@@ -20,20 +20,20 @@ const generateTimeLabels = (days: number) => {
   return generatePastDates(days).map(date => formatDate(date));
 };
 
-// Generate evaluation data for the past 14 days
-export const evaluationData = generatePastDates(14).map((date, index) => {
+// Generate evaluation data for the past 90 days (maximum time frame)
+export const evaluationData = generatePastDates(90).map((date, index) => {
   // Create some variations in the data
   const baseValue = 85;
   let value: number;
 
-  if (index < 4) {
-    // First 4 days - stable around 85
+  if (index < 30) {
+    // First 30 days - stable around 85
     value = baseValue + Math.floor(Math.random() * 5);
-  } else if (index < 8) {
-    // Days 5-8 - slight drop after version change
+  } else if (index < 60) {
+    // Days 30-60 - slight drop after version change
     value = baseValue - 10 + Math.floor(Math.random() * 5);
   } else {
-    // Days 9-14 - recovery and improvement
+    // Days 60-90 - recovery and improvement
     value = baseValue + 5 + Math.floor(Math.random() * 8);
   }
 
@@ -47,32 +47,32 @@ export const evaluationData = generatePastDates(14).map((date, index) => {
 // Version changes for evaluations
 export const evaluationVersionChanges = [
   {
-    date: formatDate(generatePastDates(14)[4]),
-    position: 4,
+    date: formatDate(generatePastDates(90)[30]),
+    position: 30,
     version: "2.1.0",
     details: "Major algorithm update to improve accuracy"
   },
   {
-    date: formatDate(generatePastDates(14)[9]),
-    position: 9,
+    date: formatDate(generatePastDates(90)[60]),
+    position: 60,
     version: "2.1.5",
     details: "Optimization to reduce false positives"
   }
 ];
 
-// Generate conversion rate data for the past 14 days
-export const conversionData = generatePastDates(14).map((date, index) => {
+// Generate conversion rate data for the past 90 days
+export const conversionData = generatePastDates(90).map((date, index) => {
   // Create some variations in the data
   let value: number;
 
-  if (index < 6) {
-    // First 6 days - moderate conversion rate
+  if (index < 40) {
+    // First 40 days - moderate conversion rate
     value = 18 + Math.random() * 3;
-  } else if (index < 10) {
-    // Days 7-10 - improved conversion after version change
+  } else if (index < 70) {
+    // Days 40-70 - improved conversion after version change
     value = 22 + Math.random() * 4;
   } else {
-    // Days 11-14 - stabilizing at a higher level
+    // Days 70-90 - stabilizing at a higher level
     value = 24 + Math.random() * 3;
   }
 
@@ -86,29 +86,29 @@ export const conversionData = generatePastDates(14).map((date, index) => {
 // Version changes for conversion rate
 export const conversionVersionChanges = [
   {
-    date: formatDate(generatePastDates(14)[6]),
-    position: 6,
+    date: formatDate(generatePastDates(90)[40]),
+    position: 40,
     version: "1.8.2",
     details: "UI redesign of checkout flow"
   }
 ];
 
-// Generate error rate data for the past 14 days
-export const errorRateData = generatePastDates(14).map((date, index) => {
+// Generate error rate data for the past 90 days
+export const errorRateData = generatePastDates(90).map((date, index) => {
   // Create some variations in the data
   let value: number;
 
-  if (index < 3) {
-    // First 3 days - high error rate
+  if (index < 25) {
+    // First 25 days - high error rate
     value = 4.2 + Math.random() * 1.0;
-  } else if (index < 7) {
-    // Days 4-7 - decreasing after version change
+  } else if (index < 50) {
+    // Days 25-50 - decreasing after version change
     value = 3.0 + Math.random() * 0.8;
-  } else if (index < 11) {
-    // Days 8-11 - further improvement
+  } else if (index < 75) {
+    // Days 50-75 - further improvement
     value = 1.8 + Math.random() * 0.6;
   } else {
-    // Days 12-14 - stabilizing at a lower level
+    // Days 75-90 - stabilizing at a lower level
     value = 1.5 + Math.random() * 0.5;
   }
 
@@ -122,40 +122,52 @@ export const errorRateData = generatePastDates(14).map((date, index) => {
 // Version changes for error rate
 export const errorRateVersionChanges = [
   {
-    date: formatDate(generatePastDates(14)[3]),
-    position: 3,
+    date: formatDate(generatePastDates(90)[25]),
+    position: 25,
     version: "3.2.1",
     details: "Error handling improvements"
   },
   {
-    date: formatDate(generatePastDates(14)[7]),
-    position: 7,
+    date: formatDate(generatePastDates(90)[50]),
+    position: 50,
     version: "3.3.0",
     details: "Major refactoring of error-prone modules"
   }
 ];
 
-// Calculate current metrics and changes
+// Filter data based on the selected timeframe
+export const getFilteredData = (data: any[], days: number) => {
+  // Always pick the last 'days' items from the data array
+  return data.slice(-days);
+};
+
+// Calculate current metrics and changes based on the filtered data (last 14 days by default)
+const lastTwoWeeksData = {
+  evaluations: evaluationData.slice(-14),
+  conversion: conversionData.slice(-14),
+  errorRate: errorRateData.slice(-14)
+};
+
 export const currentMetrics = {
   evaluations: {
-    value: evaluationData[evaluationData.length - 1].value,
+    value: lastTwoWeeksData.evaluations[lastTwoWeeksData.evaluations.length - 1].value,
     change: {
-      value: parseFloat(((evaluationData[evaluationData.length - 1].value / evaluationData[evaluationData.length - 8].value - 1) * 100).toFixed(1)),
-      trend: (evaluationData[evaluationData.length - 1].value >= evaluationData[evaluationData.length - 8].value) ? 'up' : 'down'
+      value: parseFloat(((lastTwoWeeksData.evaluations[lastTwoWeeksData.evaluations.length - 1].value / lastTwoWeeksData.evaluations[lastTwoWeeksData.evaluations.length - 8].value - 1) * 100).toFixed(1)),
+      trend: (lastTwoWeeksData.evaluations[lastTwoWeeksData.evaluations.length - 1].value >= lastTwoWeeksData.evaluations[lastTwoWeeksData.evaluations.length - 8].value) ? 'up' as const : 'down' as const
     }
   },
   conversion: {
-    value: conversionData[conversionData.length - 1].value,
+    value: lastTwoWeeksData.conversion[lastTwoWeeksData.conversion.length - 1].value,
     change: {
-      value: parseFloat(((conversionData[conversionData.length - 1].value / conversionData[conversionData.length - 8].value - 1) * 100).toFixed(1)),
-      trend: (conversionData[conversionData.length - 1].value >= conversionData[conversionData.length - 8].value) ? 'up' : 'down'
+      value: parseFloat(((lastTwoWeeksData.conversion[lastTwoWeeksData.conversion.length - 1].value / lastTwoWeeksData.conversion[lastTwoWeeksData.conversion.length - 8].value - 1) * 100).toFixed(1)),
+      trend: (lastTwoWeeksData.conversion[lastTwoWeeksData.conversion.length - 1].value >= lastTwoWeeksData.conversion[lastTwoWeeksData.conversion.length - 8].value) ? 'up' as const : 'down' as const
     }
   },
   errorRate: {
-    value: errorRateData[errorRateData.length - 1].value,
+    value: lastTwoWeeksData.errorRate[lastTwoWeeksData.errorRate.length - 1].value,
     change: {
-      value: parseFloat(((errorRateData[errorRateData.length - 1].value / errorRateData[errorRateData.length - 8].value - 1) * 100).toFixed(1)),
-      trend: (errorRateData[errorRateData.length - 1].value <= errorRateData[errorRateData.length - 8].value) ? 'up' : 'down'
+      value: parseFloat(((lastTwoWeeksData.errorRate[lastTwoWeeksData.errorRate.length - 1].value / lastTwoWeeksData.errorRate[lastTwoWeeksData.errorRate.length - 8].value - 1) * 100).toFixed(1)),
+      trend: (lastTwoWeeksData.errorRate[lastTwoWeeksData.errorRate.length - 1].value <= lastTwoWeeksData.errorRate[lastTwoWeeksData.errorRate.length - 8].value) ? 'up' as const : 'down' as const
     }
   }
 };

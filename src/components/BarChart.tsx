@@ -83,7 +83,8 @@ const BarChart = ({
         <RechartsBarChart
           data={data}
           margin={{ top: 16, right: 16, left: 0, bottom: 0 }}
-          barSize={8}
+          barSize={24} // Increased from 8 to 24 for much larger bars
+          barGap={5} // Small gap between bars
           onMouseLeave={handleMouseLeave}
         >
           <CartesianGrid 
