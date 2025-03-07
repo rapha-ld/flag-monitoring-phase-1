@@ -108,8 +108,8 @@ export const calculateMetrics = (
 // Process the data to ensure no true values are 0
 export const processTrueFalseValues = (data: any[]) => {
   return data.filter(item => {
-    // Only keep items where valueTrue is greater than 0
-    // We'll add this property after filtering
+    // Only keep items where value is greater than 0
+    // We'll add valueTrue and valueFalse properties after filtering
     return item.value > 0;
   }).map(item => ({
     ...item,
