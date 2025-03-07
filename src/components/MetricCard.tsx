@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { cn } from '@/lib/utils';
 import { Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import BarChart from './BarChart';
+import { DataPoint, VersionChange } from './BarChart';
 
 interface MetricCardProps {
   title: string;
@@ -15,9 +17,30 @@ interface MetricCardProps {
   info?: string;
   className?: string;
   children?: React.ReactNode;
+  chartData?: DataPoint[];
+  versionChanges?: VersionChange[];
+  barColor?: string;
+  valueFormatter?: (value: number) => string;
+  tooltipValueFormatter?: (value: number) => string;
+  tooltipLabelFormatter?: (label: string) => string;
+  timeframe?: string;
 }
 
-const MetricCard = ({ title, value, change, info, className, children }: MetricCardProps) => {
+const MetricCard = ({ 
+  title, 
+  value, 
+  change, 
+  info, 
+  className, 
+  children,
+  chartData,
+  versionChanges,
+  barColor = "#6E6F96",
+  valueFormatter,
+  tooltipValueFormatter,
+  tooltipLabelFormatter,
+  timeframe
+}: MetricCardProps) => {
   return (
     <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", className)}>
       <CardHeader className="pb-2">
@@ -37,6 +60,9 @@ const MetricCard = ({ title, value, change, info, className, children }: MetricC
               </TooltipProvider>
             )}
           </CardTitle>
+          {timeframe && (
+            <span className="text-xs text-textSecondary">Last {timeframe}</span>
+          )}
         </div>
         <div className="flex items-end justify-between">
           <CardDescription className="text-2xl font-semibold text-foreground">
@@ -57,7 +83,17 @@ const MetricCard = ({ title, value, change, info, className, children }: MetricC
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        {children}
+        {chartData && chartData.length > 0 ? (
+          <BarChart
+            data={chartData}
+            versionChanges={versionChanges}
+            barColor={barColor}
+            height={160}
+            valueFormatter={valueFormatter}
+            tooltipValueFormatter={tooltipValueFormatter}
+            tooltipLabelFormatter={tooltipLabelFormatter}
+          />
+        ) : children}
       </CardContent>
     </Card>
   );

@@ -12,7 +12,10 @@ export const getFilteredData = (data: any[], days: number, environment: string =
   const timeFilteredData = envFilteredData.slice(-days);
   
   // Ensure we have continuous dates with values
-  return ensureContinuousDates(timeFilteredData, days);
+  const continuousData = ensureContinuousDates(timeFilteredData, days);
+  
+  // Filter out any 0 values
+  return continuousData.filter(item => item.value > 0);
 };
 
 // Calculate metrics based on filtered data
