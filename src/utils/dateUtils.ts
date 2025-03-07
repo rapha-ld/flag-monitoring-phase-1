@@ -30,7 +30,7 @@ export const ensureContinuousDates = (data: any[], days: number) => {
       name: formattedDate,
       value: 0,
       date: date.toISOString(),
-      environment: 'production' // Default environment
+      environment: data[0]?.environment || 'production' // Use first data point's environment or default
     });
   });
   
@@ -42,7 +42,14 @@ export const ensureContinuousDates = (data: any[], days: number) => {
   });
   
   // Convert map back to array and ensure it's sorted by date
-  return Array.from(dateMap.values()).sort((a, b) => {
+  const result = Array.from(dateMap.values()).sort((a, b) => {
     return new Date(a.date).getTime() - new Date(b.date).getTime();
   });
+  
+  // Ensure we return exactly the requested number of days
+  if (result.length > days) {
+    return result.slice(-days);
+  }
+  
+  return result;
 };
