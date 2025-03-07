@@ -97,9 +97,22 @@ const BarChart = ({
     }
   }
 
-  // Log to check if versionChanges exist
-  console.log('All version changes:', allVersionChanges);
-  console.log('Feb 21 position:', feb21Position);
+  // Calculate optimal interval for the X axis based on data length
+  const getXAxisInterval = () => {
+    if (data.length > 60) return 6;
+    if (data.length > 40) return 4;
+    if (data.length > 20) return 2;
+    if (data.length > 14) return 1;
+    return 'preserveStartEnd';
+  };
+
+  // Calculate optimal bar size based on data length
+  const getBarSize = () => {
+    if (data.length > 60) return 2;
+    if (data.length > 30) return 4;
+    if (data.length > 14) return 8;
+    return 24;
+  };
 
   return (
     <div className={cn("w-full h-full chart-container", className)}>
@@ -107,7 +120,7 @@ const BarChart = ({
         <RechartsBarChart
           data={data}
           margin={{ top: 30, right: 16, left: 0, bottom: 0 }}
-          barSize={data.length > 30 ? 4 : data.length > 14 ? 8 : 24}
+          barSize={getBarSize()}
           barGap={2}
           onMouseLeave={handleMouseLeave}
         >
@@ -125,8 +138,11 @@ const BarChart = ({
             tickMargin={8}
             stroke="#545A62"
             fontSize={10}
-            interval={data.length > 40 ? 4 : data.length > 20 ? 2 : 'preserveStartEnd'}
+            interval={getXAxisInterval()}
             minTickGap={5}
+            angle={data.length > 14 ? -45 : 0}
+            textAnchor={data.length > 14 ? "end" : "middle"}
+            height={data.length > 14 ? 60 : 30}
           />
           <YAxis 
             axisLine={false} 
@@ -162,8 +178,6 @@ const BarChart = ({
             // Calculate pixel position instead of percentage
             const barWidth = 100 / data.length;
             const xPosition = change.position * barWidth + (barWidth / 2);
-            
-            console.log(`Adding version marker at position: ${xPosition} for version ${change.version}`);
             
             return (
               <VersionMarker 

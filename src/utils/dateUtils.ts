@@ -23,7 +23,7 @@ export const ensureContinuousDates = (data: any[], days: number) => {
   const dateMap = new Map();
   const allDates = generatePastDates(days);
   
-  // Initialize with all dates and null values
+  // Initialize with all dates and zero values
   allDates.forEach(date => {
     const formattedDate = formatDate(date);
     dateMap.set(formattedDate, {
@@ -41,6 +41,8 @@ export const ensureContinuousDates = (data: any[], days: number) => {
     }
   });
   
-  // Convert map back to array
-  return Array.from(dateMap.values());
+  // Convert map back to array and ensure it's sorted by date
+  return Array.from(dateMap.values()).sort((a, b) => {
+    return new Date(a.date).getTime() - new Date(b.date).getTime();
+  });
 };

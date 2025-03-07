@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { CalendarIcon, ChevronRight } from 'lucide-react';
@@ -6,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
+import NavTabs from './NavTabs';
 
 interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   timeframe: string;
@@ -26,6 +25,7 @@ const Header = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const [activeTab, setActiveTab] = useState("analytics");
 
   const handleDateSelect = (date: Date | undefined, type: 'start' | 'end') => {
     if (type === 'start') {
@@ -44,15 +44,18 @@ const Header = ({
   };
 
   return (
-    <header className={cn("pb-4 animate-slide-down", className)} {...props}>
+    <header className={cn("pb-4 animate-slide-down space-y-4", className)} {...props}>
       {/* Breadcrumb */}
-      <div className="flex items-center text-textBase mb-4">
+      <div className="flex items-center text-textBase">
         <span className="text-textSecondary">Flags</span>
         <ChevronRight className="h-4 w-4 mx-1 text-textSecondary" />
         <span className="font-medium">New Checkout</span>
       </div>
       
-      {/* Controls - moved below breadcrumb */}
+      {/* Tab Navigation */}
+      <NavTabs activeTab={activeTab} onChange={setActiveTab} />
+      
+      {/* Controls */}
       <div className="flex flex-col md:flex-row items-start gap-4">
         {/* Environment Selector */}
         <Select value={environment} onValueChange={onEnvironmentChange}>

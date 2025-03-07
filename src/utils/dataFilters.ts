@@ -11,7 +11,7 @@ export const getFilteredData = (data: any[], days: number, environment: string =
   // Take the last 'days' items and ensure we have all dates
   const timeFilteredData = envFilteredData.slice(-days);
   
-  // Ensure we have continuous dates
+  // Ensure we have continuous dates with values
   return ensureContinuousDates(timeFilteredData, days);
 };
 
