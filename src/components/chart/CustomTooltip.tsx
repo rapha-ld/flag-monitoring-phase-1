@@ -9,6 +9,7 @@ interface CustomTooltipProps {
   tooltipValueFormatter: (value: number) => string;
   showTrue?: boolean;
   showFalse?: boolean;
+  chartType?: 'stacked' | 'mixed';
 }
 
 const CustomTooltip = ({ 
@@ -18,7 +19,8 @@ const CustomTooltip = ({
   tooltipLabelFormatter, 
   tooltipValueFormatter,
   showTrue,
-  showFalse
+  showFalse,
+  chartType = 'stacked'
 }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     return (

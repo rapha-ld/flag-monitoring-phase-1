@@ -27,6 +27,7 @@ interface MetricCardProps {
   isTotal?: boolean;
   showTrue?: boolean;
   showFalse?: boolean;
+  chartType?: 'stacked' | 'mixed';
 }
 
 const MetricCard = ({ 
@@ -45,7 +46,8 @@ const MetricCard = ({
   timeframe,
   isTotal = false,
   showTrue,
-  showFalse
+  showFalse,
+  chartType = 'stacked'
 }: MetricCardProps) => {
   return (
     <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", className)}>
@@ -97,6 +99,7 @@ const MetricCard = ({
             tooltipLabelFormatter={tooltipLabelFormatter}
             showTrue={showTrue}
             showFalse={showFalse}
+            chartType={chartType}
           />
         ) : children}
       </CardContent>

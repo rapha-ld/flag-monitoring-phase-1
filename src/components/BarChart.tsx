@@ -8,6 +8,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Line,
 } from 'recharts';
 import { cn } from '@/lib/utils';
 import VersionMarker from './VersionMarker';
@@ -42,6 +43,7 @@ interface BarChartProps {
   tooltipLabelFormatter?: (label: string) => string;
   showTrue?: boolean;
   showFalse?: boolean;
+  chartType?: 'stacked' | 'mixed';
 }
 
 const BarChart = ({
@@ -55,6 +57,7 @@ const BarChart = ({
   tooltipLabelFormatter = (label) => label,
   showTrue = true,
   showFalse = false,
+  chartType = 'stacked',
 }: BarChartProps) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
@@ -153,34 +156,67 @@ const BarChart = ({
                 tooltipValueFormatter={tooltipValueFormatter}
                 showTrue={showTrue}
                 showFalse={showFalse}
+                chartType={chartType}
               />
             )}
             cursor={{ fill: 'hsl(var(--muted))', opacity: 0.4 }}
           />
           
-          {/* Conditionally render the bars based on showTrue and showFalse */}
-          {showTrue && (
-            <Bar 
-              dataKey="valueTrue" 
-              name="True"
-              stackId="stack1"
-              radius={showFalse ? [0, 0, 0, 0] : [2, 2, 0, 0]} 
-              isAnimationActive={false}
-              onMouseOver={handleMouseOver}
-              fill={trueColor}
-            />
-          )}
-          
-          {showFalse && (
-            <Bar 
-              dataKey="valueFalse" 
-              name="False"
-              stackId="stack1"
-              radius={[2, 2, 0, 0]} 
-              isAnimationActive={false}
-              onMouseOver={handleMouseOver}
-              fill={falseColor}
-            />
+          {/* Render based on chart type */}
+          {chartType === 'stacked' ? (
+            // Stacked Bar Chart (for Evaluations)
+            <>
+              {showTrue && (
+                <Bar 
+                  dataKey="valueTrue" 
+                  name="True"
+                  stackId="stack1"
+                  radius={showFalse ? [0, 0, 0, 0] : [2, 2, 0, 0]} 
+                  isAnimationActive={false}
+                  onMouseOver={handleMouseOver}
+                  fill={trueColor}
+                />
+              )}
+              
+              {showFalse && (
+                <Bar 
+                  dataKey="valueFalse" 
+                  name="False"
+                  stackId="stack1"
+                  radius={[2, 2, 0, 0]} 
+                  isAnimationActive={false}
+                  onMouseOver={handleMouseOver}
+                  fill={falseColor}
+                />
+              )}
+            </>
+          ) : (
+            // Mixed Chart (Bar for True, Line for False)
+            <>
+              {showTrue && (
+                <Bar 
+                  dataKey="valueTrue" 
+                  name="True"
+                  radius={[2, 2, 0, 0]} 
+                  isAnimationActive={false}
+                  onMouseOver={handleMouseOver}
+                  fill={trueColor}
+                />
+              )}
+              
+              {showFalse && (
+                <Line
+                  type="monotone"
+                  dataKey="valueFalse"
+                  name="False"
+                  stroke={falseColor}
+                  strokeWidth={2}
+                  dot={{ fill: falseColor, r: 4 }}
+                  activeDot={{ r: 6 }}
+                  isAnimationActive={false}
+                />
+              )}
+            </>
           )}
           
           {/* If neither True/False is specified, use the original value */}

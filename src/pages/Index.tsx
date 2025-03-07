@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { cn } from "@/lib/utils";
 import Header from '@/components/Header';
@@ -134,6 +135,7 @@ const Index = () => {
                 barColor="#6E6F96"
                 showTrue={showTrue}
                 showFalse={showFalse}
+                chartType="stacked"
               />
             )}
             {selectedMetrics.includes('conversion') && (
@@ -152,6 +154,7 @@ const Index = () => {
                 barColor="#6E6F96"
                 showTrue={showTrue}
                 showFalse={showFalse}
+                chartType="mixed"
               />
             )}
             {selectedMetrics.includes('errorRate') && (
@@ -173,6 +176,7 @@ const Index = () => {
                 barColor="#6E6F96"
                 showTrue={showTrue}
                 showFalse={showFalse}
+                chartType="mixed"
               />
             )}
           </div>
