@@ -1,4 +1,6 @@
 
+import { ensureContinuousDates } from "./dateUtils";
+
 // Filter data based on the selected timeframe and environment
 export const getFilteredData = (data: any[], days: number, environment: string = 'production') => {
   // First filter by environment if specified
@@ -6,8 +8,11 @@ export const getFilteredData = (data: any[], days: number, environment: string =
     ? data 
     : data.filter(item => item.environment === environment);
   
-  // Then pick the last 'days' items from the filtered data array
-  return envFilteredData.slice(-days);
+  // Take the last 'days' items and ensure we have all dates
+  const timeFilteredData = envFilteredData.slice(-days);
+  
+  // Ensure we have continuous dates
+  return ensureContinuousDates(timeFilteredData, days);
 };
 
 // Calculate metrics based on filtered data

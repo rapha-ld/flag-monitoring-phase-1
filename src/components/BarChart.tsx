@@ -8,7 +8,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  ReferenceLine,
   Cell,
 } from 'recharts';
 import { cn } from '@/lib/utils';
@@ -108,8 +107,8 @@ const BarChart = ({
         <RechartsBarChart
           data={data}
           margin={{ top: 30, right: 16, left: 0, bottom: 0 }}
-          barSize={24}
-          barGap={5}
+          barSize={data.length > 30 ? 4 : data.length > 14 ? 8 : 24}
+          barGap={2}
           onMouseLeave={handleMouseLeave}
         >
           <CartesianGrid 
@@ -126,7 +125,7 @@ const BarChart = ({
             tickMargin={8}
             stroke="#545A62"
             fontSize={10}
-            interval="preserveStartEnd"
+            interval={data.length > 40 ? 4 : data.length > 20 ? 2 : 'preserveStartEnd'}
             minTickGap={5}
           />
           <YAxis 

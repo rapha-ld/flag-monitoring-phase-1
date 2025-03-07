@@ -17,3 +17,30 @@ export const formatDate = (date: Date) => {
 export const generateTimeLabels = (days: number) => {
   return generatePastDates(days).map(date => formatDate(date));
 };
+
+// Ensure data has entries for every day in the date range
+export const ensureContinuousDates = (data: any[], days: number) => {
+  const dateMap = new Map();
+  const allDates = generatePastDates(days);
+  
+  // Initialize with all dates and null values
+  allDates.forEach(date => {
+    const formattedDate = formatDate(date);
+    dateMap.set(formattedDate, {
+      name: formattedDate,
+      value: 0,
+      date: date.toISOString(),
+      environment: 'production' // Default environment
+    });
+  });
+  
+  // Fill in actual values from the data
+  data.forEach(item => {
+    if (dateMap.has(item.name)) {
+      dateMap.set(item.name, item);
+    }
+  });
+  
+  // Convert map back to array
+  return Array.from(dateMap.values());
+};
