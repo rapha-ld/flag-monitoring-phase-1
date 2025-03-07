@@ -10,6 +10,7 @@ interface CustomTooltipProps {
   showTrue?: boolean;
   showFalse?: boolean;
   chartType?: 'stacked' | 'mixed';
+  metricType?: 'evaluations' | 'conversion' | 'errorRate';
 }
 
 const CustomTooltip = ({ 
@@ -20,7 +21,8 @@ const CustomTooltip = ({
   tooltipValueFormatter,
   showTrue,
   showFalse,
-  chartType = 'stacked'
+  chartType = 'stacked',
+  metricType
 }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     // Log to inspect the payload structure
@@ -37,7 +39,9 @@ const CustomTooltip = ({
               <div key={`tooltip-${index}`} className="flex justify-between gap-2">
                 <span style={{ color: entry.color }}>{entry.name}:</span>
                 <span className="text-primary font-medium">
-                  {tooltipValueFormatter(entry.value)}
+                  {metricType === 'evaluations' && entry.name === 'True' 
+                    ? `Evaluations: ${entry.value}` 
+                    : tooltipValueFormatter(entry.value)}
                 </span>
               </div>
             ))}
@@ -47,7 +51,9 @@ const CustomTooltip = ({
         {/* If we're showing the original value */}
         {!showTrue && !showFalse && (
           <p className="text-primary">
-            {tooltipValueFormatter(payload[0].value)}
+            {metricType === 'evaluations' 
+              ? `Evaluations: ${payload[0].value}` 
+              : tooltipValueFormatter(payload[0].value)}
           </p>
         )}
       </div>

@@ -44,6 +44,7 @@ interface BarChartProps {
   showTrue?: boolean;
   showFalse?: boolean;
   chartType?: 'stacked' | 'mixed';
+  metricType?: 'evaluations' | 'conversion' | 'errorRate';
 }
 
 const BarChart = ({
@@ -58,6 +59,7 @@ const BarChart = ({
   showTrue = true,
   showFalse = false,
   chartType = 'stacked',
+  metricType
 }: BarChartProps) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   
@@ -113,6 +115,9 @@ const BarChart = ({
   const trueColor = "#2BB7D2";
   const falseColor = "#FFD099";
 
+  // Determine chart type based on selected variants and metric type
+  const effectiveChartType = (chartType === 'mixed' && showTrue && showFalse) ? 'mixed' : 'bar';
+
   return (
     <div className={cn("w-full h-full chart-container", className)}>
       <ResponsiveContainer width="100%" height={height}>
@@ -162,6 +167,7 @@ const BarChart = ({
                 showTrue={showTrue}
                 showFalse={showFalse}
                 chartType={chartType}
+                metricType={metricType}
               />
             )}
             cursor={{ fill: 'hsl(var(--muted))', opacity: 0.4 }}
@@ -198,6 +204,7 @@ const BarChart = ({
           ) : (
             // Mixed Chart (Bar for True, Line for False)
             <>
+              {/* Always render True as bars */}
               {showTrue && (
                 <Bar 
                   dataKey="valueTrue" 
@@ -209,17 +216,31 @@ const BarChart = ({
                 />
               )}
               
+              {/* Render False as line when both variants are shown, as bars when only False is shown */}
               {showFalse && (
-                <Line
-                  type="monotone"
-                  dataKey="valueFalse"
-                  name="False"
-                  stroke={falseColor}
-                  strokeWidth={2}
-                  dot={{ fill: falseColor, r: 4 }}
-                  activeDot={{ r: 6 }}
-                  isAnimationActive={false}
-                />
+                showTrue ? (
+                  // Line chart when both True and False are selected
+                  <Line
+                    type="monotone"
+                    dataKey="valueFalse"
+                    name="False"
+                    stroke={falseColor}
+                    strokeWidth={2}
+                    dot={{ fill: falseColor, r: 4 }}
+                    activeDot={{ r: 6 }}
+                    isAnimationActive={false}
+                  />
+                ) : (
+                  // Bar chart when only False is selected
+                  <Bar 
+                    dataKey="valueFalse" 
+                    name="False"
+                    radius={[2, 2, 0, 0]} 
+                    isAnimationActive={false}
+                    onMouseOver={handleMouseOver}
+                    fill={falseColor}
+                  />
+                )
               )}
             </>
           )}

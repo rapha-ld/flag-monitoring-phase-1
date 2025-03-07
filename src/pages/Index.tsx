@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { cn } from "@/lib/utils";
 import Header from '@/components/Header';
@@ -137,11 +136,12 @@ const Index = () => {
                   change.position < filteredEvaluationData.length
                 )}
                 valueFormatter={(value) => `${value}`}
-                tooltipValueFormatter={(value) => `Score: ${value}`}
+                tooltipValueFormatter={(value) => `${value}`}
                 barColor="#6E6F96"
                 showTrue={showTrue}
                 showFalse={showFalse}
                 chartType="stacked"
+                metricType="evaluations"
               />
             )}
             {selectedMetrics.includes('conversion') && (
@@ -161,6 +161,7 @@ const Index = () => {
                 showTrue={showTrue}
                 showFalse={showFalse}
                 chartType="mixed"
+                metricType="conversion"
               />
             )}
             {selectedMetrics.includes('errorRate') && (
@@ -183,6 +184,7 @@ const Index = () => {
                 showTrue={showTrue}
                 showFalse={showFalse}
                 chartType="mixed"
+                metricType="errorRate"
               />
             )}
           </div>

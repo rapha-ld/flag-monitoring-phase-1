@@ -28,6 +28,7 @@ interface MetricCardProps {
   showTrue?: boolean;
   showFalse?: boolean;
   chartType?: 'stacked' | 'mixed';
+  metricType?: 'evaluations' | 'conversion' | 'errorRate';
 }
 
 const MetricCard = ({ 
@@ -47,7 +48,8 @@ const MetricCard = ({
   isTotal = false,
   showTrue,
   showFalse,
-  chartType = 'stacked'
+  chartType = 'stacked',
+  metricType
 }: MetricCardProps) => {
   return (
     <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", className)}>
@@ -100,6 +102,7 @@ const MetricCard = ({
             showTrue={showTrue}
             showFalse={showFalse}
             chartType={chartType}
+            metricType={metricType}
           />
         ) : children}
       </CardContent>
