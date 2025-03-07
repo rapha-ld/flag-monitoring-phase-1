@@ -1,5 +1,5 @@
 
-import { ensureContinuousDates } from "./dateUtils";
+import { ensureContinuousDates, generatePastDates, formatDate } from "./dateUtils";
 
 // Filter data based on the selected timeframe, environment, and device
 export const getFilteredData = (
@@ -18,16 +18,25 @@ export const getFilteredData = (
     ? envFilteredData
     : envFilteredData.filter(item => item.device === device);
   
+  // Generate exact dates we need for the timeframe
+  const requiredDates = generatePastDates(days).map(date => formatDate(date));
+  
   // Pass all filtered data to ensureContinuousDates which will 
-  // generate the exact number of days we need
+  // generate the exact number of days we need with the correct dates
   const result = ensureContinuousDates(deviceFilteredData, days);
   
-  // Verify we have the exact number of days requested
+  // Verify we have the exact number of days requested and they match our required dates
   if (result.length !== days) {
     console.error(`Data filtering error: Expected exactly ${days} data points but got ${result.length}`);
   }
   
-  return result;
+  // Make sure names match exactly with our required dates
+  const sortedResult = result.map((item, index) => ({
+    ...item,
+    name: requiredDates[index]
+  }));
+  
+  return sortedResult;
 };
 
 // Calculate metrics based on filtered data
@@ -111,11 +120,7 @@ export const calculateMetrics = (
 
 // Process the data to ensure no true values are 0
 export const processTrueFalseValues = (data: any[]) => {
-  return data.filter(item => {
-    // Only keep items where valueTrue is greater than 0
-    // We'll add this property after filtering
-    return item.value > 0;
-  }).map(item => ({
+  return data.map(item => ({
     ...item,
     valueTrue: Math.round(item.value * 0.6), // 60% true
     valueFalse: Math.round(item.value * 0.4), // 40% false

@@ -60,9 +60,14 @@ const BarChart = ({
   chartType = 'stacked',
 }: BarChartProps) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-
+  
   // Include all data points, even those with 0 values
   const filteredData = data;
+  
+  console.log("Chart Data:", filteredData);
+  console.log("Chart Type:", chartType);
+  console.log("Show True:", showTrue);
+  console.log("Show False:", showFalse);
 
   const handleMouseOver = (data: any, index: number) => {
     setActiveIndex(index);

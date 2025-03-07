@@ -50,13 +50,19 @@ const Index = () => {
       days = parseInt(timeframe.replace('d', ''));
     }
     
+    console.log(`Filtering data for ${days} days`);
+    
+    // Get filtered data for the selected timeframe
     const filteredEval = getFilteredData(evaluationData, days, environment, selectedDevice);
     const filteredConv = getFilteredData(conversionData, days, environment, selectedDevice);
     const filteredError = getFilteredData(errorRateData, days, environment, selectedDevice);
     
+    // Process data to add valueTrue and valueFalse properties
     const processedEval = processTrueFalseValues(filteredEval);
     const processedConv = processTrueFalseValues(filteredConv);
     const processedError = processTrueFalseValues(filteredError);
+    
+    console.log(`Processed eval data length: ${processedEval.length}`);
     
     setFilteredEvaluationData(processedEval);
     setFilteredConversionData(processedConv);

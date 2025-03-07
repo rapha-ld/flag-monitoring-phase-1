@@ -39,7 +39,11 @@ export const ensureContinuousDates = (data: any[], days: number) => {
   // Fill in actual values from the data
   data.forEach(item => {
     if (dateMap.has(item.name)) {
-      dateMap.set(item.name, item);
+      dateMap.set(item.name, {
+        ...item,
+        // Ensure these properties exist even if they're 0
+        value: item.value || 0
+      });
     }
   });
   

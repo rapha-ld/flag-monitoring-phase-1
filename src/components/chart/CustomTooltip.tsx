@@ -23,11 +23,14 @@ const CustomTooltip = ({
   chartType = 'stacked'
 }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
+    // Log to inspect the payload structure
+    console.log("Tooltip payload:", payload);
+    
     return (
       <div className="bg-popover border border-border shadow-md rounded-md p-2 text-xs">
         <p className="font-medium">{tooltipLabelFormatter(label || '')}</p>
         
-        {/* If we're showing true/false values */}
+        {/* For stacked or mixed charts when showing true/false values */}
         {(showTrue || showFalse) && (
           <div className="space-y-1 mt-1">
             {payload.map((entry, index) => (
