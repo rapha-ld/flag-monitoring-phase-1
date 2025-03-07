@@ -14,8 +14,8 @@ export const getFilteredData = (data: any[], days: number, environment: string =
   // Ensure we have continuous dates with values
   const continuousData = ensureContinuousDates(timeFilteredData, days);
   
-  // Filter out any 0 values
-  return continuousData.filter(item => item.value > 0);
+  // Return all data points, including those with 0 values
+  return continuousData;
 };
 
 // Calculate metrics based on filtered data
@@ -25,9 +25,8 @@ export const calculateMetrics = (
   errorRateData: any[],
   days: number
 ) => {
-  // For evaluations, calculate the average
-  const evalSum = evaluationData.reduce((sum, item) => sum + item.value, 0);
-  const evalAvg = parseFloat((evalSum / evaluationData.length).toFixed(1));
+  // For evaluations, calculate the total
+  const evalTotal = evaluationData.reduce((sum, item) => sum + item.value, 0);
   
   // For conversion, calculate the average
   const convSum = conversionData.reduce((sum, item) => sum + item.value, 0);
@@ -40,16 +39,16 @@ export const calculateMetrics = (
   // Calculate change (comparing to the first half of the period)
   const middleIndex = Math.floor(days / 2);
   
-  // For evaluations
+  // For evaluations, compare totals
   const evalFirstHalf = evaluationData.slice(0, middleIndex);
   const evalSecondHalf = evaluationData.slice(middleIndex);
-  const evalFirstAvg = evalFirstHalf.length 
-    ? evalFirstHalf.reduce((sum, item) => sum + item.value, 0) / evalFirstHalf.length 
-    : evalAvg;
-  const evalSecondAvg = evalSecondHalf.length 
-    ? evalSecondHalf.reduce((sum, item) => sum + item.value, 0) / evalSecondHalf.length 
-    : evalAvg;
-  const evalChange = parseFloat(((evalSecondAvg / evalFirstAvg - 1) * 100).toFixed(1));
+  const evalFirstTotal = evalFirstHalf.reduce((sum, item) => sum + item.value, 0);
+  const evalSecondTotal = evalSecondHalf.reduce((sum, item) => sum + item.value, 0);
+  
+  let evalChange = 0;
+  if (evalFirstTotal > 0) {
+    evalChange = parseFloat(((evalSecondTotal / evalFirstTotal - 1) * 100).toFixed(1));
+  }
   
   // For conversion
   const convFirstHalf = conversionData.slice(0, middleIndex);
@@ -75,7 +74,7 @@ export const calculateMetrics = (
   
   return {
     evaluations: {
-      value: evalAvg,
+      value: evalTotal,
       change: {
         value: evalChange,
         trend: evalChange >= 0 ? 'up' as const : 'down' as const

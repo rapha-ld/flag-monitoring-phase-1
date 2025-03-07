@@ -24,6 +24,7 @@ interface MetricCardProps {
   tooltipValueFormatter?: (value: number) => string;
   tooltipLabelFormatter?: (label: string) => string;
   timeframe?: string;
+  isTotal?: boolean;
 }
 
 const MetricCard = ({ 
@@ -39,7 +40,8 @@ const MetricCard = ({
   valueFormatter,
   tooltipValueFormatter,
   tooltipLabelFormatter,
-  timeframe
+  timeframe,
+  isTotal = false
 }: MetricCardProps) => {
   return (
     <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", className)}>
@@ -61,7 +63,9 @@ const MetricCard = ({
             )}
           </CardTitle>
           {timeframe && (
-            <span className="text-xs text-textSecondary">Last {timeframe}</span>
+            <span className="text-xs text-textSecondary">
+              {isTotal ? `Total for last ${timeframe}` : `Last ${timeframe}`}
+            </span>
           )}
         </div>
         <div className="flex items-end justify-between">

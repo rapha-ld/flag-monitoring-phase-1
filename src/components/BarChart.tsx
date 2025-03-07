@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   BarChart as RechartsBarChart,
@@ -49,8 +48,8 @@ const BarChart = ({
 }: BarChartProps) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   
-  // Filter out any data points with 0 values
-  const filteredData = data.filter(item => item.value > 0);
+  // We keep all data points, even those with 0 values
+  const filteredData = data;
 
   const handleMouseOver = (data: any, index: number) => {
     setActiveIndex(index);
@@ -105,7 +104,7 @@ const BarChart = ({
     }
   }
 
-  // Update version change positions to match filtered data
+  // Update version change positions to match all data
   const updatedVersionChanges = allVersionChanges.map(change => {
     // Find the date of the original version change
     const originalDate = data[change.position]?.name;

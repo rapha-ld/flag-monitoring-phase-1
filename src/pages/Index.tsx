@@ -90,7 +90,7 @@ const Index = () => {
             title="Evaluations" 
             value={currentMetrics.evaluations.value}
             change={currentMetrics.evaluations.change}
-            info="Daily average evaluation score (0-100)"
+            info="Total evaluation score for the selected time period"
             className="animate-slide-up [animation-delay:100ms]"
             chartData={filteredEvaluationData}
             versionChanges={evaluationVersionChanges.filter(change => 
@@ -100,6 +100,7 @@ const Index = () => {
             tooltipValueFormatter={(value) => `Score: ${value}`}
             barColor="#6E6F96"
             timeframe={timeframe}
+            isTotal={true}
           />
           <MetricCard 
             title="Checkout Conversion" 
