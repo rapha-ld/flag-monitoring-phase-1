@@ -40,22 +40,22 @@ const VersionMarker = ({
               y1="0" 
               x2="0" 
               y2={height} 
-              className="stroke-primary stroke-[1.5] stroke-dasharray-2"
-              strokeOpacity="0.8"
+              stroke="black"
+              strokeWidth="1.5"
+              strokeOpacity="0.7"
             />
             
-            {/* Flag indicator */}
-            <circle 
-              cx="0" 
-              cy="10" 
-              r="6" 
-              className="fill-primary/20 stroke-primary stroke-[1.5]" 
-            />
-            
-            <Flag 
-              className="text-primary w-3 h-3" 
-              style={{ transform: `translate(-6px, 6.5px)` }} 
-            />
+            {/* Version label at the top */}
+            <text
+              x="0"
+              y="14"
+              fontSize="10"
+              textAnchor="middle"
+              fill="black"
+              fontWeight="bold"
+            >
+              v{version}
+            </text>
           </g>
         </TooltipTrigger>
         <TooltipContent side="top" className="p-3 space-y-1.5 max-w-xs">

@@ -83,7 +83,7 @@ const BarChart = ({
       <ResponsiveContainer width="100%" height={height}>
         <RechartsBarChart
           data={data}
-          margin={{ top: 16, right: 16, left: 0, bottom: 0 }}
+          margin={{ top: 30, right: 16, left: 0, bottom: 0 }}
           barSize={24}
           barGap={5}
           onMouseLeave={handleMouseLeave}
@@ -137,7 +137,6 @@ const BarChart = ({
           {/* Version Markers */}
           {versionChanges && versionChanges.length > 0 && versionChanges.map((change, index) => {
             // Calculate pixel position instead of percentage
-            // For a chart with data.length bars, calculate the position
             const barWidth = 100 / data.length;
             const xPosition = change.position * barWidth + (barWidth / 2);
             
@@ -146,7 +145,7 @@ const BarChart = ({
             return (
               <VersionMarker 
                 key={`version-${index}`}
-                x={xPosition}
+                x={`${xPosition}%`}
                 height={Number(height) - 30}
                 version={change.version}
                 date={change.date}
