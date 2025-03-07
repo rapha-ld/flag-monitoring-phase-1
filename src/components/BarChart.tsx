@@ -132,13 +132,13 @@ const BarChart = ({
           </Bar>
           
           {versionChanges.map((change, index) => {
-            const xPos = change.position * (100 / (data.length - 1)) + '%';
-            
+            // Calculate position based on bar width and position
+            // This is a percentage of the chart width
             return (
               <VersionMarker 
                 key={`version-${index}`}
                 x={change.position * (100 / (data.length - 1))}
-                height={height as number - 30}
+                height={Number(height) - 30}
                 version={change.version}
                 date={change.date}
                 details={change.details}

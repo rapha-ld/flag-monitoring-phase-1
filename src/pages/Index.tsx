@@ -124,7 +124,10 @@ const Index = () => {
             <div className="bg-card border rounded-lg p-4 shadow-sm">
               <BarChart 
                 data={filteredEvaluationData} 
-                versionChanges={evaluationVersionChanges}
+                versionChanges={evaluationVersionChanges.filter(change => 
+                  // Only include version changes that fall within our filtered data timeframe
+                  change.position < filteredEvaluationData.length
+                )}
                 height={220}
                 valueFormatter={(value) => `${value}`}
                 tooltipValueFormatter={(value) => `Score: ${value}`}
@@ -142,7 +145,10 @@ const Index = () => {
             <div className="bg-card border rounded-lg p-4 shadow-sm">
               <BarChart 
                 data={filteredConversionData} 
-                versionChanges={conversionVersionChanges}
+                versionChanges={conversionVersionChanges.filter(change => 
+                  // Only include version changes that fall within our filtered data timeframe
+                  change.position < filteredConversionData.length
+                )}
                 barColor="#6E6F96"
                 height={220}
                 valueFormatter={(value) => `${value}%`}
@@ -160,7 +166,10 @@ const Index = () => {
             <div className="bg-card border rounded-lg p-4 shadow-sm">
               <BarChart 
                 data={filteredErrorRateData} 
-                versionChanges={errorRateVersionChanges}
+                versionChanges={errorRateVersionChanges.filter(change => 
+                  // Only include version changes that fall within our filtered data timeframe
+                  change.position < filteredErrorRateData.length
+                )}
                 barColor="#6E6F96"
                 height={220}
                 valueFormatter={(value) => `${value}%`}
