@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
   BarChart as RechartsBarChart,
@@ -48,9 +49,9 @@ const BarChart = ({
   tooltipLabelFormatter = (label) => label,
 }: BarChartProps) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  
-  // We keep all data points, but filter out those with 0 values
-  const filteredData = data.filter(item => item.value > 0);
+
+  // Include all data points, even those with 0 values
+  const filteredData = data;
 
   const handleMouseOver = (data: any, index: number) => {
     setActiveIndex(index);
@@ -119,11 +120,11 @@ const BarChart = ({
 
   // Calculate optimal interval for the X axis based on data length
   const getXAxisInterval = () => {
-    if (filteredData.length > 60) return 6;
-    if (filteredData.length > 40) return 4;
-    if (filteredData.length > 20) return 2;
-    if (filteredData.length > 14) return 1;
-    return 'preserveStartEnd';
+    if (filteredData.length > 60) return 14;
+    if (filteredData.length > 40) return 8;
+    if (filteredData.length > 20) return 4;
+    if (filteredData.length > 14) return 2;
+    return 1;
   };
 
   // Calculate optimal bar size based on data length
@@ -139,7 +140,7 @@ const BarChart = ({
       <ResponsiveContainer width="100%" height={height}>
         <RechartsBarChart
           data={filteredData}
-          margin={{ top: 30, right: 16, left: 0, bottom: 12 }}
+          margin={{ top: 30, right: 16, left: 0, bottom: 24 }} // Increased bottom margin for the x-axis ticks
           barSize={getBarSize()}
           barGap={2}
           onMouseLeave={handleMouseLeave}
@@ -155,14 +156,14 @@ const BarChart = ({
             dataKey="name" 
             axisLine={false} 
             tickLine={false} 
-            tickMargin={12}
+            tickMargin={16} // Increased tickMargin for more padding below x-axis ticks
             stroke="#545A62"
             fontSize={10}
             interval={getXAxisInterval()}
-            minTickGap={5}
-            angle={filteredData.length > 14 ? -45 : 0}
-            textAnchor={filteredData.length > 14 ? "end" : "middle"}
-            height={filteredData.length > 14 ? 70 : 35}
+            minTickGap={8}
+            angle={0} // Removed 45 degree angle
+            textAnchor="middle"
+            height={40} // Increased height for better spacing
           />
           <YAxis 
             axisLine={false} 

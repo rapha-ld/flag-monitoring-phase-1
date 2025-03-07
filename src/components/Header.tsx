@@ -1,15 +1,13 @@
 
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { CalendarIcon, ChevronRight, Filter, FilterX, BarChart3, Check } from 'lucide-react';
+import { ChevronRight, BarChart3, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Calendar } from "@/components/ui/calendar";
-import NavTabs from './NavTabs';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import NavTabs from './NavTabs';
 
 interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   timeframe: string;
@@ -34,27 +32,8 @@ const Header = ({
   className, 
   ...props 
 }: HeaderProps) => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [activeTab, setActiveTab] = useState("monitoring");
   const [metricsOpen, setMetricsOpen] = useState(false);
-
-  const handleDateSelect = (date: Date | undefined, type: 'start' | 'end') => {
-    if (type === 'start') {
-      setStartDate(date);
-    } else {
-      setEndDate(date);
-    }
-  };
-
-  const handleApplyCustomRange = () => {
-    if (startDate && endDate) {
-      const diffDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-      onTimeframeChange(`custom-${diffDays}d`);
-      setIsDialogOpen(false);
-    }
-  };
 
   const handleMetricToggle = (metric: string) => {
     const updatedMetrics = selectedMetrics.includes(metric)
@@ -92,13 +71,10 @@ const Header = ({
           </SelectContent>
         </Select>
         
-        {/* Device Filter */}
+        {/* Device Filter - Icon removed */}
         <Select value={selectedDevice} onValueChange={onDeviceChange}>
           <SelectTrigger className="h-9 w-[130px] bg-background border">
-            <div className="flex items-center gap-2">
-              <Filter className="h-3.5 w-3.5 text-muted-foreground" />
-              <SelectValue placeholder="Device" />
-            </div>
+            <SelectValue placeholder="Device" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Devices</SelectItem>
@@ -145,61 +121,7 @@ const Header = ({
             90d
           </Button>
           
-          {/* Date Range Picker */}
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm" className="h-9 gap-1.5">
-                <CalendarIcon className="h-4 w-4" />
-                <span>Date Range</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[480px]">
-              <DialogHeader>
-                <DialogTitle>Select Date Range</DialogTitle>
-              </DialogHeader>
-              <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 py-4">
-                <div className="flex flex-col space-y-2">
-                  <span className="text-sm font-medium">Start Date</span>
-                  <Calendar
-                    mode="single"
-                    selected={startDate}
-                    onSelect={(date) => handleDateSelect(date, 'start')}
-                    initialFocus
-                    className="p-3 pointer-events-auto border rounded-md"
-                  />
-                </div>
-                <div className="flex flex-col space-y-2">
-                  <span className="text-sm font-medium">End Date</span>
-                  <Calendar
-                    mode="single"
-                    selected={endDate}
-                    onSelect={(date) => handleDateSelect(date, 'end')}
-                    disabled={startDate 
-                      ? { before: new Date(startDate) } 
-                      : undefined}
-                    className="p-3 pointer-events-auto border rounded-md"
-                  />
-                </div>
-              </div>
-              <div className="flex justify-between mt-4">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setStartDate(undefined);
-                    setEndDate(undefined);
-                  }}
-                >
-                  Reset
-                </Button>
-                <Button
-                  onClick={handleApplyCustomRange}
-                  disabled={!startDate || !endDate}
-                >
-                  Apply Range
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          {/* Date Range Picker removed */}
         </div>
 
         {/* Metrics Selector */}

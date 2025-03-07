@@ -22,10 +22,7 @@ export const getFilteredData = (
   const timeFilteredData = deviceFilteredData.slice(-days);
   
   // Ensure we have continuous dates with values
-  const continuousData = ensureContinuousDates(timeFilteredData, days);
-  
-  // Return data points, filtering out those with 0 values
-  return continuousData.filter(item => item.value > 0);
+  return ensureContinuousDates(timeFilteredData, days);
 };
 
 // Calculate metrics based on filtered data
