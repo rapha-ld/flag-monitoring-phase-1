@@ -32,7 +32,7 @@ const VersionMarker = ({
         <TooltipTrigger asChild>
           <g 
             className={cn("version-marker cursor-pointer", className)} 
-            transform={`translate(${x}%, 0)`}
+            transform={`translate(${x}, 0)`}
           >
             {/* Vertical line */}
             <line 
@@ -41,6 +41,7 @@ const VersionMarker = ({
               x2="0" 
               y2={height} 
               className="stroke-primary stroke-[1.5] stroke-dasharray-2"
+              strokeOpacity="0.8"
             />
             
             {/* Flag indicator */}
@@ -48,7 +49,7 @@ const VersionMarker = ({
               cx="0" 
               cy="10" 
               r="6" 
-              className="fill-primary/10 stroke-primary stroke-[1.5]" 
+              className="fill-primary/20 stroke-primary stroke-[1.5]" 
             />
             
             <Flag 

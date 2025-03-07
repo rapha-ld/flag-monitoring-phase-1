@@ -75,6 +75,9 @@ const BarChart = ({
     return null;
   };
 
+  // Log to check if versionChanges exist
+  console.log('Version changes:', versionChanges);
+
   return (
     <div className={cn("w-full h-full chart-container", className)}>
       <ResponsiveContainer width="100%" height={height}>
@@ -131,13 +134,19 @@ const BarChart = ({
             ))}
           </Bar>
           
-          {versionChanges.map((change, index) => {
-            // Calculate position based on bar width and position
-            // This is a percentage of the chart width
+          {/* Version Markers */}
+          {versionChanges && versionChanges.length > 0 && versionChanges.map((change, index) => {
+            // Calculate pixel position instead of percentage
+            // For a chart with data.length bars, calculate the position
+            const barWidth = 100 / data.length;
+            const xPosition = change.position * barWidth + (barWidth / 2);
+            
+            console.log(`Adding version marker at position: ${xPosition} for version ${change.version}`);
+            
             return (
               <VersionMarker 
                 key={`version-${index}`}
-                x={change.position * (100 / (data.length - 1))}
+                x={xPosition}
                 height={Number(height) - 30}
                 version={change.version}
                 date={change.date}
