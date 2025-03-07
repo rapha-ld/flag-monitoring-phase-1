@@ -21,7 +21,7 @@ export const calculateYAxisDomain = (
   data: Array<{value: number, valueTrue?: number, valueFalse?: number}>,
   showTrue = false,
   showFalse = false
-) => {
+): [number, number] => {
   if (showTrue && showFalse) {
     // For stacked bars, calculate the total of both values
     const maxValue = Math.max(...data.map(item => {
