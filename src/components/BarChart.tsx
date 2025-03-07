@@ -8,6 +8,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Line,
 } from 'recharts';
 import { cn } from '@/lib/utils';
 import VersionMarker from './VersionMarker';
@@ -42,6 +43,7 @@ interface BarChartProps {
   tooltipLabelFormatter?: (label: string) => string;
   showTrue?: boolean;
   showFalse?: boolean;
+  chartType?: 'stacked' | 'line-false';
 }
 
 const BarChart = ({
@@ -55,6 +57,7 @@ const BarChart = ({
   tooltipLabelFormatter = (label) => label,
   showTrue = true,
   showFalse = false,
+  chartType = 'stacked',
 }: BarChartProps) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
@@ -158,20 +161,21 @@ const BarChart = ({
             cursor={{ fill: 'hsl(var(--muted))', opacity: 0.4 }}
           />
           
-          {/* Conditionally render the bars based on showTrue and showFalse */}
+          {/* Conditionally render the bars based on showTrue and chartType */}
           {showTrue && (
             <Bar 
               dataKey="valueTrue" 
               name="True"
-              stackId="stack1"
-              radius={showFalse ? [0, 0, 0, 0] : [2, 2, 0, 0]} 
+              stackId={chartType === 'stacked' ? "stack1" : undefined}
+              radius={[2, 2, 0, 0]} 
               isAnimationActive={false}
               onMouseOver={handleMouseOver}
               fill={trueColor}
             />
           )}
           
-          {showFalse && (
+          {/* Show False as bars only if stacked chart type */}
+          {showFalse && chartType === 'stacked' && (
             <Bar 
               dataKey="valueFalse" 
               name="False"
@@ -180,6 +184,20 @@ const BarChart = ({
               isAnimationActive={false}
               onMouseOver={handleMouseOver}
               fill={falseColor}
+            />
+          )}
+          
+          {/* Show False as line when line-false chart type */}
+          {showFalse && chartType === 'line-false' && (
+            <Line
+              type="monotone"
+              dataKey="valueFalse"
+              name="False"
+              stroke={falseColor}
+              strokeWidth={2}
+              dot={{ fill: falseColor, r: 4 }}
+              activeDot={{ r: 6 }}
+              isAnimationActive={false}
             />
           )}
           
