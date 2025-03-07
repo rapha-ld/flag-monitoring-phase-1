@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { cn } from "@/lib/utils";
 import Header from '@/components/Header';
@@ -13,6 +12,7 @@ import {
   getFilteredData,
   calculateMetrics
 } from '@/data/chartData';
+import { processTrueFalseValues } from '@/utils/dataFilters';
 
 const Index = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -32,7 +32,6 @@ const Index = () => {
   });
 
   useEffect(() => {
-    // Simulate loading state for animation purposes
     const timer = setTimeout(() => {
       setIsLoaded(true);
     }, 100);
@@ -41,45 +40,26 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
-    // Update data based on selected timeframe, environment, and device
     let days = 14; // default
     
     if (timeframe.startsWith('custom-')) {
-      // Handle custom date range
       days = parseInt(timeframe.replace('custom-', '').replace('d', ''));
     } else {
       days = parseInt(timeframe.replace('d', ''));
     }
     
-    // Apply filters for time frame, environment, and device
     const filteredEval = getFilteredData(evaluationData, days, environment, selectedDevice);
     const filteredConv = getFilteredData(conversionData, days, environment, selectedDevice);
     const filteredError = getFilteredData(errorRateData, days, environment, selectedDevice);
     
-    // Add true/false data for the stacked bar chart
-    const processedEval = filteredEval.map(item => ({
-      ...item,
-      valueTrue: Math.round(item.value * 0.6), // 60% true
-      valueFalse: Math.round(item.value * 0.4), // 40% false
-    }));
-    
-    const processedConv = filteredConv.map(item => ({
-      ...item,
-      valueTrue: Math.round(item.value * 0.7), // 70% true
-      valueFalse: Math.round(item.value * 0.3), // 30% false
-    }));
-    
-    const processedError = filteredError.map(item => ({
-      ...item,
-      valueTrue: Math.round(item.value * 0.3), // 30% true
-      valueFalse: Math.round(item.value * 0.7), // 70% false
-    }));
+    const processedEval = processTrueFalseValues(filteredEval);
+    const processedConv = processTrueFalseValues(filteredConv);
+    const processedError = processTrueFalseValues(filteredError);
     
     setFilteredEvaluationData(processedEval);
     setFilteredConversionData(processedConv);
     setFilteredErrorRateData(processedError);
     
-    // Update metrics based on the filtered data
     const metrics = calculateMetrics(filteredEval, filteredConv, filteredError, days);
     setCurrentMetrics(metrics);
     
@@ -103,7 +83,6 @@ const Index = () => {
 
   const handleToggleTrue = () => {
     setShowTrue(!showTrue);
-    // If both would be unchecked, force at least one to be checked
     if (!showTrue === false && !showFalse) {
       setShowFalse(true);
     }
@@ -111,7 +90,6 @@ const Index = () => {
 
   const handleToggleFalse = () => {
     setShowFalse(!showFalse);
-    // If both would be unchecked, force at least one to be checked
     if (!showFalse === false && !showTrue) {
       setShowTrue(true);
     }
@@ -123,7 +101,6 @@ const Index = () => {
       isLoaded ? "opacity-100" : "opacity-0"
     )}>
       <div className="mx-auto max-w-6xl space-y-6">
-        {/* Controls */}
         <Header 
           timeframe={timeframe}
           onTimeframeChange={handleTimeframeChange}
@@ -139,7 +116,6 @@ const Index = () => {
           onToggleFalse={handleToggleFalse}
         />
         
-        {/* Metrics Cards with Embedded Charts */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {selectedMetrics.includes('evaluations') && (
             <MetricCard 
@@ -204,7 +180,6 @@ const Index = () => {
           )}
         </div>
         
-        {/* Footer */}
         <footer className="py-6 text-center text-sm text-textSecondary animate-fade-in [animation-delay:700ms]">
           <p>Data refreshed every 24 hours. Last updated: {new Date().toLocaleDateString()}</p>
         </footer>

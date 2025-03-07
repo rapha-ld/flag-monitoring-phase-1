@@ -8,7 +8,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
 } from 'recharts';
 import { cn } from '@/lib/utils';
 import VersionMarker from './VersionMarker';
@@ -220,14 +219,6 @@ const BarChart = ({
               />
             );
           })}
-          
-          {(showTrue || showFalse) && (
-            <Legend
-              verticalAlign="top"
-              height={36}
-              wrapperStyle={{ paddingTop: '10px' }}
-            />
-          )}
         </RechartsBarChart>
       </ResponsiveContainer>
     </div>
