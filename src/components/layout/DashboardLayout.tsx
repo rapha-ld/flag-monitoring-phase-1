@@ -14,7 +14,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <img 
           src="/lovable-uploads/d7b57556-8338-4df5-b726-151da5a62c8f.png" 
           alt="Sidebar" 
-          className="h-full w-full object-contain"
+          className="w-full object-contain"
         />
       </div>
       
@@ -28,7 +28,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <img 
           src="/lovable-uploads/8481db1a-24b4-402f-95c5-235ada172dfa.png" 
           alt="App Navigation" 
-          className="h-full w-full object-contain"
+          className="w-full object-contain"
         />
       </div>
     </div>
