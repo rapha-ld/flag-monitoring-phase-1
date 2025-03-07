@@ -25,7 +25,7 @@ const Header = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
-  const [activeTab, setActiveTab] = useState("analytics");
+  const [activeTab, setActiveTab] = useState("monitoring");
 
   const handleDateSelect = (date: Date | undefined, type: 'start' | 'end') => {
     if (type === 'start') {
