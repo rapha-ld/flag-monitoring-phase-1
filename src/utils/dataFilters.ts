@@ -8,11 +8,6 @@ export const getFilteredData = (
   environment: string = 'production',
   device: string = 'all'
 ) => {
-  if (!data || data.length === 0) {
-    console.warn('No data provided to getFilteredData');
-    return [];
-  }
-
   // First filter by environment if specified
   const envFilteredData = environment === 'all' 
     ? data 
@@ -23,12 +18,13 @@ export const getFilteredData = (
     ? envFilteredData
     : envFilteredData.filter(item => item.device === device);
   
-  // Use ensureContinuousDates to ensure we have exactly 'days' number of data points
+  // Pass all filtered data to ensureContinuousDates which will 
+  // generate the exact number of days we need
   const result = ensureContinuousDates(deviceFilteredData, days);
   
-  // Double check we have the correct number of data points
+  // Verify we have the exact number of days requested
   if (result.length !== days) {
-    console.error(`Critical error: Expected ${days} data points but got ${result.length}`);
+    console.error(`Data filtering error: Expected exactly ${days} data points but got ${result.length}`);
   }
   
   return result;
@@ -115,7 +111,11 @@ export const calculateMetrics = (
 
 // Process the data to ensure no true values are 0
 export const processTrueFalseValues = (data: any[]) => {
-  return data.map(item => ({
+  return data.filter(item => {
+    // Only keep items where valueTrue is greater than 0
+    // We'll add this property after filtering
+    return item.value > 0;
+  }).map(item => ({
     ...item,
     valueTrue: Math.round(item.value * 0.6), // 60% true
     valueFalse: Math.round(item.value * 0.4), // 40% false
