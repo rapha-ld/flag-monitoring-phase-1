@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/tooltip';
 
 interface VersionMarkerProps {
-  x: number;
+  x: number | string;
   height: number;
   version: string;
   date: string;
