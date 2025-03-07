@@ -67,7 +67,7 @@ const Header = ({
       <NavTabs activeTab={activeTab} onChange={setActiveTab} />
       
       {/* Controls */}
-      <div className="flex flex-col md:flex-row items-start gap-4">
+      <div className="flex flex-col md:flex-row items-center gap-4">
         {/* Environment Selector */}
         <Select value={environment} onValueChange={onEnvironmentChange}>
           <SelectTrigger className="h-9 w-[120px] bg-background border">
@@ -130,8 +130,9 @@ const Header = ({
           </Button>
         </div>
 
-        {/* True/False Filter Checkboxes */}
+        {/* True/False Filter Checkboxes with "Variants:" label */}
         <div className="flex items-center space-x-4 ml-2">
+          <span className="text-sm font-medium">Variants:</span>
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="filter-true" 
@@ -171,7 +172,7 @@ const Header = ({
                       checked={selectedMetrics.includes('evaluations')}
                       onCheckedChange={() => handleMetricToggle('evaluations')}
                     />
-                    <Label htmlFor="metrics-evaluations" className="text-sm cursor-pointer">Evaluations</Label>
+                    <Label htmlFor="metrics-evaluations" className="text-sm cursor-pointer">Total Evaluations</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Checkbox 
@@ -179,7 +180,7 @@ const Header = ({
                       checked={selectedMetrics.includes('conversion')}
                       onCheckedChange={() => handleMetricToggle('conversion')}
                     />
-                    <Label htmlFor="metrics-conversion" className="text-sm cursor-pointer">Checkout Conversion</Label>
+                    <Label htmlFor="metrics-conversion" className="text-sm cursor-pointer">Avg. Checkout Conversion Rate</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Checkbox 
@@ -187,7 +188,7 @@ const Header = ({
                       checked={selectedMetrics.includes('errorRate')}
                       onCheckedChange={() => handleMetricToggle('errorRate')}
                     />
-                    <Label htmlFor="metrics-error" className="text-sm cursor-pointer">Error Rate</Label>
+                    <Label htmlFor="metrics-error" className="text-sm cursor-pointer">Avg. Error Rate</Label>
                   </div>
                 </div>
               </div>

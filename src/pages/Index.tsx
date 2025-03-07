@@ -119,7 +119,7 @@ const Index = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {selectedMetrics.includes('evaluations') && (
             <MetricCard 
-              title="Evaluations" 
+              title="Total Evaluations" 
               value={currentMetrics.evaluations.value}
               change={currentMetrics.evaluations.change}
               info="Total evaluation score for the selected time period"
@@ -131,15 +131,13 @@ const Index = () => {
               valueFormatter={(value) => `${value}`}
               tooltipValueFormatter={(value) => `Score: ${value}`}
               barColor="#6E6F96"
-              timeframe={timeframe}
-              isTotal={true}
               showTrue={showTrue}
               showFalse={showFalse}
             />
           )}
           {selectedMetrics.includes('conversion') && (
             <MetricCard 
-              title="Checkout Conversion" 
+              title="Avg. Checkout Conversion Rate" 
               value={`${currentMetrics.conversion.value}%`}
               change={currentMetrics.conversion.change}
               info="Percentage of checkout completions from initiated sessions"
@@ -151,14 +149,13 @@ const Index = () => {
               valueFormatter={(value) => `${value}%`}
               tooltipValueFormatter={(value) => `Rate: ${value}%`}
               barColor="#6E6F96"
-              timeframe={timeframe}
               showTrue={showTrue}
               showFalse={showFalse}
             />
           )}
           {selectedMetrics.includes('errorRate') && (
             <MetricCard 
-              title="Error Rate" 
+              title="Avg. Error Rate" 
               value={`${currentMetrics.errorRate.value}%`}
               change={{
                 value: Math.abs(currentMetrics.errorRate.change.value),
@@ -173,7 +170,6 @@ const Index = () => {
               valueFormatter={(value) => `${value}%`}
               tooltipValueFormatter={(value) => `Rate: ${value}%`}
               barColor="#6E6F96"
-              timeframe={timeframe}
               showTrue={showTrue}
               showFalse={showFalse}
             />

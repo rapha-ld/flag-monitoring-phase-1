@@ -66,13 +66,8 @@ const MetricCard = ({
               </TooltipProvider>
             )}
           </CardTitle>
-          {timeframe && (
-            <span className="text-xs text-textSecondary">
-              {isTotal ? `Total for last ${timeframe}` : `Last ${timeframe}`}
-            </span>
-          )}
         </div>
-        <div className="flex items-end justify-between">
+        <div className="flex items-center gap-2">
           <CardDescription className="text-2xl font-semibold text-foreground">
             {value}
           </CardDescription>
