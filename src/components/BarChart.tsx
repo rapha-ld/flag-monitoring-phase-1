@@ -56,7 +56,7 @@ const BarChart = ({
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   // Include all data points, even those with 0 values
-  const filteredData = data;
+  const filteredData = data || [];
 
   const handleMouseOver = (data: any, index: number) => {
     setActiveIndex(index);
@@ -67,7 +67,7 @@ const BarChart = ({
   };
 
   // Make sure we have data to display
-  if (filteredData.length === 0) {
+  if (!filteredData || filteredData.length === 0) {
     return <div className="flex items-center justify-center h-full">No data available</div>;
   }
 

@@ -1,3 +1,4 @@
+
 import { ensureContinuousDates } from "./dateUtils";
 
 // Filter data based on the selected timeframe, environment, and device
@@ -38,11 +39,11 @@ export const calculateMetrics = (
   
   // For conversion, calculate the average
   const convSum = conversionData.reduce((sum, item) => sum + item.value, 0);
-  const convAvg = parseFloat((convSum / conversionData.length).toFixed(1));
+  const convAvg = parseFloat((convSum / conversionData.length || 0).toFixed(1));
   
   // For error rate, calculate the average
   const errorSum = errorRateData.reduce((sum, item) => sum + item.value, 0);
-  const errorAvg = parseFloat((errorSum / errorRateData.length).toFixed(1));
+  const errorAvg = parseFloat((errorSum / errorRateData.length || 0).toFixed(1));
   
   // Calculate change (comparing to the first half of the period)
   const middleIndex = Math.floor(days / 2);
@@ -63,7 +64,7 @@ export const calculateMetrics = (
   const convSecondHalf = conversionData.slice(middleIndex);
   const convFirstAvg = convFirstHalf.length 
     ? convFirstHalf.reduce((sum, item) => sum + item.value, 0) / convFirstHalf.length 
-    : convAvg;
+    : 1; // Prevent division by zero
   const convSecondAvg = convSecondHalf.length 
     ? convSecondHalf.reduce((sum, item) => sum + item.value, 0) / convSecondHalf.length 
     : convAvg;
@@ -74,7 +75,7 @@ export const calculateMetrics = (
   const errorSecondHalf = errorRateData.slice(middleIndex);
   const errorFirstAvg = errorFirstHalf.length 
     ? errorFirstHalf.reduce((sum, item) => sum + item.value, 0) / errorFirstHalf.length 
-    : errorAvg;
+    : 1; // Prevent division by zero
   const errorSecondAvg = errorSecondHalf.length 
     ? errorSecondHalf.reduce((sum, item) => sum + item.value, 0) / errorSecondHalf.length 
     : errorAvg;
@@ -107,6 +108,10 @@ export const calculateMetrics = (
 
 // Process the data to ensure no true values are 0
 export const processTrueFalseValues = (data: any[]) => {
+  if (!data || data.length === 0) {
+    return [];
+  }
+  
   return data.filter(item => {
     // Only keep items where value is greater than 0
     // We'll add valueTrue and valueFalse properties after filtering
