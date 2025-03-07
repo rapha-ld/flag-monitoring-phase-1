@@ -8,10 +8,12 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Cell,
 } from 'recharts';
 import { cn } from '@/lib/utils';
 import VersionMarker from './VersionMarker';
+import CustomTooltip from './chart/CustomTooltip';
+import BarChartCell from './chart/BarChartCell';
+import { getXAxisInterval, getBarSize, calculateYAxisDomain, processVersionChanges } from '@/utils/chartUtils';
 
 export interface DataPoint {
   name: string;
@@ -66,22 +68,7 @@ const BarChart = ({
     return <div className="flex items-center justify-center h-full">No data available</div>;
   }
 
-  const maxValue = Math.max(...filteredData.map(item => item.value));
-  const yAxisDomain = [0, Math.ceil(maxValue * 1.1)];
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-popover border border-border shadow-md rounded-md p-2 text-xs">
-          <p className="font-medium">{tooltipLabelFormatter(label)}</p>
-          <p className="text-primary">
-            {tooltipValueFormatter(payload[0].value)}
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
+  const yAxisDomain = calculateYAxisDomain(filteredData);
 
   // Find the February 21 position in the data array
   const feb21Position = filteredData.findIndex(item => item.name === "Feb 21");
@@ -107,41 +94,15 @@ const BarChart = ({
   }
 
   // Update version change positions to match all data
-  const updatedVersionChanges = allVersionChanges.map(change => {
-    // Find the date of the original version change
-    const originalDate = data[change.position]?.name;
-    // Find the new position in filtered data
-    const newPosition = filteredData.findIndex(item => item.name === originalDate);
-    return {
-      ...change,
-      position: newPosition >= 0 ? newPosition : 0 // Default to 0 if not found
-    };
-  }).filter(change => change.position >= 0);
-
-  // Calculate optimal interval for the X axis based on data length
-  const getXAxisInterval = () => {
-    if (filteredData.length > 60) return 14;
-    if (filteredData.length > 40) return 8;
-    if (filteredData.length > 20) return 4;
-    if (filteredData.length > 14) return 2;
-    return 1;
-  };
-
-  // Calculate optimal bar size based on data length
-  const getBarSize = () => {
-    if (filteredData.length > 60) return 2;
-    if (filteredData.length > 30) return 4;
-    if (filteredData.length > 14) return 8;
-    return 24;
-  };
+  const updatedVersionChanges = processVersionChanges(allVersionChanges, data, filteredData);
 
   return (
     <div className={cn("w-full h-full chart-container", className)}>
       <ResponsiveContainer width="100%" height={height}>
         <RechartsBarChart
           data={filteredData}
-          margin={{ top: 30, right: 16, left: 0, bottom: 24 }} // Increased bottom margin for the x-axis ticks
-          barSize={getBarSize()}
+          margin={{ top: 30, right: 16, left: 0, bottom: 24 }}
+          barSize={getBarSize(filteredData.length)}
           barGap={2}
           onMouseLeave={handleMouseLeave}
         >
@@ -156,14 +117,14 @@ const BarChart = ({
             dataKey="name" 
             axisLine={false} 
             tickLine={false} 
-            tickMargin={16} // Increased tickMargin for more padding below x-axis ticks
+            tickMargin={16}
             stroke="#545A62"
             fontSize={10}
-            interval={getXAxisInterval()}
+            interval={getXAxisInterval(filteredData.length)}
             minTickGap={8}
-            angle={0} // Removed 45 degree angle
+            angle={0}
             textAnchor="middle"
-            height={40} // Increased height for better spacing
+            height={40}
           />
           <YAxis 
             axisLine={false} 
@@ -176,7 +137,13 @@ const BarChart = ({
             width={40}
           />
           <Tooltip 
-            content={<CustomTooltip />} 
+            content={(props) => (
+              <CustomTooltip 
+                {...props} 
+                tooltipLabelFormatter={tooltipLabelFormatter}
+                tooltipValueFormatter={tooltipValueFormatter}
+              />
+            )}
             cursor={{ fill: 'hsl(var(--muted))', opacity: 0.4 }}
           />
           <Bar 
@@ -186,10 +153,11 @@ const BarChart = ({
             onMouseOver={handleMouseOver}
           >
             {filteredData.map((entry, index) => (
-              <Cell
+              <BarChartCell 
                 key={`cell-${index}`}
-                fill={activeIndex === index ? `${barColor}` : `${barColor}90`}
-                className="transition-colors duration-200"
+                index={index}
+                activeIndex={activeIndex}
+                barColor={barColor}
               />
             ))}
           </Bar>
