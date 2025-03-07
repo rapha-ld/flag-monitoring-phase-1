@@ -16,6 +16,7 @@ export interface DataPoint {
   name: string;
   value: number;
   date?: string;
+  device?: string;
 }
 
 export interface VersionChange {
@@ -48,8 +49,8 @@ const BarChart = ({
 }: BarChartProps) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   
-  // We keep all data points, even those with 0 values
-  const filteredData = data;
+  // We keep all data points, but filter out those with 0 values
+  const filteredData = data.filter(item => item.value > 0);
 
   const handleMouseOver = (data: any, index: number) => {
     setActiveIndex(index);
@@ -138,7 +139,7 @@ const BarChart = ({
       <ResponsiveContainer width="100%" height={height}>
         <RechartsBarChart
           data={filteredData}
-          margin={{ top: 30, right: 16, left: 0, bottom: 0 }}
+          margin={{ top: 30, right: 16, left: 0, bottom: 12 }}
           barSize={getBarSize()}
           barGap={2}
           onMouseLeave={handleMouseLeave}
@@ -154,14 +155,14 @@ const BarChart = ({
             dataKey="name" 
             axisLine={false} 
             tickLine={false} 
-            tickMargin={8}
+            tickMargin={12}
             stroke="#545A62"
             fontSize={10}
             interval={getXAxisInterval()}
             minTickGap={5}
             angle={filteredData.length > 14 ? -45 : 0}
             textAnchor={filteredData.length > 14 ? "end" : "middle"}
-            height={filteredData.length > 14 ? 60 : 30}
+            height={filteredData.length > 14 ? 70 : 35}
           />
           <YAxis 
             axisLine={false} 
@@ -195,7 +196,6 @@ const BarChart = ({
           {/* Version Markers */}
           {updatedVersionChanges && updatedVersionChanges.length > 0 && updatedVersionChanges.map((change, index) => {
             if (change.position < 0) return null;
-            // Calculate pixel position instead of percentage
             const barWidth = 100 / filteredData.length;
             const xPosition = change.position * barWidth + (barWidth / 2);
             
@@ -203,7 +203,7 @@ const BarChart = ({
               <VersionMarker 
                 key={`version-${index}`}
                 x={`${xPosition}%`}
-                height={Number(height) - 30}
+                height={Number(height) - 35}
                 version={change.version}
                 date={change.date}
                 details={change.details}

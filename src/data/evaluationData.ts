@@ -1,6 +1,9 @@
 
 import { formatDate, generatePastDates } from "../utils/dateUtils";
 
+// List of devices
+const devices = ['windows', 'macos', 'linux', 'ios', 'android'];
+
 // Generate evaluation data for the past 90 days (maximum time frame)
 export const evaluationData = generatePastDates(90).map((date, index) => {
   // Create some variations in the data
@@ -22,7 +25,8 @@ export const evaluationData = generatePastDates(90).map((date, index) => {
     name: formatDate(date),
     value,
     date: date.toISOString(),
-    environment: Math.random() > 0.5 ? "production" : "staging"
+    environment: Math.random() > 0.5 ? "production" : "staging",
+    device: devices[Math.floor(Math.random() * devices.length)]
   };
 });
 

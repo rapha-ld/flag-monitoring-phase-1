@@ -18,6 +18,8 @@ const Index = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [timeframe, setTimeframe] = useState("14d");
   const [environment, setEnvironment] = useState("production");
+  const [selectedDevice, setSelectedDevice] = useState("all");
+  const [selectedMetrics, setSelectedMetrics] = useState(['evaluations', 'conversion', 'errorRate']);
   const [filteredEvaluationData, setFilteredEvaluationData] = useState(evaluationData);
   const [filteredConversionData, setFilteredConversionData] = useState(conversionData);
   const [filteredErrorRateData, setFilteredErrorRateData] = useState(errorRateData);
@@ -37,7 +39,7 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
-    // Update data based on selected timeframe and environment
+    // Update data based on selected timeframe, environment, and device
     let days = 14; // default
     
     if (timeframe.startsWith('custom-')) {
@@ -47,10 +49,10 @@ const Index = () => {
       days = parseInt(timeframe.replace('d', ''));
     }
     
-    // Apply filter for time frame
-    const filteredEval = getFilteredData(evaluationData, days, environment);
-    const filteredConv = getFilteredData(conversionData, days, environment);
-    const filteredError = getFilteredData(errorRateData, days, environment);
+    // Apply filters for time frame, environment, and device
+    const filteredEval = getFilteredData(evaluationData, days, environment, selectedDevice);
+    const filteredConv = getFilteredData(conversionData, days, environment, selectedDevice);
+    const filteredError = getFilteredData(errorRateData, days, environment, selectedDevice);
     
     setFilteredEvaluationData(filteredEval);
     setFilteredConversionData(filteredConv);
@@ -60,7 +62,7 @@ const Index = () => {
     const metrics = calculateMetrics(filteredEval, filteredConv, filteredError, days);
     setCurrentMetrics(metrics);
     
-  }, [timeframe, environment]);
+  }, [timeframe, environment, selectedDevice]);
 
   const handleTimeframeChange = (value: string) => {
     setTimeframe(value);
@@ -68,6 +70,14 @@ const Index = () => {
 
   const handleEnvironmentChange = (value: string) => {
     setEnvironment(value);
+  };
+
+  const handleDeviceChange = (value: string) => {
+    setSelectedDevice(value);
+  };
+
+  const handleMetricsChange = (metrics: string[]) => {
+    setSelectedMetrics(metrics);
   };
 
   return (
@@ -82,59 +92,69 @@ const Index = () => {
           onTimeframeChange={handleTimeframeChange}
           environment={environment}
           onEnvironmentChange={handleEnvironmentChange}
+          selectedDevice={selectedDevice}
+          onDeviceChange={handleDeviceChange}
+          selectedMetrics={selectedMetrics}
+          onMetricsChange={handleMetricsChange}
         />
         
         {/* Metrics Cards with Embedded Charts */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <MetricCard 
-            title="Evaluations" 
-            value={currentMetrics.evaluations.value}
-            change={currentMetrics.evaluations.change}
-            info="Total evaluation score for the selected time period"
-            className="animate-slide-up [animation-delay:100ms]"
-            chartData={filteredEvaluationData}
-            versionChanges={evaluationVersionChanges.filter(change => 
-              change.position < filteredEvaluationData.length
-            )}
-            valueFormatter={(value) => `${value}`}
-            tooltipValueFormatter={(value) => `Score: ${value}`}
-            barColor="#6E6F96"
-            timeframe={timeframe}
-            isTotal={true}
-          />
-          <MetricCard 
-            title="Checkout Conversion" 
-            value={`${currentMetrics.conversion.value}%`}
-            change={currentMetrics.conversion.change}
-            info="Percentage of checkout completions from initiated sessions"
-            className="animate-slide-up [animation-delay:200ms]"
-            chartData={filteredConversionData}
-            versionChanges={conversionVersionChanges.filter(change => 
-              change.position < filteredConversionData.length
-            )}
-            valueFormatter={(value) => `${value}%`}
-            tooltipValueFormatter={(value) => `Rate: ${value}%`}
-            barColor="#6E6F96"
-            timeframe={timeframe}
-          />
-          <MetricCard 
-            title="Error Rate" 
-            value={`${currentMetrics.errorRate.value}%`}
-            change={{
-              value: Math.abs(currentMetrics.errorRate.change.value),
-              trend: currentMetrics.errorRate.change.value < 0 ? 'up' : 'down' as 'up' | 'down'
-            }}
-            info="Percentage of requests resulting in error responses"
-            className="animate-slide-up [animation-delay:300ms]"
-            chartData={filteredErrorRateData}
-            versionChanges={errorRateVersionChanges.filter(change => 
-              change.position < filteredErrorRateData.length
-            )}
-            valueFormatter={(value) => `${value}%`}
-            tooltipValueFormatter={(value) => `Rate: ${value}%`}
-            barColor="#6E6F96"
-            timeframe={timeframe}
-          />
+          {selectedMetrics.includes('evaluations') && (
+            <MetricCard 
+              title="Evaluations" 
+              value={currentMetrics.evaluations.value}
+              change={currentMetrics.evaluations.change}
+              info="Total evaluation score for the selected time period"
+              className="animate-slide-up [animation-delay:100ms]"
+              chartData={filteredEvaluationData}
+              versionChanges={evaluationVersionChanges.filter(change => 
+                change.position < filteredEvaluationData.length
+              )}
+              valueFormatter={(value) => `${value}`}
+              tooltipValueFormatter={(value) => `Score: ${value}`}
+              barColor="#6E6F96"
+              timeframe={timeframe}
+              isTotal={true}
+            />
+          )}
+          {selectedMetrics.includes('conversion') && (
+            <MetricCard 
+              title="Checkout Conversion" 
+              value={`${currentMetrics.conversion.value}%`}
+              change={currentMetrics.conversion.change}
+              info="Percentage of checkout completions from initiated sessions"
+              className="animate-slide-up [animation-delay:200ms]"
+              chartData={filteredConversionData}
+              versionChanges={conversionVersionChanges.filter(change => 
+                change.position < filteredConversionData.length
+              )}
+              valueFormatter={(value) => `${value}%`}
+              tooltipValueFormatter={(value) => `Rate: ${value}%`}
+              barColor="#6E6F96"
+              timeframe={timeframe}
+            />
+          )}
+          {selectedMetrics.includes('errorRate') && (
+            <MetricCard 
+              title="Error Rate" 
+              value={`${currentMetrics.errorRate.value}%`}
+              change={{
+                value: Math.abs(currentMetrics.errorRate.change.value),
+                trend: currentMetrics.errorRate.change.value < 0 ? 'up' : 'down' as 'up' | 'down'
+              }}
+              info="Percentage of requests resulting in error responses"
+              className="animate-slide-up [animation-delay:300ms]"
+              chartData={filteredErrorRateData}
+              versionChanges={errorRateVersionChanges.filter(change => 
+                change.position < filteredErrorRateData.length
+              )}
+              valueFormatter={(value) => `${value}%`}
+              tooltipValueFormatter={(value) => `Rate: ${value}%`}
+              barColor="#6E6F96"
+              timeframe={timeframe}
+            />
+          )}
         </div>
         
         {/* Footer */}

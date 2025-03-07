@@ -1,17 +1,25 @@
+
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { CalendarIcon, ChevronRight } from 'lucide-react';
+import { CalendarIcon, ChevronRight, Filter, FilterX, BarChart3, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Calendar } from "@/components/ui/calendar";
 import NavTabs from './NavTabs';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 
 interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   timeframe: string;
   onTimeframeChange: (value: string) => void;
   environment: string;
   onEnvironmentChange: (value: string) => void;
+  selectedDevice?: string;
+  onDeviceChange?: (value: string) => void;
+  selectedMetrics?: string[];
+  onMetricsChange?: (metrics: string[]) => void;
 }
 
 const Header = ({ 
@@ -19,6 +27,10 @@ const Header = ({
   onTimeframeChange, 
   environment, 
   onEnvironmentChange,
+  selectedDevice = 'all',
+  onDeviceChange = () => {},
+  selectedMetrics = ['evaluations', 'conversion', 'errorRate'],
+  onMetricsChange = () => {},
   className, 
   ...props 
 }: HeaderProps) => {
@@ -26,6 +38,7 @@ const Header = ({
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [activeTab, setActiveTab] = useState("monitoring");
+  const [metricsOpen, setMetricsOpen] = useState(false);
 
   const handleDateSelect = (date: Date | undefined, type: 'start' | 'end') => {
     if (type === 'start') {
@@ -40,6 +53,17 @@ const Header = ({
       const diffDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
       onTimeframeChange(`custom-${diffDays}d`);
       setIsDialogOpen(false);
+    }
+  };
+
+  const handleMetricToggle = (metric: string) => {
+    const updatedMetrics = selectedMetrics.includes(metric)
+      ? selectedMetrics.filter(m => m !== metric)
+      : [...selectedMetrics, metric];
+    
+    // Ensure at least one metric is selected
+    if (updatedMetrics.length > 0) {
+      onMetricsChange(updatedMetrics);
     }
   };
 
@@ -65,6 +89,24 @@ const Header = ({
           <SelectContent>
             <SelectItem value="production">Production</SelectItem>
             <SelectItem value="staging">Staging</SelectItem>
+          </SelectContent>
+        </Select>
+        
+        {/* Device Filter */}
+        <Select value={selectedDevice} onValueChange={onDeviceChange}>
+          <SelectTrigger className="h-9 w-[130px] bg-background border">
+            <div className="flex items-center gap-2">
+              <Filter className="h-3.5 w-3.5 text-muted-foreground" />
+              <SelectValue placeholder="Device" />
+            </div>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Devices</SelectItem>
+            <SelectItem value="windows">Windows</SelectItem>
+            <SelectItem value="macos">macOS</SelectItem>
+            <SelectItem value="linux">Linux</SelectItem>
+            <SelectItem value="ios">iOS</SelectItem>
+            <SelectItem value="android">Android</SelectItem>
           </SelectContent>
         </Select>
         
@@ -158,6 +200,49 @@ const Header = ({
               </div>
             </DialogContent>
           </Dialog>
+        </div>
+
+        {/* Metrics Selector */}
+        <div className="ml-auto">
+          <Popover open={metricsOpen} onOpenChange={setMetricsOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="sm" className="h-9 gap-1.5">
+                <BarChart3 className="h-4 w-4" />
+                <span>Metrics</span>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[200px] p-2 z-50" align="end">
+              <div className="space-y-2">
+                <div className="text-sm font-medium pb-1 border-b mb-1">Display Metrics</div>
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="metrics-evaluations" 
+                      checked={selectedMetrics.includes('evaluations')}
+                      onCheckedChange={() => handleMetricToggle('evaluations')}
+                    />
+                    <Label htmlFor="metrics-evaluations" className="text-sm cursor-pointer">Evaluations</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="metrics-conversion" 
+                      checked={selectedMetrics.includes('conversion')}
+                      onCheckedChange={() => handleMetricToggle('conversion')}
+                    />
+                    <Label htmlFor="metrics-conversion" className="text-sm cursor-pointer">Checkout Conversion</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="metrics-error" 
+                      checked={selectedMetrics.includes('errorRate')}
+                      onCheckedChange={() => handleMetricToggle('errorRate')}
+                    />
+                    <Label htmlFor="metrics-error" className="text-sm cursor-pointer">Error Rate</Label>
+                  </div>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
     </header>

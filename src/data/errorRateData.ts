@@ -1,6 +1,9 @@
 
 import { formatDate, generatePastDates } from "../utils/dateUtils";
 
+// List of devices
+const devices = ['windows', 'macos', 'linux', 'ios', 'android'];
+
 // Generate error rate data for the past 90 days
 export const errorRateData = generatePastDates(90).map((date, index) => {
   // Create some variations in the data
@@ -24,7 +27,8 @@ export const errorRateData = generatePastDates(90).map((date, index) => {
     name: formatDate(date),
     value: parseFloat(value.toFixed(1)),
     date: date.toISOString(),
-    environment: Math.random() > 0.5 ? "production" : "staging"
+    environment: Math.random() > 0.5 ? "production" : "staging",
+    device: devices[Math.floor(Math.random() * devices.length)]
   };
 });
 
