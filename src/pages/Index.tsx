@@ -34,7 +34,15 @@ const Index = () => {
 
   useEffect(() => {
     // Update data based on selected timeframe
-    const days = parseInt(timeframe.replace('d', ''));
+    let days = 14; // default
+    
+    if (timeframe.startsWith('custom-')) {
+      // Handle custom date range
+      days = parseInt(timeframe.replace('custom-', '').replace('d', ''));
+    } else {
+      days = parseInt(timeframe.replace('d', ''));
+    }
+    
     setFilteredEvaluationData(getFilteredData(evaluationData, days));
     setFilteredConversionData(getFilteredData(conversionData, days));
     setFilteredErrorRateData(getFilteredData(errorRateData, days));
