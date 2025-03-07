@@ -20,37 +20,34 @@ export const generateTimeLabels = (days: number) => {
 
 // Ensure data has entries for every day in the date range
 export const ensureContinuousDates = (data: any[], days: number) => {
-  // Generate the exact number of dates we need - this is crucial
+  // Generate EXACTLY the number of days requested
   const allDates = generatePastDates(days);
-  const dateMap = new Map();
   
-  // Initialize with all dates and zero values
-  allDates.forEach(date => {
+  // Create result array with default values for each date
+  const result = allDates.map(date => {
     const formattedDate = formatDate(date);
-    dateMap.set(formattedDate, {
-      name: formattedDate,
-      value: 0,
-      date: date.toISOString(),
-      environment: data[0]?.environment || 'production', // Use first data point's environment or default
-      device: data[0]?.device || 'all' // Use first data point's device or default
-    });
-  });
-  
-  // Fill in actual values from the data
-  data.forEach(item => {
-    if (dateMap.has(item.name)) {
-      dateMap.set(item.name, item);
+    
+    // Try to find matching data point from the input data
+    const matchingData = data.find(item => item.name === formattedDate);
+    
+    if (matchingData) {
+      // Use existing data if we found a match
+      return matchingData;
+    } else {
+      // Create a default data point if no match is found
+      return {
+        name: formattedDate,
+        value: 0,
+        date: date.toISOString(),
+        environment: data[0]?.environment || 'production',
+        device: data[0]?.device || 'all'
+      };
     }
   });
-  
-  // Convert map back to array and ensure it's sorted by date
-  const result = Array.from(dateMap.values()).sort((a, b) => {
-    return new Date(a.date).getTime() - new Date(b.date).getTime();
-  });
-  
-  // Double-check we have exactly the requested number of days
+
+  // Sanity check to ensure we have exactly the right number of days
   if (result.length !== days) {
-    console.warn(`Expected ${days} days but got ${result.length}`);
+    console.error(`Date generation error: Expected ${days} days but got ${result.length}`);
   }
   
   return result;
