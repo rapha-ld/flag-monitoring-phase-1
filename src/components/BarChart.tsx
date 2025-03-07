@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   BarChart as RechartsBarChart,
@@ -41,7 +40,7 @@ interface BarChartProps {
 const BarChart = ({
   data,
   versionChanges = [],
-  barColor = "hsl(var(--primary))",
+  barColor = "#6E6F96",
   height = 200,
   className,
   valueFormatter = (value) => value.toString(),
@@ -58,11 +57,9 @@ const BarChart = ({
     setActiveIndex(null);
   };
 
-  // Calculate Y-axis domain with a little padding at the top
   const maxValue = Math.max(...data.map(item => item.value));
   const yAxisDomain = [0, Math.ceil(maxValue * 1.1)];
 
-  // Custom tooltip that looks clean and minimal
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
@@ -83,8 +80,8 @@ const BarChart = ({
         <RechartsBarChart
           data={data}
           margin={{ top: 16, right: 16, left: 0, bottom: 0 }}
-          barSize={24} // Increased from 8 to 24 for much larger bars
-          barGap={5} // Small gap between bars
+          barSize={24}
+          barGap={5}
           onMouseLeave={handleMouseLeave}
         >
           <CartesianGrid 
@@ -99,7 +96,7 @@ const BarChart = ({
             axisLine={false} 
             tickLine={false} 
             tickMargin={8}
-            stroke="hsl(var(--muted-foreground))" 
+            stroke="#545A62"
             fontSize={10}
             interval="preserveStartEnd"
             minTickGap={5}
@@ -108,7 +105,7 @@ const BarChart = ({
             axisLine={false} 
             tickLine={false} 
             tickMargin={8}
-            stroke="hsl(var(--muted-foreground))" 
+            stroke="#545A62"
             fontSize={10}
             tickFormatter={valueFormatter}
             domain={yAxisDomain}
@@ -133,9 +130,7 @@ const BarChart = ({
             ))}
           </Bar>
           
-          {/* Version change markers */}
           {versionChanges.map((change, index) => {
-            // Find the x position based on the data index
             const xPos = change.position * (100 / (data.length - 1)) + '%';
             
             return (
