@@ -26,20 +26,20 @@ const Header = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
-  const [dateSelectionStep, setDateSelectionStep] = useState<'start' | 'end'>('start');
 
-  const handleDateSelect = (date: Date | undefined) => {
-    if (dateSelectionStep === 'start') {
+  const handleDateSelect = (date: Date | undefined, type: 'start' | 'end') => {
+    if (type === 'start') {
       setStartDate(date);
-      setDateSelectionStep('end');
     } else {
       setEndDate(date);
-      if (date && startDate) {
-        const diffDays = Math.ceil((date.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-        onTimeframeChange(`custom-${diffDays}d`);
-        setIsDialogOpen(false);
-        setDateSelectionStep('start');
-      }
+    }
+  };
+
+  const handleApplyCustomRange = () => {
+    if (startDate && endDate) {
+      const diffDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+      onTimeframeChange(`custom-${diffDays}d`);
+      setIsDialogOpen(false);
     }
   };
 
@@ -73,7 +73,7 @@ const Header = ({
             className="h-9"
             onClick={() => onTimeframeChange("7d")}
           >
-            7 days
+            7d
           </Button>
           <Button 
             variant={timeframe === "14d" ? "default" : "outline"} 
@@ -81,7 +81,7 @@ const Header = ({
             className="h-9"
             onClick={() => onTimeframeChange("14d")}
           >
-            14 days
+            14d
           </Button>
           <Button 
             variant={timeframe === "30d" ? "default" : "outline"} 
@@ -89,7 +89,7 @@ const Header = ({
             className="h-9"
             onClick={() => onTimeframeChange("30d")}
           >
-            30 days
+            30d
           </Button>
           <Button 
             variant={timeframe === "90d" ? "default" : "outline"} 
@@ -97,7 +97,7 @@ const Header = ({
             className="h-9"
             onClick={() => onTimeframeChange("90d")}
           >
-            90 days
+            90d
           </Button>
           
           {/* Date Range Picker */}
@@ -108,38 +108,50 @@ const Header = ({
                 <span>Date Range</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[480px]">
               <DialogHeader>
-                <DialogTitle>{dateSelectionStep === 'start' ? 'Select Start Date' : 'Select End Date'}</DialogTitle>
+                <DialogTitle>Select Date Range</DialogTitle>
               </DialogHeader>
-              <div className="flex flex-col items-center py-4">
-                {startDate && dateSelectionStep === 'end' && (
-                  <div className="mb-4 text-sm text-textSecondary">
-                    Start date: {format(startDate, "MMMM d, yyyy")}
-                  </div>
-                )}
-                <Calendar
-                  mode="single"
-                  selected={dateSelectionStep === 'start' ? startDate : endDate}
-                  onSelect={handleDateSelect}
-                  disabled={dateSelectionStep === 'end' && startDate 
-                    ? { before: new Date(startDate) } 
-                    : undefined}
-                  initialFocus
-                  className="p-3 pointer-events-auto"
-                />
-                {dateSelectionStep === 'end' && (
-                  <Button
-                    className="mt-4"
-                    onClick={() => {
-                      setDateSelectionStep('start');
-                      setStartDate(undefined);
-                      setEndDate(undefined);
-                    }}
-                  >
-                    Reset Selection
-                  </Button>
-                )}
+              <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 py-4">
+                <div className="flex flex-col space-y-2">
+                  <span className="text-sm font-medium">Start Date</span>
+                  <Calendar
+                    mode="single"
+                    selected={startDate}
+                    onSelect={(date) => handleDateSelect(date, 'start')}
+                    initialFocus
+                    className="p-3 pointer-events-auto border rounded-md"
+                  />
+                </div>
+                <div className="flex flex-col space-y-2">
+                  <span className="text-sm font-medium">End Date</span>
+                  <Calendar
+                    mode="single"
+                    selected={endDate}
+                    onSelect={(date) => handleDateSelect(date, 'end')}
+                    disabled={startDate 
+                      ? { before: new Date(startDate) } 
+                      : undefined}
+                    className="p-3 pointer-events-auto border rounded-md"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-between mt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setStartDate(undefined);
+                    setEndDate(undefined);
+                  }}
+                >
+                  Reset
+                </Button>
+                <Button
+                  onClick={handleApplyCustomRange}
+                  disabled={!startDate || !endDate}
+                >
+                  Apply Range
+                </Button>
               </div>
             </DialogContent>
           </Dialog>

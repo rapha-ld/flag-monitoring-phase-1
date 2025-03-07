@@ -11,8 +11,8 @@ import {
   conversionVersionChanges,
   errorRateData,
   errorRateVersionChanges,
-  currentMetrics,
-  getFilteredData
+  getFilteredData,
+  calculateMetrics
 } from '@/data/chartData';
 
 const Index = () => {
@@ -22,6 +22,11 @@ const Index = () => {
   const [filteredEvaluationData, setFilteredEvaluationData] = useState(evaluationData);
   const [filteredConversionData, setFilteredConversionData] = useState(conversionData);
   const [filteredErrorRateData, setFilteredErrorRateData] = useState(errorRateData);
+  const [currentMetrics, setCurrentMetrics] = useState({
+    evaluations: { value: 0, change: { value: 0, trend: 'up' as 'up' | 'down' } },
+    conversion: { value: 0, change: { value: 0, trend: 'up' as 'up' | 'down' } },
+    errorRate: { value: 0, change: { value: 0, trend: 'up' as 'up' | 'down' } }
+  });
 
   useEffect(() => {
     // Simulate loading state for animation purposes
@@ -33,7 +38,7 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
-    // Update data based on selected timeframe
+    // Update data based on selected timeframe and environment
     let days = 14; // default
     
     if (timeframe.startsWith('custom-')) {
@@ -43,10 +48,20 @@ const Index = () => {
       days = parseInt(timeframe.replace('d', ''));
     }
     
-    setFilteredEvaluationData(getFilteredData(evaluationData, days));
-    setFilteredConversionData(getFilteredData(conversionData, days));
-    setFilteredErrorRateData(getFilteredData(errorRateData, days));
-  }, [timeframe]);
+    // Apply filter for time frame
+    const filteredEval = getFilteredData(evaluationData, days, environment);
+    const filteredConv = getFilteredData(conversionData, days, environment);
+    const filteredError = getFilteredData(errorRateData, days, environment);
+    
+    setFilteredEvaluationData(filteredEval);
+    setFilteredConversionData(filteredConv);
+    setFilteredErrorRateData(filteredError);
+    
+    // Update metrics based on the filtered data
+    const metrics = calculateMetrics(filteredEval, filteredConv, filteredError, days);
+    setCurrentMetrics(metrics);
+    
+  }, [timeframe, environment]);
 
   const handleTimeframeChange = (value: string) => {
     setTimeframe(value);
@@ -113,6 +128,7 @@ const Index = () => {
                 height={220}
                 valueFormatter={(value) => `${value}`}
                 tooltipValueFormatter={(value) => `Score: ${value}`}
+                barColor="#6E6F96"
               />
             </div>
           </div>
