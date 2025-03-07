@@ -20,8 +20,9 @@ export const generateTimeLabels = (days: number) => {
 
 // Ensure data has entries for every day in the date range
 export const ensureContinuousDates = (data: any[], days: number) => {
-  const dateMap = new Map();
+  // Generate the exact number of dates we need
   const allDates = generatePastDates(days);
+  const dateMap = new Map();
   
   // Initialize with all dates and zero values
   allDates.forEach(date => {
@@ -30,7 +31,8 @@ export const ensureContinuousDates = (data: any[], days: number) => {
       name: formattedDate,
       value: 0,
       date: date.toISOString(),
-      environment: data[0]?.environment || 'production' // Use first data point's environment or default
+      environment: data[0]?.environment || 'production', // Use first data point's environment or default
+      device: data[0]?.device || 'all' // Use first data point's device or default
     });
   });
   
@@ -42,14 +44,7 @@ export const ensureContinuousDates = (data: any[], days: number) => {
   });
   
   // Convert map back to array and ensure it's sorted by date
-  const result = Array.from(dateMap.values()).sort((a, b) => {
+  return Array.from(dateMap.values()).sort((a, b) => {
     return new Date(a.date).getTime() - new Date(b.date).getTime();
   });
-  
-  // Ensure we return exactly the requested number of days
-  if (result.length > days) {
-    return result.slice(-days);
-  }
-  
-  return result;
 };
