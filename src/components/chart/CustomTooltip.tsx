@@ -21,40 +21,30 @@ const CustomTooltip = ({
   showFalse
 }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
-    // Find the true and false values in the payload
-    const trueData = payload.find(p => p.name === 'True');
-    const falseData = payload.find(p => p.name === 'False');
-    
     return (
       <div className="bg-popover border border-border shadow-md rounded-md p-2 text-xs">
         <p className="font-medium">{tooltipLabelFormatter(label || '')}</p>
         
-        <div className="space-y-1 mt-1">
-          {showTrue && trueData && (
-            <div className="flex justify-between gap-2">
-              <span style={{ color: trueData.color }}>True:</span>
-              <span className="text-primary font-medium">
-                {tooltipValueFormatter(trueData.value)}
-              </span>
-            </div>
-          )}
-          
-          {showFalse && falseData && (
-            <div className="flex justify-between gap-2">
-              <span style={{ color: falseData.color }}>False:</span>
-              <span className="text-primary font-medium">
-                {tooltipValueFormatter(falseData.value)}
-              </span>
-            </div>
-          )}
-          
-          {/* If we're showing the original value */}
-          {!showTrue && !showFalse && payload[0] && (
-            <p className="text-primary">
-              {tooltipValueFormatter(payload[0].value)}
-            </p>
-          )}
-        </div>
+        {/* If we're showing true/false values */}
+        {(showTrue || showFalse) && (
+          <div className="space-y-1 mt-1">
+            {payload.map((entry, index) => (
+              <div key={`tooltip-${index}`} className="flex justify-between gap-2">
+                <span style={{ color: entry.color }}>{entry.name}:</span>
+                <span className="text-primary font-medium">
+                  {tooltipValueFormatter(entry.value)}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+        
+        {/* If we're showing the original value */}
+        {!showTrue && !showFalse && (
+          <p className="text-primary">
+            {tooltipValueFormatter(payload[0].value)}
+          </p>
+        )}
       </div>
     );
   }

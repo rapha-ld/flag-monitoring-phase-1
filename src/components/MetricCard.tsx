@@ -47,15 +47,6 @@ const MetricCard = ({
   showTrue,
   showFalse
 }: MetricCardProps) => {
-  // Determine chart type based on the metric title
-  const getChartType = () => {
-    if (title.includes('Total Evaluations')) {
-      return 'stacked';
-    } else {
-      return 'line-false';
-    }
-  };
-
   return (
     <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", className)}>
       <CardHeader className="pb-2">
@@ -106,7 +97,6 @@ const MetricCard = ({
             tooltipLabelFormatter={tooltipLabelFormatter}
             showTrue={showTrue}
             showFalse={showFalse}
-            chartType={getChartType()}
           />
         ) : children}
       </CardContent>
