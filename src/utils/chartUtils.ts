@@ -16,10 +16,31 @@ export const getBarSize = (dataLength: number) => {
   return 24;
 };
 
-// Calculate Y axis domain with some padding
-export const calculateYAxisDomain = (data: Array<{value: number}>) => {
-  const maxValue = Math.max(...data.map(item => item.value));
-  return [0, Math.ceil(maxValue * 1.1)];
+// Calculate Y axis domain with some padding based on which data series are visible
+export const calculateYAxisDomain = (
+  data: Array<{value: number, valueTrue?: number, valueFalse?: number}>,
+  showTrue = false,
+  showFalse = false
+) => {
+  if (showTrue && showFalse) {
+    // For stacked bars, calculate the total of both values
+    const maxValue = Math.max(...data.map(item => {
+      const trueVal = item.valueTrue || 0;
+      const falseVal = item.valueFalse || 0;
+      return trueVal + falseVal;
+    }));
+    return [0, Math.ceil(maxValue * 1.1)];
+  } else if (showTrue) {
+    const maxValue = Math.max(...data.map(item => item.valueTrue || 0));
+    return [0, Math.ceil(maxValue * 1.1)];
+  } else if (showFalse) {
+    const maxValue = Math.max(...data.map(item => item.valueFalse || 0));
+    return [0, Math.ceil(maxValue * 1.1)];
+  } else {
+    // Default to the original value
+    const maxValue = Math.max(...data.map(item => item.value));
+    return [0, Math.ceil(maxValue * 1.1)];
+  }
 };
 
 // Process version changes to match filtered data positions

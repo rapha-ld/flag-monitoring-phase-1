@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { ChevronRight, BarChart3, Check } from 'lucide-react';
+import { ChevronRight, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -18,6 +18,10 @@ interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   onDeviceChange?: (value: string) => void;
   selectedMetrics?: string[];
   onMetricsChange?: (metrics: string[]) => void;
+  showTrue?: boolean;
+  showFalse?: boolean;
+  onToggleTrue?: () => void;
+  onToggleFalse?: () => void;
 }
 
 const Header = ({ 
@@ -29,6 +33,10 @@ const Header = ({
   onDeviceChange = () => {},
   selectedMetrics = ['evaluations', 'conversion', 'errorRate'],
   onMetricsChange = () => {},
+  showTrue = true,
+  showFalse = false,
+  onToggleTrue = () => {},
+  onToggleFalse = () => {},
   className, 
   ...props 
 }: HeaderProps) => {
@@ -71,7 +79,7 @@ const Header = ({
           </SelectContent>
         </Select>
         
-        {/* Device Filter - Icon removed */}
+        {/* Device Filter */}
         <Select value={selectedDevice} onValueChange={onDeviceChange}>
           <SelectTrigger className="h-9 w-[130px] bg-background border">
             <SelectValue placeholder="Device" />
@@ -120,10 +128,30 @@ const Header = ({
           >
             90d
           </Button>
-          
-          {/* Date Range Picker removed */}
         </div>
 
+        {/* True/False Filter Checkboxes */}
+        <div className="flex items-center space-x-4 ml-2">
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="filter-true" 
+              checked={showTrue}
+              onCheckedChange={onToggleTrue}
+              className="data-[state=checked]:bg-[#2BB7D2] data-[state=checked]:border-[#2BB7D2]"
+            />
+            <Label htmlFor="filter-true" className="text-sm">True</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="filter-false" 
+              checked={showFalse}
+              onCheckedChange={onToggleFalse}
+              className="data-[state=checked]:bg-[#FFD099] data-[state=checked]:border-[#FFD099] data-[state=checked]:text-black"
+            />
+            <Label htmlFor="filter-false" className="text-sm">False</Label>
+          </div>
+        </div>
+        
         {/* Metrics Selector */}
         <div className="ml-auto">
           <Popover open={metricsOpen} onOpenChange={setMetricsOpen}>

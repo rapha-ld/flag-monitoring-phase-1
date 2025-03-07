@@ -25,6 +25,8 @@ interface MetricCardProps {
   tooltipLabelFormatter?: (label: string) => string;
   timeframe?: string;
   isTotal?: boolean;
+  showTrue?: boolean;
+  showFalse?: boolean;
 }
 
 const MetricCard = ({ 
@@ -41,7 +43,9 @@ const MetricCard = ({
   tooltipValueFormatter,
   tooltipLabelFormatter,
   timeframe,
-  isTotal = false
+  isTotal = false,
+  showTrue,
+  showFalse
 }: MetricCardProps) => {
   return (
     <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", className)}>
@@ -96,6 +100,8 @@ const MetricCard = ({
             valueFormatter={valueFormatter}
             tooltipValueFormatter={tooltipValueFormatter}
             tooltipLabelFormatter={tooltipLabelFormatter}
+            showTrue={showTrue}
+            showFalse={showFalse}
           />
         ) : children}
       </CardContent>

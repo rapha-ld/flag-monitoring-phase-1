@@ -1,4 +1,3 @@
-
 import { ensureContinuousDates } from "./dateUtils";
 
 // Filter data based on the selected timeframe, environment, and device
@@ -21,11 +20,11 @@ export const getFilteredData = (
   // Take the last 'days' items and ensure we have all dates
   const timeFilteredData = deviceFilteredData.slice(-days);
   
-  // Ensure we have continuous dates with values, then filter out zero values
+  // Ensure we have continuous dates with values
   const continuousData = ensureContinuousDates(timeFilteredData, days);
   
-  // Filter out any dates with zero values
-  return continuousData.filter(item => item.value > 0);
+  // Don't filter out zero values anymore - we want to keep all dates
+  return continuousData;
 };
 
 // Calculate metrics based on filtered data

@@ -20,6 +20,8 @@ const Index = () => {
   const [environment, setEnvironment] = useState("production");
   const [selectedDevice, setSelectedDevice] = useState("all");
   const [selectedMetrics, setSelectedMetrics] = useState(['evaluations', 'conversion', 'errorRate']);
+  const [showTrue, setShowTrue] = useState(true);
+  const [showFalse, setShowFalse] = useState(false);
   const [filteredEvaluationData, setFilteredEvaluationData] = useState(evaluationData);
   const [filteredConversionData, setFilteredConversionData] = useState(conversionData);
   const [filteredErrorRateData, setFilteredErrorRateData] = useState(errorRateData);
@@ -54,9 +56,28 @@ const Index = () => {
     const filteredConv = getFilteredData(conversionData, days, environment, selectedDevice);
     const filteredError = getFilteredData(errorRateData, days, environment, selectedDevice);
     
-    setFilteredEvaluationData(filteredEval);
-    setFilteredConversionData(filteredConv);
-    setFilteredErrorRateData(filteredError);
+    // Add true/false data for the stacked bar chart
+    const processedEval = filteredEval.map(item => ({
+      ...item,
+      valueTrue: Math.round(item.value * 0.6), // 60% true
+      valueFalse: Math.round(item.value * 0.4), // 40% false
+    }));
+    
+    const processedConv = filteredConv.map(item => ({
+      ...item,
+      valueTrue: Math.round(item.value * 0.7), // 70% true
+      valueFalse: Math.round(item.value * 0.3), // 30% false
+    }));
+    
+    const processedError = filteredError.map(item => ({
+      ...item,
+      valueTrue: Math.round(item.value * 0.3), // 30% true
+      valueFalse: Math.round(item.value * 0.7), // 70% false
+    }));
+    
+    setFilteredEvaluationData(processedEval);
+    setFilteredConversionData(processedConv);
+    setFilteredErrorRateData(processedError);
     
     // Update metrics based on the filtered data
     const metrics = calculateMetrics(filteredEval, filteredConv, filteredError, days);
@@ -80,6 +101,22 @@ const Index = () => {
     setSelectedMetrics(metrics);
   };
 
+  const handleToggleTrue = () => {
+    setShowTrue(!showTrue);
+    // If both would be unchecked, force at least one to be checked
+    if (!showTrue === false && !showFalse) {
+      setShowFalse(true);
+    }
+  };
+
+  const handleToggleFalse = () => {
+    setShowFalse(!showFalse);
+    // If both would be unchecked, force at least one to be checked
+    if (!showFalse === false && !showTrue) {
+      setShowTrue(true);
+    }
+  };
+
   return (
     <div className={cn(
       "min-h-screen bg-background px-6 py-8 transition-opacity duration-500 font-sans",
@@ -96,6 +133,10 @@ const Index = () => {
           onDeviceChange={handleDeviceChange}
           selectedMetrics={selectedMetrics}
           onMetricsChange={handleMetricsChange}
+          showTrue={showTrue}
+          showFalse={showFalse}
+          onToggleTrue={handleToggleTrue}
+          onToggleFalse={handleToggleFalse}
         />
         
         {/* Metrics Cards with Embedded Charts */}
@@ -116,6 +157,8 @@ const Index = () => {
               barColor="#6E6F96"
               timeframe={timeframe}
               isTotal={true}
+              showTrue={showTrue}
+              showFalse={showFalse}
             />
           )}
           {selectedMetrics.includes('conversion') && (
@@ -133,6 +176,8 @@ const Index = () => {
               tooltipValueFormatter={(value) => `Rate: ${value}%`}
               barColor="#6E6F96"
               timeframe={timeframe}
+              showTrue={showTrue}
+              showFalse={showFalse}
             />
           )}
           {selectedMetrics.includes('errorRate') && (
@@ -153,6 +198,8 @@ const Index = () => {
               tooltipValueFormatter={(value) => `Rate: ${value}%`}
               barColor="#6E6F96"
               timeframe={timeframe}
+              showTrue={showTrue}
+              showFalse={showFalse}
             />
           )}
         </div>

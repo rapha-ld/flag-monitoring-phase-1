@@ -8,6 +8,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Legend,
 } from 'recharts';
 import { cn } from '@/lib/utils';
 import VersionMarker from './VersionMarker';
@@ -18,6 +19,8 @@ import { getXAxisInterval, getBarSize, calculateYAxisDomain, processVersionChang
 export interface DataPoint {
   name: string;
   value: number;
+  valueTrue?: number;
+  valueFalse?: number;
   date?: string;
   device?: string;
 }
@@ -38,6 +41,8 @@ interface BarChartProps {
   valueFormatter?: (value: number) => string;
   tooltipValueFormatter?: (value: number) => string;
   tooltipLabelFormatter?: (label: string) => string;
+  showTrue?: boolean;
+  showFalse?: boolean;
 }
 
 const BarChart = ({
@@ -49,6 +54,8 @@ const BarChart = ({
   valueFormatter = (value) => value.toString(),
   tooltipValueFormatter = (value) => value.toString(),
   tooltipLabelFormatter = (label) => label,
+  showTrue = true,
+  showFalse = false,
 }: BarChartProps) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
@@ -68,7 +75,7 @@ const BarChart = ({
     return <div className="flex items-center justify-center h-full">No data available</div>;
   }
 
-  const yAxisDomain = calculateYAxisDomain(filteredData);
+  const yAxisDomain = calculateYAxisDomain(filteredData, showTrue, showFalse);
 
   // Find the February 21 position in the data array
   const feb21Position = filteredData.findIndex(item => item.name === "Feb 21");
@@ -95,6 +102,9 @@ const BarChart = ({
 
   // Update version change positions to match all data
   const updatedVersionChanges = processVersionChanges(allVersionChanges, data, filteredData);
+
+  const trueColor = "#2BB7D2";
+  const falseColor = "#FFD099";
 
   return (
     <div className={cn("w-full h-full chart-container", className)}>
@@ -142,25 +152,56 @@ const BarChart = ({
                 {...props} 
                 tooltipLabelFormatter={tooltipLabelFormatter}
                 tooltipValueFormatter={tooltipValueFormatter}
+                showTrue={showTrue}
+                showFalse={showFalse}
               />
             )}
             cursor={{ fill: 'hsl(var(--muted))', opacity: 0.4 }}
           />
-          <Bar 
-            dataKey="value" 
-            radius={[2, 2, 0, 0]} 
-            isAnimationActive={false}
-            onMouseOver={handleMouseOver}
-          >
-            {filteredData.map((entry, index) => (
-              <BarChartCell 
-                key={`cell-${index}`}
-                index={index}
-                activeIndex={activeIndex}
-                barColor={barColor}
-              />
-            ))}
-          </Bar>
+          
+          {/* Conditionally render the bars based on showTrue and showFalse */}
+          {showTrue && (
+            <Bar 
+              dataKey="valueTrue" 
+              name="True"
+              stackId="stack1"
+              radius={showFalse ? [0, 0, 0, 0] : [2, 2, 0, 0]} 
+              isAnimationActive={false}
+              onMouseOver={handleMouseOver}
+              fill={trueColor}
+            />
+          )}
+          
+          {showFalse && (
+            <Bar 
+              dataKey="valueFalse" 
+              name="False"
+              stackId="stack1"
+              radius={[2, 2, 0, 0]} 
+              isAnimationActive={false}
+              onMouseOver={handleMouseOver}
+              fill={falseColor}
+            />
+          )}
+          
+          {/* If neither True/False is specified, use the original value */}
+          {!showTrue && !showFalse && (
+            <Bar 
+              dataKey="value" 
+              radius={[2, 2, 0, 0]} 
+              isAnimationActive={false}
+              onMouseOver={handleMouseOver}
+            >
+              {filteredData.map((entry, index) => (
+                <BarChartCell 
+                  key={`cell-${index}`}
+                  index={index}
+                  activeIndex={activeIndex}
+                  barColor={barColor}
+                />
+              ))}
+            </Bar>
+          )}
           
           {/* Version Markers */}
           {updatedVersionChanges && updatedVersionChanges.length > 0 && updatedVersionChanges.map((change, index) => {
@@ -179,6 +220,14 @@ const BarChart = ({
               />
             );
           })}
+          
+          {(showTrue || showFalse) && (
+            <Legend
+              verticalAlign="top"
+              height={36}
+              wrapperStyle={{ paddingTop: '10px' }}
+            />
+          )}
         </RechartsBarChart>
       </ResponsiveContainer>
     </div>
