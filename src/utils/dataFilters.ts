@@ -1,3 +1,4 @@
+
 import { ensureContinuousDates } from "./dateUtils";
 
 // Filter data based on the selected timeframe, environment, and device
@@ -17,11 +18,16 @@ export const getFilteredData = (
     ? envFilteredData
     : envFilteredData.filter(item => item.device === device);
   
-  // Don't slice to -days here, we'll just pass all data to ensureContinuousDates
-  // and let it handle generating the exact number of days we need
+  // Pass all filtered data to ensureContinuousDates which will 
+  // generate the exact number of days we need
+  const result = ensureContinuousDates(deviceFilteredData, days);
   
-  // Ensure we have continuous dates with exact number of data points
-  return ensureContinuousDates(deviceFilteredData, days);
+  // Verify we have the exact number of days requested
+  if (result.length !== days) {
+    console.error(`Data filtering error: Expected exactly ${days} data points but got ${result.length}`);
+  }
+  
+  return result;
 };
 
 // Calculate metrics based on filtered data
