@@ -21,12 +21,7 @@ export const calculateYAxisDomain = (
   data: Array<{value: number, valueTrue?: number, valueFalse?: number}>,
   showTrue = false,
   showFalse = false
-): [number, number] => {
-  // Handle empty data case to prevent charts from disappearing
-  if (!data || data.length === 0) {
-    return [0, 10]; // Default domain when no data is available
-  }
-
+) => {
   if (showTrue && showFalse) {
     // For stacked bars, calculate the total of both values
     const maxValue = Math.max(...data.map(item => {
@@ -34,20 +29,17 @@ export const calculateYAxisDomain = (
       const falseVal = item.valueFalse || 0;
       return trueVal + falseVal;
     }));
-    return [0, Math.ceil(maxValue * 1.1) || 10]; // Ensure non-zero max value
+    return [0, Math.ceil(maxValue * 1.1)];
   } else if (showTrue) {
-    const values = data.map(item => item.valueTrue || 0);
-    const maxValue = values.length > 0 ? Math.max(...values) : 0;
-    return [0, Math.ceil(maxValue * 1.1) || 10]; // Ensure non-zero max value
+    const maxValue = Math.max(...data.map(item => item.valueTrue || 0));
+    return [0, Math.ceil(maxValue * 1.1)];
   } else if (showFalse) {
-    const values = data.map(item => item.valueFalse || 0);
-    const maxValue = values.length > 0 ? Math.max(...values) : 0;
-    return [0, Math.ceil(maxValue * 1.1) || 10]; // Ensure non-zero max value
+    const maxValue = Math.max(...data.map(item => item.valueFalse || 0));
+    return [0, Math.ceil(maxValue * 1.1)];
   } else {
     // Default to the original value
-    const values = data.map(item => item.value);
-    const maxValue = values.length > 0 ? Math.max(...values) : 0;
-    return [0, Math.ceil(maxValue * 1.1) || 10]; // Ensure non-zero max value
+    const maxValue = Math.max(...data.map(item => item.value));
+    return [0, Math.ceil(maxValue * 1.1)];
   }
 };
 
