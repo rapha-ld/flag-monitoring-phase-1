@@ -75,8 +75,32 @@ const BarChart = ({
     return null;
   };
 
+  // Find the February 21 position in the data array
+  const feb21Position = data.findIndex(item => item.name === "Feb 21");
+  
+  // Combine version changes with our new Feb 21 annotation
+  const allVersionChanges = [...versionChanges];
+  
+  // Only add Feb 21 annotation if it exists in our data
+  if (feb21Position !== -1) {
+    // Check if we already have a version change on Feb 21
+    const existingFeb21 = allVersionChanges.find(change => 
+      data[change.position]?.name === "Feb 21"
+    );
+    
+    if (!existingFeb21) {
+      allVersionChanges.push({
+        date: "Feb 21",
+        position: feb21Position,
+        version: "1.0.2",
+        details: "Release v1.0.2"
+      });
+    }
+  }
+
   // Log to check if versionChanges exist
-  console.log('Version changes:', versionChanges);
+  console.log('All version changes:', allVersionChanges);
+  console.log('Feb 21 position:', feb21Position);
 
   return (
     <div className={cn("w-full h-full chart-container", className)}>
@@ -135,7 +159,7 @@ const BarChart = ({
           </Bar>
           
           {/* Version Markers */}
-          {versionChanges && versionChanges.length > 0 && versionChanges.map((change, index) => {
+          {allVersionChanges && allVersionChanges.length > 0 && allVersionChanges.map((change, index) => {
             // Calculate pixel position instead of percentage
             const barWidth = 100 / data.length;
             const xPosition = change.position * barWidth + (barWidth / 2);
