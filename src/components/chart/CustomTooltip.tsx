@@ -53,35 +53,21 @@ const CustomTooltip = ({
         {/* For average values (when both true/false are selected) */}
         {showAverage && (
           <div className="space-y-1 mt-1">
-            {/* Show the average value */}
+            {/* Show the True value first */}
             <div className="flex justify-between gap-2">
-              <span style={{ color: '#6E6F96' }}>Average:</span>
+              <span style={{ color: '#2BB7D2' }}>True:</span>
               <span className="text-primary font-medium">
-                {tooltipValueFormatter(payload.find(p => p.dataKey === 'valueAvg')?.value || 0)}
+                {tooltipValueFormatter(payload[0].payload.valueTrue || 0)}
               </span>
             </div>
             
-            {/* Also show the individual True and False values */}
-            {payload.map((entry, index) => (
-              entry.dataKey === 'valueFalse' && (
-                <div key={`tooltip-${index}`} className="flex justify-between gap-2">
-                  <span style={{ color: entry.color }}>False:</span>
-                  <span className="text-primary font-medium">
-                    {tooltipValueFormatter(entry.value)}
-                  </span>
-                </div>
-              )
-            ))}
-            
-            {/* Show the True value too even though it's not directly displayed */}
-            {payload.some(p => p.dataKey === 'valueAvg') && (
-              <div className="flex justify-between gap-2">
-                <span style={{ color: '#2BB7D2' }}>True:</span>
-                <span className="text-primary font-medium">
-                  {tooltipValueFormatter(payload[0].payload.valueTrue || 0)}
-                </span>
-              </div>
-            )}
+            {/* Show the False value */}
+            <div className="flex justify-between gap-2">
+              <span style={{ color: '#FFD099' }}>False:</span>
+              <span className="text-primary font-medium">
+                {tooltipValueFormatter(payload.find(p => p.dataKey === 'valueFalse')?.value || 0)}
+              </span>
+            </div>
           </div>
         )}
         
