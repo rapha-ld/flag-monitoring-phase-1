@@ -10,7 +10,7 @@ interface NavTabsProps {
 const NavTabs = ({ activeTab, onChange }: NavTabsProps) => {
   return (
     <Tabs value={activeTab} onValueChange={onChange} className="w-full">
-      <TabsList className="grid grid-cols-4 w-full max-w-md bg-transparent border-b border-muted">
+      <TabsList className="grid grid-cols-4 w-full max-w-md bg-transparent border-b border-muted pointer-events-none">
         <TabsTrigger 
           value="targeting" 
           className="rounded-none border-b-2 border-transparent data-[state=active]:border-[#425EFF] data-[state=active]:text-foreground data-[state=active]:shadow-none text-muted-foreground"

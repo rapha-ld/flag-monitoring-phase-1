@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
   BarChart as RechartsBarChart,
@@ -18,9 +19,9 @@ import { getXAxisInterval, getBarSize, calculateYAxisDomain, processVersionChang
 
 export interface DataPoint {
   name: string;
-  value: number | null;
-  valueTrue?: number | null;
-  valueFalse?: number | null;
+  value: number;
+  valueTrue?: number;
+  valueFalse?: number;
   date?: string;
   device?: string;
 }
@@ -63,38 +64,30 @@ const BarChart = ({
 }: BarChartProps) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   
-  // Filter out null values, but keep the structure for continuous dates
-  const processedData = data.map(item => {
-    // Create a copy of the item for modification
-    const processedItem = { ...item };
-    
-    // If showing true/false values, respect those flags
-    if (showTrue && showFalse && (metricType === 'conversion' || metricType === 'errorRate')) {
-      // When both variants are selected for conversion or error rate, calculate average
-      const trueVal = item.valueTrue !== null ? item.valueTrue || 0 : null;
-      const falseVal = item.valueFalse !== null ? item.valueFalse || 0 : null;
-      
-      // Only calculate average if both values exist and are not null
-      if (trueVal !== null && falseVal !== null) {
-        const avgValue = (trueVal + falseVal) / 2;
-        processedItem.valueAvg = avgValue;
-      } else if (trueVal !== null) {
-        processedItem.valueAvg = trueVal;
-      } else if (falseVal !== null) {
-        processedItem.valueAvg = falseVal;
-      } else {
-        // If both are null, set valueAvg to undefined to skip rendering
-        processedItem.valueAvg = undefined;
-      }
-    }
-    
-    return processedItem;
-  });
+  // Include all data points, even those with 0 values
+  const filteredData = data;
   
-  console.log("Chart Data:", processedData);
+  console.log("Chart Data:", filteredData);
   console.log("Chart Type:", chartType);
   console.log("Show True:", showTrue);
   console.log("Show False:", showFalse);
+
+  // Process data to calculate average values when both variants are selected
+  const processedData = filteredData.map(item => {
+    if (showTrue && showFalse && (metricType === 'conversion' || metricType === 'errorRate')) {
+      // When both variants are selected for conversion or error rate, calculate average
+      const trueVal = item.valueTrue || 0;
+      const falseVal = item.valueFalse || 0;
+      
+      // Only calculate average if both values exist
+      if (trueVal !== 0 || falseVal !== 0) {
+        const divisor = (trueVal !== 0 && falseVal !== 0) ? 2 : (trueVal !== 0 ? 1 : (falseVal !== 0 ? 1 : 1));
+        const avgValue = (trueVal + falseVal) / divisor;
+        return { ...item, valueAvg: avgValue };
+      }
+    }
+    return item;
+  });
 
   const handleMouseOver = (data: any, index: number) => {
     setActiveIndex(index);
@@ -105,15 +98,15 @@ const BarChart = ({
   };
 
   // Make sure we have data to display
-  if (processedData.length === 0) {
+  if (filteredData.length === 0) {
     return <div className="flex items-center justify-center h-full">No data available</div>;
   }
 
   // Pass the metricType to calculateYAxisDomain to get a fixed max value
-  const yAxisDomain = calculateYAxisDomain(processedData, showTrue, showFalse, metricType);
+  const yAxisDomain = calculateYAxisDomain(filteredData, showTrue, showFalse, metricType);
 
   // Find the February 21 position in the data array
-  const feb21Position = processedData.findIndex(item => item.name === "Feb 21");
+  const feb21Position = filteredData.findIndex(item => item.name === "Feb 21");
   
   // Combine version changes with our new Feb 21 annotation
   const allVersionChanges = [...versionChanges];
@@ -122,7 +115,7 @@ const BarChart = ({
   if (feb21Position !== -1) {
     // Check if we already have a version change on Feb 21
     const existingFeb21 = allVersionChanges.find(change => 
-      processedData[change.position]?.name === "Feb 21"
+      filteredData[change.position]?.name === "Feb 21"
     );
     
     if (!existingFeb21) {
@@ -136,7 +129,7 @@ const BarChart = ({
   }
 
   // Update version change positions to match all data
-  const updatedVersionChanges = processVersionChanges(allVersionChanges, data, processedData);
+  const updatedVersionChanges = processVersionChanges(allVersionChanges, data, filteredData);
 
   const trueColor = "#2BB7D2";
   const falseColor = "#FFD099";
@@ -154,8 +147,8 @@ const BarChart = ({
       <ResponsiveContainer width="100%" height={height}>
         <RechartsBarChart
           data={processedData}
-          margin={{ top: 30, right: 16, left: 0, bottom: 5 }} // Reduced bottom margin from 16 to 5
-          barSize={getBarSize(processedData.length)}
+          margin={{ top: 30, right: 16, left: 0, bottom: 16 }} // Reduced bottom margin from 24 to 16
+          barSize={getBarSize(filteredData.length)}
           barGap={2}
           onMouseLeave={handleMouseLeave}
         >
@@ -170,14 +163,14 @@ const BarChart = ({
             dataKey="name" 
             axisLine={false} 
             tickLine={false} 
-            tickMargin={4} // Reduced tickMargin from 8 to 4
+            tickMargin={8} // Reduced tickMargin from 16 to 8
             stroke="#545A62"
             fontSize={10}
-            interval={getXAxisInterval(processedData.length)}
+            interval={getXAxisInterval(filteredData.length)}
             minTickGap={8}
             angle={0}
             textAnchor="middle"
-            height={20} // Reduced height from 30 to 20
+            height={30} // Reduced height from 40 to 30
           />
           <YAxis 
             axisLine={false} 
@@ -314,7 +307,7 @@ const BarChart = ({
               isAnimationActive={false}
               onMouseOver={handleMouseOver}
             >
-              {processedData.map((entry, index) => (
+              {filteredData.map((entry, index) => (
                 <BarChartCell 
                   key={`cell-${index}`}
                   index={index}
@@ -328,7 +321,7 @@ const BarChart = ({
           {/* Version Markers */}
           {updatedVersionChanges && updatedVersionChanges.length > 0 && updatedVersionChanges.map((change, index) => {
             if (change.position < 0) return null;
-            const barWidth = 100 / processedData.length;
+            const barWidth = 100 / filteredData.length;
             const xPosition = change.position * barWidth + (barWidth / 2);
             
             return (
