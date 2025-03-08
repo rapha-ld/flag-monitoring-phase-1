@@ -51,7 +51,9 @@ const BarChart = ({
   metricType
 }: BarChartProps) => {
   const interval = getXAxisInterval(data.length);
-  const barSize = getBarSize(data.length);
+  const calculatedBarSize = getBarSize(data.length);
+  // Make bars 10% more narrow
+  const barSize = Math.floor(calculatedBarSize * 0.9);
   const showAverage = showTrue && showFalse && (metricType === 'conversion' || metricType === 'errorRate');
   
   const yAxisDomain = calculateYAxisDomain(
