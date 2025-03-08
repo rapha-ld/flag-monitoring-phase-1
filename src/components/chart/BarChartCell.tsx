@@ -1,14 +1,16 @@
 
 import React from 'react';
 import { Cell } from 'recharts';
+import { DataPoint } from '../BarChart';
 
 interface BarChartCellProps {
   index: number;
-  activeIndex: number | null;
   barColor: string;
+  data?: DataPoint[];
+  activeIndex?: number | null;
 }
 
-const BarChartCell = ({ index, activeIndex, barColor }: BarChartCellProps) => {
+const BarChartCell = ({ index, barColor, activeIndex = null }: BarChartCellProps) => {
   return (
     <Cell
       key={`cell-${index}`}

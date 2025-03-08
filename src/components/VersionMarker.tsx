@@ -10,17 +10,18 @@ import {
 } from '@/components/ui/tooltip';
 
 interface VersionMarkerProps {
-  x: number | string;
-  height: number;
+  x?: number | string;
+  height?: number;
   version: string;
-  date: string;
+  position?: number;
+  date?: string;
   details?: string;
   className?: string;
 }
 
 const VersionMarker = ({ 
   x, 
-  height, 
+  height = 350, 
   version, 
   date, 
   details,
@@ -60,7 +61,7 @@ const VersionMarker = ({
         </TooltipTrigger>
         <TooltipContent side="top" className="p-3 space-y-1.5 max-w-xs">
           <p className="font-medium text-sm">Version {version}</p>
-          <p className="text-xs text-muted-foreground">{date}</p>
+          {date && <p className="text-xs text-muted-foreground">{date}</p>}
           {details && <p className="text-xs text-muted-foreground">{details}</p>}
         </TooltipContent>
       </Tooltip>

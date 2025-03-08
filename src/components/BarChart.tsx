@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Bar, CartesianGrid, Cell, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -54,7 +53,6 @@ const BarChart = ({
   const barSize = getBarSize(data.length);
   const showAverage = showTrue && showFalse && (metricType === 'conversion' || metricType === 'errorRate');
   
-  // Calculate y-axis domain
   const yAxisDomain = calculateYAxisDomain(
     data, 
     showTrue, 
@@ -62,7 +60,6 @@ const BarChart = ({
     metricType
   );
   
-  // Only show the version markers that are within the visible data range
   const visibleVersionChanges = versionChanges.filter(change => 
     change.position >= 0 && change.position < data.length
   );
@@ -115,7 +112,6 @@ const BarChart = ({
             }
           />
           
-          {/* Reference lines for important dates */}
           {referenceLineMarkers.map((marker, index) => (
             <ReferenceLine
               key={`ref-line-${index}`}
@@ -133,73 +129,7 @@ const BarChart = ({
             />
           ))}
           
-          {/* If showing mixed or both variants are selected */}
-          {chartType === 'mixed' || (showTrue && showFalse) ? (
-            <>
-              {/* Only render stacked bars for the evaluations metric */}
-              {metricType === 'evaluations' && showTrue && showFalse && (
-                <Bar 
-                  dataKey="valueTrue" 
-                  name="True" 
-                  fill="#2BB7D2" 
-                  stackId="a"
-                  barSize={barSize} 
-                  isAnimationActive={false}
-                />
-              )}
-              
-              {metricType === 'evaluations' && showTrue && showFalse && (
-                <Bar 
-                  dataKey="valueFalse" 
-                  name="False" 
-                  fill="#9CA3AF" 
-                  stackId="a"
-                  barSize={barSize} 
-                  isAnimationActive={false}
-                />
-              )}
-              
-              {/* For conversion and error rates, show bars and lines when both variants are selected */}
-              {(metricType === 'conversion' || metricType === 'errorRate') && showTrue && showFalse && (
-                <Bar
-                  dataKey="valueAvg"
-                  name="Average"
-                  fill="#6E6F96"
-                  barSize={barSize}
-                  isAnimationActive={false}
-                />
-              )}
-              
-              {/* Show line chart only for conversion and error rate metrics with both variants */}
-              {(metricType === 'conversion' || metricType === 'errorRate') && showFalse && (
-                <Line
-                  type="monotone"
-                  dataKey="valueFalse"
-                  name="False"
-                  stroke="#9CA3AF"
-                  strokeWidth={2}
-                  dot={false}
-                  isAnimationActive={false}
-                />
-              )}
-              
-              {/* Individual True variant - used for all metrics */}
-              {showTrue && !(showTrue && showFalse && metricType === 'evaluations') && (
-                <Bar
-                  dataKey={showTrue && showFalse && (metricType === 'conversion' || metricType === 'errorRate') ? 'valueAvg' : 'valueTrue'}
-                  name={showTrue && showFalse ? 'Average' : 'True'}
-                  fill={showTrue && showFalse ? '#6E6F96' : '#2BB7D2'}
-                  barSize={barSize}
-                  isAnimationActive={false}
-                >
-                  {data.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={barColor} />
-                  ))}
-                </Bar>
-              )}
-            </>
-          ) : (
-            // Simple bar chart (either showing True only, False only, or original value)
+          {!(chartType === 'mixed' || (showTrue && showFalse)) && (
             <Bar
               dataKey={showTrue ? 'valueTrue' : showFalse ? 'valueFalse' : 'value'}
               name={showTrue ? 'True' : showFalse ? 'False' : 'Value'}
@@ -208,16 +138,19 @@ const BarChart = ({
               isAnimationActive={false}
             >
               {data.map((entry, index) => (
-                <BarChartCell key={`cell-${index}`} index={index} data={data} barColor={barColor} />
+                <BarChartCell 
+                  key={`cell-${index}`} 
+                  index={index} 
+                  barColor={barColor} 
+                />
               ))}
             </Bar>
           )}
           
-          {/* Version markers */}
           {visibleVersionChanges.map((change, index) => (
             <VersionMarker 
               key={`marker-${index}`}
-              position={change.position} 
+              x={change.position}
               version={change.version}
               details={change.details}
             />
