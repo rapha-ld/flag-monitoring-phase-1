@@ -137,8 +137,8 @@ const BarChart = ({
             />
           ))}
           
-          {/* For evaluation metrics or when line chart is not appropriate, use bar chart */}
-          {(!useLineChart || metricType === 'evaluations') && !(showTrue && showFalse) && (
+          {/* For evaluation metrics, use bar chart */}
+          {metricType === 'evaluations' && !(showTrue && showFalse) && (
             <Bar
               dataKey={showTrue ? 'valueTrue' : showFalse ? 'valueFalse' : 'value'}
               name={showTrue ? 'True' : showFalse ? 'False' : 'Value'}
@@ -178,7 +178,7 @@ const BarChart = ({
             </>
           )}
           
-          {/* For conversion and error rates, use line charts when both variants are selected */}
+          {/* For conversion and error rates, use line charts */}
           {useLineChart && showTrue && (
             <Line
               type="monotone"
