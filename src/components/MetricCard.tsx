@@ -59,6 +59,93 @@ const MetricCard = ({
   // Determine if we should show average values (only for conversion and error rate when both variants selected)
   const showAverage = showTrue && showFalse && (metricType === 'conversion' || metricType === 'errorRate');
 
+  // Calculate the displayed value based on variant selection
+  const getDisplayValue = () => {
+    if (!chartData || chartData.length === 0) return value;
+    
+    // For evaluations (Total Evaluations), calculate the sum based on selected variants
+    if (metricType === 'evaluations') {
+      let sum = 0;
+      
+      if (showTrue && showFalse) {
+        // Sum both true and false values
+        chartData.forEach(item => {
+          sum += (item.valueTrue || 0) + (item.valueFalse || 0);
+        });
+      } else if (showTrue) {
+        // Only sum true values
+        chartData.forEach(item => {
+          sum += (item.valueTrue || 0);
+        });
+      } else if (showFalse) {
+        // Only sum false values
+        chartData.forEach(item => {
+          sum += (item.valueFalse || 0);
+        });
+      } else {
+        // Default to the original value
+        return value;
+      }
+      
+      return sum;
+    }
+    
+    // For conversion and error rates, calculate average based on selected variants
+    else if (metricType === 'conversion' || metricType === 'errorRate') {
+      let sum = 0;
+      let count = 0;
+      
+      if (showTrue && showFalse) {
+        // Average of both true and false values
+        chartData.forEach(item => {
+          const trueVal = item.valueTrue || 0;
+          const falseVal = item.valueFalse || 0;
+          let itemCount = 0;
+          
+          if (trueVal > 0) {
+            sum += trueVal;
+            itemCount++;
+          }
+          
+          if (falseVal > 0) {
+            sum += falseVal;
+            itemCount++;
+          }
+          
+          count += (itemCount > 0 ? 1 : 0);
+        });
+      } else if (showTrue) {
+        // Average of true values
+        chartData.forEach(item => {
+          const val = item.valueTrue || 0;
+          if (val > 0) {
+            sum += val;
+            count++;
+          }
+        });
+      } else if (showFalse) {
+        // Average of false values
+        chartData.forEach(item => {
+          const val = item.valueFalse || 0;
+          if (val > 0) {
+            sum += val;
+            count++;
+          }
+        });
+      } else {
+        // Default to the original value
+        return value;
+      }
+      
+      const avg = count > 0 ? sum / count : 0;
+      return metricType === 'conversion' || metricType === 'errorRate' 
+        ? `${avg.toFixed(1)}%` 
+        : avg.toFixed(1);
+    }
+    
+    return value;
+  };
+
   // Extract the number of days from the timeframe
   const getDaysFromTimeframe = () => {
     if (!timeframe) return 14; // Default to 14 days
@@ -69,6 +156,9 @@ const MetricCard = ({
       return parseInt(timeframe.replace('d', ''));
     }
   };
+  
+  // Get the display value based on the selected variants
+  const displayValue = getDisplayValue();
   
   return (
     <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", className)}>
@@ -92,7 +182,7 @@ const MetricCard = ({
         </div>
         <div className="flex items-center gap-2">
           <CardDescription className="text-2xl font-semibold text-foreground">
-            {value}
+            {displayValue}
           </CardDescription>
           {change && (
             <TooltipProvider delayDuration={200}>
