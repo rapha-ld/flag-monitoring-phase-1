@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { 
   evaluationData, 
@@ -20,7 +19,7 @@ export const useDashboardData = () => {
   const [selectedDevice, setSelectedDevice] = useState("all");
   const [selectedMetrics, setSelectedMetrics] = useState(['evaluations', 'conversion', 'errorRate']);
   const [showTrue, setShowTrue] = useState(true);
-  const [showFalse, setShowFalse] = useState(false);
+  const [showFalse, setShowFalse] = useState(true);
   const [filteredEvaluationData, setFilteredEvaluationData] = useState<DataPoint[]>(evaluationData);
   const [filteredConversionData, setFilteredConversionData] = useState<DataPoint[]>(conversionData);
   const [filteredErrorRateData, setFilteredErrorRateData] = useState<DataPoint[]>(errorRateData);
@@ -30,7 +29,6 @@ export const useDashboardData = () => {
     errorRate: { value: 0, change: { value: 0, trend: 'up' as 'up' | 'down' } }
   });
 
-  // Initialize the data
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoaded(true);
@@ -39,7 +37,6 @@ export const useDashboardData = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Data filtering and processing
   useEffect(() => {
     let days = 14; // default
     
@@ -51,12 +48,10 @@ export const useDashboardData = () => {
     
     console.log(`Filtering data for ${days} days`);
     
-    // Get filtered data for the selected timeframe
     const filteredEval = getFilteredData(evaluationData, days, environment, selectedDevice);
     const filteredConv = getFilteredData(conversionData, days, environment, selectedDevice);
     const filteredError = getFilteredData(errorRateData, days, environment, selectedDevice);
     
-    // Process data to add valueTrue and valueFalse properties
     const processedEval = processTrueFalseValues(filteredEval);
     const processedConv = processTrueFalseValues(filteredConv);
     const processedError = processTrueFalseValues(filteredError);
@@ -71,7 +66,6 @@ export const useDashboardData = () => {
     setCurrentMetrics(metrics);
   }, [timeframe, environment, selectedDevice]);
 
-  // Event handlers
   const handleTimeframeChange = (value: string) => {
     setTimeframe(value);
   };
