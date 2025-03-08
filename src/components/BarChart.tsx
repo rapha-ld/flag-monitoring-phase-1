@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Bar, CartesianGrid, Cell, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
 import VersionMarker from './VersionMarker';
 import CustomTooltip from './chart/CustomTooltip';
@@ -63,6 +64,13 @@ const BarChart = ({
   const visibleVersionChanges = versionChanges.filter(change => 
     change.position >= 0 && change.position < data.length
   );
+  
+  // Determine if we should use line chart for this metric
+  const useLineChart = (metricType === 'conversion' || metricType === 'errorRate');
+  
+  // Line colors
+  const trueColor = '#2BB7D2';
+  const falseColor = '#9CA3AF';
   
   return (
     <div className="w-full h-full">
@@ -129,11 +137,12 @@ const BarChart = ({
             />
           ))}
           
-          {!(chartType === 'mixed' || (showTrue && showFalse)) && (
+          {/* For evaluation metrics or when line chart is not appropriate, use bar chart */}
+          {(!useLineChart || metricType === 'evaluations') && !(showTrue && showFalse) && (
             <Bar
               dataKey={showTrue ? 'valueTrue' : showFalse ? 'valueFalse' : 'value'}
               name={showTrue ? 'True' : showFalse ? 'False' : 'Value'}
-              fill={showTrue ? '#2BB7D2' : showFalse ? '#9CA3AF' : barColor}
+              fill={showTrue ? trueColor : showFalse ? falseColor : barColor}
               barSize={barSize}
               isAnimationActive={false}
             >
@@ -141,10 +150,59 @@ const BarChart = ({
                 <BarChartCell 
                   key={`cell-${index}`} 
                   index={index} 
-                  barColor={barColor} 
+                  barColor={showTrue ? trueColor : showFalse ? falseColor : barColor} 
                 />
               ))}
             </Bar>
+          )}
+          
+          {/* For stacked bar charts (only for evaluations) */}
+          {metricType === 'evaluations' && showTrue && showFalse && (
+            <>
+              <Bar
+                dataKey="valueTrue"
+                name="True"
+                stackId="a"
+                fill={trueColor}
+                barSize={barSize}
+                isAnimationActive={false}
+              />
+              <Bar
+                dataKey="valueFalse"
+                name="False"
+                stackId="a"
+                fill={falseColor}
+                barSize={barSize}
+                isAnimationActive={false}
+              />
+            </>
+          )}
+          
+          {/* For conversion and error rates, use line charts when both variants are selected */}
+          {useLineChart && showTrue && (
+            <Line
+              type="monotone"
+              dataKey="valueTrue"
+              name="True"
+              stroke={trueColor}
+              strokeWidth={2}
+              dot={{ r: 3, fill: trueColor }}
+              activeDot={{ r: 5 }}
+              isAnimationActive={false}
+            />
+          )}
+          
+          {useLineChart && showFalse && (
+            <Line
+              type="monotone"
+              dataKey="valueFalse"
+              name="False"
+              stroke={falseColor}
+              strokeWidth={2}
+              dot={{ r: 3, fill: falseColor }}
+              activeDot={{ r: 5 }}
+              isAnimationActive={false}
+            />
           )}
           
           {visibleVersionChanges.map((change, index) => (
