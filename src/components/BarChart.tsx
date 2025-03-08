@@ -77,7 +77,7 @@ const BarChart = ({
           data={data}
           margin={{ top: 20, right: 10, left: 0, bottom: 0 }}
           barGap={0}
-          barCategoryGap={barSize * 1.1} // Increased gap between bar groups by 10%
+          barCategoryGap={barSize * 2} // Increased gap between bar groups by 100%
         >
           <CartesianGrid 
             strokeDasharray="3 3" 
