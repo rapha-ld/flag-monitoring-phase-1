@@ -56,15 +56,20 @@ const Header = ({
 
   return (
     <header className={cn("pb-4 animate-slide-down space-y-4", className)} {...props}>
-      {/* Breadcrumb */}
-      <div className="flex items-center text-textBase">
-        <span className="text-textSecondary">Flags</span>
-        <ChevronRight className="h-4 w-4 mx-1 text-textSecondary" />
-        <span className="font-medium">New Checkout</span>
+      {/* White background div around breadcrumb and tabs */}
+      <div className="bg-white mb-4 pb-4">
+        {/* Breadcrumb */}
+        <div className="flex items-center text-textBase pt-4 px-6">
+          <span className="text-textSecondary">Flags</span>
+          <ChevronRight className="h-4 w-4 mx-1 text-textSecondary" />
+          <span className="font-medium">New Checkout</span>
+        </div>
+        
+        {/* Tab Navigation */}
+        <div className="px-6 mt-4">
+          <NavTabs activeTab={activeTab} onChange={setActiveTab} />
+        </div>
       </div>
-      
-      {/* Tab Navigation */}
-      <NavTabs activeTab={activeTab} onChange={setActiveTab} />
       
       {/* Controls */}
       <div className="flex flex-col md:flex-row items-center gap-4">
