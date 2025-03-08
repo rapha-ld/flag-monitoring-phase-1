@@ -1,4 +1,3 @@
-
 import { ensureContinuousDates, generatePastDates, formatDate } from "./dateUtils";
 
 // Filter data based on the selected timeframe, environment, and device
@@ -18,12 +17,15 @@ export const getFilteredData = (
     ? envFilteredData
     : envFilteredData.filter(item => item.device === device);
   
+  // Keep only non-zero values
+  const nonZeroData = deviceFilteredData.filter(item => item.value > 0);
+  
   // Generate exact dates we need for the timeframe
   const requiredDates = generatePastDates(days).map(date => formatDate(date));
   
   // Pass all filtered data to ensureContinuousDates which will 
   // generate the exact number of days we need with the correct dates
-  const result = ensureContinuousDates(deviceFilteredData, days);
+  const result = ensureContinuousDates(nonZeroData, days);
   
   // Verify we have the exact number of days requested and they match our required dates
   if (result.length !== days) {
@@ -34,10 +36,10 @@ export const getFilteredData = (
   const sortedResult = result.map((item, index) => ({
     ...item,
     name: requiredDates[index],
-    // Ensure we have non-null values for chart display
-    value: item.value || 0,
-    valueTrue: item.valueTrue || 0,
-    valueFalse: item.valueFalse || 0
+    // Keep null values as null, don't convert to 0
+    value: item.value === null ? null : item.value,
+    valueTrue: item.valueTrue === null ? null : item.valueTrue,
+    valueFalse: item.valueFalse === null ? null : item.valueFalse
   }));
   
   return sortedResult;
@@ -45,11 +47,20 @@ export const getFilteredData = (
 
 // Process the data to ensure no true values are 0
 export const processTrueFalseValues = (data: any[]) => {
-  return data.map(item => ({
-    ...item,
-    valueTrue: item.valueTrue !== undefined ? item.valueTrue : Math.round(item.value * 0.6), // 60% true
-    valueFalse: item.valueFalse !== undefined ? item.valueFalse : Math.round(item.value * 0.4), // 40% false
-  }));
+  return data.map(item => {
+    // Only process items that have a non-null value
+    if (item.value !== null) {
+      return {
+        ...item,
+        valueTrue: item.valueTrue !== undefined && item.valueTrue !== null ? 
+          item.valueTrue : Math.round(item.value * 0.6), // 60% true
+        valueFalse: item.valueFalse !== undefined && item.valueFalse !== null ? 
+          item.valueFalse : Math.round(item.value * 0.4), // 40% false
+      };
+    }
+    // Keep null values as is
+    return item;
+  });
 };
 
 // Calculate metrics based on filtered data
@@ -59,23 +70,30 @@ export const calculateMetrics = (
   errorRateData: any[],
   days: number
 ) => {
-  // For evaluations, calculate the total
-  const evalTotal = evaluationData.reduce((sum, item) => sum + item.value, 0);
+  // Filter out null values before calculations
+  const validEvalData = evaluationData.filter(item => item.value !== null);
+  const validConvData = conversionData.filter(item => item.value !== null);
+  const validErrorData = errorRateData.filter(item => item.value !== null);
   
-  // For conversion, calculate the average
-  const convSum = conversionData.reduce((sum, item) => sum + item.value, 0);
-  const convAvg = parseFloat((convSum / conversionData.length).toFixed(1));
+  // For evaluations, calculate the total from non-null values
+  const evalTotal = validEvalData.reduce((sum, item) => sum + item.value, 0);
   
-  // For error rate, calculate the average
-  const errorSum = errorRateData.reduce((sum, item) => sum + item.value, 0);
-  const errorAvg = parseFloat((errorSum / errorRateData.length).toFixed(1));
+  // For conversion, calculate the average from non-null values
+  const convAvg = validConvData.length > 0 
+    ? parseFloat((validConvData.reduce((sum, item) => sum + item.value, 0) / validConvData.length).toFixed(1))
+    : 0;
+  
+  // For error rate, calculate the average from non-null values
+  const errorAvg = validErrorData.length > 0
+    ? parseFloat((validErrorData.reduce((sum, item) => sum + item.value, 0) / validErrorData.length).toFixed(1))
+    : 0;
   
   // Calculate change (comparing to the first half of the period)
   const middleIndex = Math.floor(days / 2);
   
-  // For evaluations, compare totals
-  const evalFirstHalf = evaluationData.slice(0, middleIndex);
-  const evalSecondHalf = evaluationData.slice(middleIndex);
+  // For evaluations, compare totals using non-null values
+  const evalFirstHalf = validEvalData.filter((_, i) => i < middleIndex);
+  const evalSecondHalf = validEvalData.filter((_, i) => i >= middleIndex);
   const evalFirstTotal = evalFirstHalf.reduce((sum, item) => sum + item.value, 0);
   const evalSecondTotal = evalSecondHalf.reduce((sum, item) => sum + item.value, 0);
   
@@ -84,9 +102,9 @@ export const calculateMetrics = (
     evalChange = parseFloat(((evalSecondTotal / evalFirstTotal - 1) * 100).toFixed(1));
   }
   
-  // For conversion
-  const convFirstHalf = conversionData.slice(0, middleIndex);
-  const convSecondHalf = conversionData.slice(middleIndex);
+  // For conversion using non-null values
+  const convFirstHalf = validConvData.filter((_, i) => i < middleIndex);
+  const convSecondHalf = validConvData.filter((_, i) => i >= middleIndex);
   const convFirstAvg = convFirstHalf.length 
     ? convFirstHalf.reduce((sum, item) => sum + item.value, 0) / convFirstHalf.length 
     : convAvg;
@@ -95,9 +113,9 @@ export const calculateMetrics = (
     : convAvg;
   const convChange = parseFloat(((convSecondAvg / convFirstAvg - 1) * 100).toFixed(1));
   
-  // For error rate
-  const errorFirstHalf = errorRateData.slice(0, middleIndex);
-  const errorSecondHalf = errorRateData.slice(middleIndex);
+  // For error rate using non-null values
+  const errorFirstHalf = validErrorData.filter((_, i) => i < middleIndex);
+  const errorSecondHalf = validErrorData.filter((_, i) => i >= middleIndex);
   const errorFirstAvg = errorFirstHalf.length 
     ? errorFirstHalf.reduce((sum, item) => sum + item.value, 0) / errorFirstHalf.length 
     : errorAvg;

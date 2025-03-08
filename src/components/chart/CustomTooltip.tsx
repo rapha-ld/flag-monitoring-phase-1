@@ -27,8 +27,15 @@ const CustomTooltip = ({
   showAverage
 }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
-    // Log to inspect the payload structure
-    console.log("Tooltip payload:", payload);
+    // Filter out entries with undefined or null values
+    const validPayloads = payload.filter(entry => 
+      entry.value !== undefined && entry.value !== null
+    );
+    
+    // If there are no valid payloads, don't show a tooltip
+    if (validPayloads.length === 0) {
+      return null;
+    }
     
     return (
       <div className="bg-popover border border-border shadow-md rounded-md p-2 text-xs">
@@ -37,7 +44,7 @@ const CustomTooltip = ({
         {/* For stacked or mixed charts when showing true/false values */}
         {(showTrue || showFalse) && !showAverage && (
           <div className="space-y-1 mt-1">
-            {payload.map((entry, index) => (
+            {validPayloads.map((entry, index) => (
               <div key={`tooltip-${index}`} className="flex justify-between gap-2">
                 <span style={{ color: entry.color }}>{entry.name}:</span>
                 <span className="text-primary font-medium">
@@ -54,16 +61,18 @@ const CustomTooltip = ({
         {showAverage && (
           <div className="space-y-1 mt-1">
             {/* Show the average value */}
-            <div className="flex justify-between gap-2">
-              <span style={{ color: '#6E6F96' }}>Average:</span>
-              <span className="text-primary font-medium">
-                {tooltipValueFormatter(payload.find(p => p.dataKey === 'valueAvg')?.value || 0)}
-              </span>
-            </div>
+            {payload.find(p => p.dataKey === 'valueAvg' && p.value !== null) && (
+              <div className="flex justify-between gap-2">
+                <span style={{ color: '#6E6F96' }}>Average:</span>
+                <span className="text-primary font-medium">
+                  {tooltipValueFormatter(payload.find(p => p.dataKey === 'valueAvg')?.value || 0)}
+                </span>
+              </div>
+            )}
             
             {/* Also show the False value as it's displayed as a line */}
             {payload.map((entry, index) => (
-              entry.dataKey === 'valueFalse' && (
+              entry.dataKey === 'valueFalse' && entry.value !== null && (
                 <div key={`tooltip-${index}`} className="flex justify-between gap-2">
                   <span style={{ color: entry.color }}>False:</span>
                   <span className="text-primary font-medium">
@@ -74,7 +83,7 @@ const CustomTooltip = ({
             ))}
             
             {/* Show the True value too even though it's not directly displayed */}
-            {payload.some(p => p.dataKey === 'valueAvg') && (
+            {payload.some(p => p.dataKey === 'valueAvg') && payload[0].payload.valueTrue !== null && (
               <div className="flex justify-between gap-2">
                 <span style={{ color: '#2BB7D2' }}>True:</span>
                 <span className="text-primary font-medium">
@@ -86,11 +95,11 @@ const CustomTooltip = ({
         )}
         
         {/* If we're showing the original value */}
-        {!showTrue && !showFalse && (
+        {!showTrue && !showFalse && validPayloads.length > 0 && (
           <p className="text-primary">
             {metricType === 'evaluations' 
-              ? `Evaluations: ${payload[0].value}` 
-              : tooltipValueFormatter(payload[0].value)}
+              ? `Evaluations: ${validPayloads[0].value}` 
+              : tooltipValueFormatter(validPayloads[0].value)}
           </p>
         )}
       </div>
