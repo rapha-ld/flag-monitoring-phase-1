@@ -195,9 +195,9 @@ const BarChart = ({
               dataKey="valueFalse"
               name="False"
               stroke={falseColor}
-              strokeWidth={2}
+              strokeWidth={1}
               dot={false}
-              activeDot={{ r: 5 }}
+              activeDot={{ r: 4 }}
               isAnimationActive={false}
             />
           )}
