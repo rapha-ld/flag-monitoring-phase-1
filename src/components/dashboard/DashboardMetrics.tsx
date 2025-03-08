@@ -70,7 +70,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
             change.position < filteredConversionData.length
           )}
           valueFormatter={(value) => `${value}%`}
-          tooltipValueFormatter={(value) => `Rate: ${value}%`}
+          tooltipValueFormatter={(value) => `${value}%`}
           barColor="#6E6F96"
           showTrue={showTrue}
           showFalse={showFalse}
@@ -95,7 +95,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
             change.position < filteredErrorRateData.length
           )}
           valueFormatter={(value) => `${value}%`}
-          tooltipValueFormatter={(value) => `Rate: ${value}%`}
+          tooltipValueFormatter={(value) => `${value}%`}
           barColor="#6E6F96"
           showTrue={showTrue}
           showFalse={showFalse}

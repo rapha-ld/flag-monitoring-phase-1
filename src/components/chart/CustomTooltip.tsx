@@ -39,10 +39,8 @@ const CustomTooltip = ({
             {payload.map((entry, index) => (
               <div key={`tooltip-${index}`} className="flex justify-between gap-2">
                 <span style={{ color: entry.color }}>{entry.name}:</span>
-                <span className="text-primary font-medium">
-                  {metricType === 'evaluations' && entry.name === 'True' 
-                    ? `Evaluations: ${entry.value}` 
-                    : tooltipValueFormatter(entry.value)}
+                <span className="text-textBase font-medium">
+                  {tooltipValueFormatter(entry.value)}
                 </span>
               </div>
             ))}
@@ -55,7 +53,7 @@ const CustomTooltip = ({
             {/* Show the True value first */}
             <div className="flex justify-between gap-2">
               <span style={{ color: '#2BB7D2' }}>True:</span>
-              <span className="text-primary font-medium">
+              <span className="text-textBase font-medium">
                 {tooltipValueFormatter(payload[0].payload.valueTrue || 0)}
               </span>
             </div>
@@ -63,7 +61,7 @@ const CustomTooltip = ({
             {/* Show the False value */}
             <div className="flex justify-between gap-2">
               <span style={{ color: '#FFD099' }}>False:</span>
-              <span className="text-primary font-medium">
+              <span className="text-textBase font-medium">
                 {tooltipValueFormatter(payload.find(p => p.dataKey === 'valueFalse')?.value || 0)}
               </span>
             </div>
@@ -72,10 +70,8 @@ const CustomTooltip = ({
         
         {/* If we're showing the original value */}
         {!showTrue && !showFalse && (
-          <p className="text-primary">
-            {metricType === 'evaluations' 
-              ? `Evaluations: ${payload[0].value}` 
-              : tooltipValueFormatter(payload[0].value)}
+          <p className="text-textBase font-medium">
+            {tooltipValueFormatter(payload[0].value)}
           </p>
         )}
       </div>
