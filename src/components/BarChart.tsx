@@ -166,6 +166,7 @@ const BarChart = ({
                 barSize={barSize}
                 isAnimationActive={false}
                 radius={[1, 1, 0, 0]}
+                className="stroke-[#2BB7D2] stroke-[1px]"
               />
               <Bar
                 dataKey="valueFalse"
@@ -175,6 +176,7 @@ const BarChart = ({
                 barSize={barSize}
                 isAnimationActive={false}
                 radius={[0, 0, 0, 0]}
+                className="stroke-[#FFD099] stroke-[1px]"
               />
             </>
           )}
