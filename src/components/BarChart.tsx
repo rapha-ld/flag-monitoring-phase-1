@@ -70,7 +70,7 @@ const BarChart = ({
   
   // Line colors
   const trueColor = '#2BB7D2';
-  const falseColor = '#9CA3AF';
+  const falseColor = '#FFD099'; // reverted to original color
   
   return (
     <div className="w-full h-full">
@@ -145,6 +145,7 @@ const BarChart = ({
               fill={showTrue ? trueColor : showFalse ? falseColor : barColor}
               barSize={barSize}
               isAnimationActive={false}
+              radius={[3, 3, 0, 0]} // added rounded corners to the top of bars
             >
               {data.map((entry, index) => (
                 <BarChartCell 
@@ -166,6 +167,7 @@ const BarChart = ({
                 fill={trueColor}
                 barSize={barSize}
                 isAnimationActive={false}
+                radius={[3, 3, 0, 0]} // added rounded corners to the top of bars
               />
               <Bar
                 dataKey="valueFalse"
@@ -174,6 +176,7 @@ const BarChart = ({
                 fill={falseColor}
                 barSize={barSize}
                 isAnimationActive={false}
+                radius={[0, 0, 0, 0]} // only top bars need rounded corners in stack
               />
             </>
           )}
@@ -186,7 +189,7 @@ const BarChart = ({
               name="True"
               stroke={trueColor}
               strokeWidth={2}
-              dot={{ r: 3, fill: trueColor }}
+              dot={false} // removed dots
               activeDot={{ r: 5 }}
               isAnimationActive={false}
             />
@@ -199,7 +202,7 @@ const BarChart = ({
               name="False"
               stroke={falseColor}
               strokeWidth={2}
-              dot={{ r: 3, fill: falseColor }}
+              dot={false} // removed dots
               activeDot={{ r: 5 }}
               isAnimationActive={false}
             />
