@@ -25,7 +25,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         </div>
         
         {/* Rest of the sidebar with the original background */}
-        <div className="flex-1 bg-sidebar border-l border-border"></div>
+        <div className="flex-1 border-l border-border bg-white"></div>
       </div>
     </div>;
 };
