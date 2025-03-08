@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -90,7 +91,7 @@ const BarChart = ({
             tickLine={false}
             tickFormatter={(value) => {
               const date = new Date(value);
-              return `${date.getDate()}/${date.getMonth() + 1}`;
+              return `${date.getMonth() + 1}/${date.getDate()}`;
             }}
             interval={interval}
             padding={{ left: 10, right: 10 }}
@@ -115,6 +116,7 @@ const BarChart = ({
                 showAverage={showAverage}
               />
             }
+            trigger="hover"
           />
           
           {referenceLineMarkers.map((marker, index) => (
