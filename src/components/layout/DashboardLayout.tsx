@@ -21,7 +21,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <div className="fixed right-0 top-0 h-full w-[300px] z-10 flex flex-col">
         {/* White background area for the top section */}
         <div className="bg-white border-l border-border">
-          <img src="/lovable-uploads/4e775057-b64f-42a8-83d9-29ae33ed1a2d.png" alt="App Navigation" className="w-full object-contain" />
+          <img alt="App Navigation" className="w-full object-contain" src="/lovable-uploads/fc0c88a8-77bf-455a-86ad-7da8992398b4.png" />
         </div>
         
         {/* Rest of the sidebar with the original background */}
