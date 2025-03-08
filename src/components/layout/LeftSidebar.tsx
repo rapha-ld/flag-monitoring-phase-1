@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, Search, Plus, Flag, Bot, Users, Settings, Shield, AlertTriangle, Activity, Fingerprint, Flask, BarChart3, GitBranch, ArrowLeft } from 'lucide-react';
+import { ChevronDown, Search, Plus, Flag, Bot, Users, Settings, Shield, AlertTriangle, Activity, Fingerprint, FlaskConical, BarChart3, GitBranch, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const NavItem = ({ 
@@ -77,7 +77,7 @@ const LeftSidebar = () => {
       </NavSection>
       
       <NavSection title="Optimize">
-        <NavItem icon={Flask} label="Experiments" />
+        <NavItem icon={FlaskConical} label="Experiments" />
         <NavItem icon={BarChart3} label="Metrics" />
         <NavItem icon={GitBranch} label="Holdouts" />
       </NavSection>
