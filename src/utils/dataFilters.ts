@@ -33,10 +33,23 @@ export const getFilteredData = (
   // Make sure names match exactly with our required dates
   const sortedResult = result.map((item, index) => ({
     ...item,
-    name: requiredDates[index]
+    name: requiredDates[index],
+    // Ensure we have non-null values for chart display
+    value: item.value || 0,
+    valueTrue: item.valueTrue || 0,
+    valueFalse: item.valueFalse || 0
   }));
   
   return sortedResult;
+};
+
+// Process the data to ensure no true values are 0
+export const processTrueFalseValues = (data: any[]) => {
+  return data.map(item => ({
+    ...item,
+    valueTrue: item.valueTrue !== undefined ? item.valueTrue : Math.round(item.value * 0.6), // 60% true
+    valueFalse: item.valueFalse !== undefined ? item.valueFalse : Math.round(item.value * 0.4), // 40% false
+  }));
 };
 
 // Calculate metrics based on filtered data
@@ -116,13 +129,4 @@ export const calculateMetrics = (
       }
     }
   };
-};
-
-// Process the data to ensure no true values are 0
-export const processTrueFalseValues = (data: any[]) => {
-  return data.map(item => ({
-    ...item,
-    valueTrue: Math.round(item.value * 0.6), // 60% true
-    valueFalse: Math.round(item.value * 0.4), // 40% false
-  }));
 };

@@ -64,8 +64,8 @@ const BarChart = ({
 }: BarChartProps) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   
-  // Include all data points, even those with 0 values
-  const filteredData = data;
+  // Make sure there are no gaps in the data
+  const filteredData = data.filter(item => item !== null && item !== undefined);
   
   console.log("Chart Data:", filteredData);
   console.log("Chart Type:", chartType);
@@ -147,7 +147,7 @@ const BarChart = ({
       <ResponsiveContainer width="100%" height={height}>
         <RechartsBarChart
           data={processedData}
-          margin={{ top: 30, right: 16, left: 0, bottom: 16 }} // Reduced bottom margin from 24 to 16
+          margin={{ top: 30, right: 16, left: 0, bottom: 5 }} // Reduced bottom margin from 16 to 5
           barSize={getBarSize(filteredData.length)}
           barGap={2}
           onMouseLeave={handleMouseLeave}
@@ -163,14 +163,14 @@ const BarChart = ({
             dataKey="name" 
             axisLine={false} 
             tickLine={false} 
-            tickMargin={8} // Reduced tickMargin from 16 to 8
+            tickMargin={4} // Reduced tickMargin from 8 to 4
             stroke="#545A62"
             fontSize={10}
             interval={getXAxisInterval(filteredData.length)}
             minTickGap={8}
             angle={0}
             textAnchor="middle"
-            height={30} // Reduced height from 40 to 30
+            height={20} // Reduced height from 30 to 20
           />
           <YAxis 
             axisLine={false} 
