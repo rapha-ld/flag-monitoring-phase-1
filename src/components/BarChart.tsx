@@ -1,14 +1,11 @@
 
 import React from 'react';
-import { ComposedChart, ResponsiveContainer, Tooltip } from 'recharts';
+import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
+import VersionMarker from './VersionMarker';
 import CustomTooltip from './chart/CustomTooltip';
+import BarChartCell from './chart/BarChartCell';
 import { referenceLineMarkers } from '@/utils/chartReferenceLines';
-import ChartAxes from './chart/ChartAxes';
-import EvaluationBars from './chart/EvaluationBars';
-import ChartLines from './chart/ChartLines';
-import ChartReferenceLines from './chart/ChartReferenceLines';
-import VersionMarkers from './chart/VersionMarkers';
 
 export interface DataPoint {
   name: string;
@@ -64,6 +61,10 @@ const BarChart = ({
     metricType
   );
   
+  const visibleVersionChanges = versionChanges.filter(change => 
+    change.position >= 0 && change.position < data.length
+  );
+  
   const useLineChart = (metricType === 'conversion' || metricType === 'errorRate');
   
   const trueColor = '#2BB7D2';
@@ -78,12 +79,31 @@ const BarChart = ({
           barGap={0}
           barCategoryGap={1}
         >
-          <ChartAxes 
-            interval={interval} 
-            yAxisDomain={yAxisDomain} 
-            valueFormatter={valueFormatter} 
+          <CartesianGrid 
+            strokeDasharray="3 3" 
+            vertical={false} 
+            stroke="#E5E7EB" 
           />
-          
+          <XAxis 
+            dataKey="name" 
+            fontSize={10}
+            axisLine={false}
+            tickLine={false}
+            tickFormatter={(value) => {
+              const date = new Date(value);
+              return `${date.getMonth() + 1}/${date.getDate()}`;
+            }}
+            interval={interval}
+            padding={{ left: 10, right: 10 }}
+          />
+          <YAxis 
+            fontSize={10}
+            axisLine={false}
+            tickLine={false}
+            domain={yAxisDomain}
+            allowDataOverflow={true}
+            tickFormatter={valueFormatter}
+          />
           <Tooltip 
             content={
               <CustomTooltip 
@@ -100,30 +120,101 @@ const BarChart = ({
             isAnimationActive={false}
           />
           
-          <ChartReferenceLines referenceLines={referenceLineMarkers} />
+          {referenceLineMarkers.map((marker, index) => (
+            <ReferenceLine
+              key={`ref-line-${index}`}
+              x={marker.date}
+              stroke={marker.color}
+              strokeWidth={2}
+              strokeDasharray="3 3"
+              label={{
+                value: marker.label,
+                position: 'top',
+                fill: marker.color,
+                fontSize: 16,
+                fontWeight: 'bold',
+              }}
+            />
+          ))}
           
-          {metricType === 'evaluations' && (
-            <EvaluationBars 
-              data={data}
-              showTrue={showTrue}
-              showFalse={showFalse}
+          {metricType === 'evaluations' && !(showTrue && showFalse) && (
+            <Bar
+              dataKey={showTrue ? 'valueTrue' : showFalse ? 'valueFalse' : 'value'}
+              name={showTrue ? 'True' : showFalse ? 'False' : 'Value'}
+              fill={showTrue ? trueColor : showFalse ? falseColor : barColor}
               barSize={barSize}
-              trueColor={trueColor}
-              falseColor={falseColor}
-              barColor={barColor}
+              isAnimationActive={false}
+              radius={[1, 1, 0, 0]}
+            >
+              {data.map((entry, index) => (
+                <BarChartCell 
+                  key={`cell-${index}`} 
+                  index={index} 
+                  barColor={showTrue ? trueColor : showFalse ? falseColor : barColor} 
+                />
+              ))}
+            </Bar>
+          )}
+          
+          {metricType === 'evaluations' && showTrue && showFalse && (
+            <>
+              <Bar
+                dataKey="valueTrue"
+                name="True"
+                stackId="a"
+                fill={trueColor}
+                barSize={barSize}
+                isAnimationActive={false}
+                radius={[1, 1, 0, 0]}
+                className="stroke-[#2BB7D2] stroke-[1px]"
+              />
+              <Bar
+                dataKey="valueFalse"
+                name="False"
+                stackId="a"
+                fill={falseColor}
+                barSize={barSize}
+                isAnimationActive={false}
+                radius={[0, 0, 0, 0]}
+                className="stroke-[#FFD099] stroke-[1px]"
+              />
+            </>
+          )}
+          
+          {useLineChart && showTrue && (
+            <Line
+              type="monotone"
+              dataKey="valueTrue"
+              name="True"
+              stroke={trueColor}
+              strokeWidth={3.5}
+              dot={false}
+              activeDot={{ r: 5 }}
+              isAnimationActive={false}
             />
           )}
           
-          {useLineChart && (
-            <ChartLines 
-              showTrue={showTrue}
-              showFalse={showFalse}
-              trueColor={trueColor}
-              falseColor={falseColor}
+          {useLineChart && showFalse && (
+            <Line
+              type="monotone"
+              dataKey="valueFalse"
+              name="False"
+              stroke={falseColor}
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 4 }}
+              isAnimationActive={false}
             />
           )}
           
-          <VersionMarkers versionChanges={versionChanges} />
+          {visibleVersionChanges.map((change, index) => (
+            <VersionMarker 
+              key={`marker-${index}`}
+              x={change.position}
+              version={change.version}
+              details={change.details}
+            />
+          ))}
         </ComposedChart>
       </ResponsiveContainer>
     </div>
