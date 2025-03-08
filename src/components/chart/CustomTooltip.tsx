@@ -61,7 +61,7 @@ const CustomTooltip = ({
               </span>
             </div>
             
-            {/* Also show the False value as it's displayed as a line */}
+            {/* Also show the individual True and False values */}
             {payload.map((entry, index) => (
               entry.dataKey === 'valueFalse' && (
                 <div key={`tooltip-${index}`} className="flex justify-between gap-2">

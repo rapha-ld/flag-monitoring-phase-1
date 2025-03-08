@@ -118,11 +118,18 @@ export const calculateMetrics = (
   };
 };
 
-// Process the data to ensure no true values are 0
+// Process the data to ensure true/false values and calculate averages properly
 export const processTrueFalseValues = (data: any[]) => {
-  return data.map(item => ({
-    ...item,
-    valueTrue: Math.round(item.value * 0.6), // 60% true
-    valueFalse: Math.round(item.value * 0.4), // 40% false
-  }));
+  return data.map(item => {
+    const trueValue = Math.round(item.value * 0.6); // 60% true
+    const falseValue = Math.round(item.value * 0.4); // 40% false
+    
+    return {
+      ...item,
+      valueTrue: trueValue,
+      valueFalse: falseValue,
+      // Add an average value - this is the true mathematical average (not sum)
+      valueAvg: trueValue && falseValue ? (trueValue + falseValue) / 2 : item.value,
+    };
+  });
 };

@@ -96,24 +96,34 @@ const MetricCard = ({
       let count = 0;
       
       if (showTrue && showFalse) {
-        // Average of both true and false values
+        // Take the average of true and false values per day, then average those
+        const dailyAverages: number[] = [];
+        
         chartData.forEach(item => {
           const trueVal = item.valueTrue || 0;
           const falseVal = item.valueFalse || 0;
-          let itemCount = 0;
           
-          if (trueVal > 0) {
-            sum += trueVal;
-            itemCount++;
+          // Only include days with data
+          if (trueVal > 0 || falseVal > 0) {
+            // Calculate the average for this day (true mathematical average)
+            const validValues = [];
+            if (trueVal > 0) validValues.push(trueVal);
+            if (falseVal > 0) validValues.push(falseVal);
+            
+            if (validValues.length > 0) {
+              const dayAvg = validValues.reduce((a, b) => a + b) / validValues.length;
+              dailyAverages.push(dayAvg);
+            }
           }
-          
-          if (falseVal > 0) {
-            sum += falseVal;
-            itemCount++;
-          }
-          
-          count += (itemCount > 0 ? 1 : 0);
         });
+        
+        // Calculate the average of all daily averages
+        if (dailyAverages.length > 0) {
+          const overallAvg = dailyAverages.reduce((a, b) => a + b) / dailyAverages.length;
+          return metricType === 'conversion' || metricType === 'errorRate' 
+            ? `${overallAvg.toFixed(1)}%` 
+            : overallAvg.toFixed(1);
+        }
       } else if (showTrue) {
         // Average of true values
         chartData.forEach(item => {
