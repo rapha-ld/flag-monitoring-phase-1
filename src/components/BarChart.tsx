@@ -145,7 +145,7 @@ const BarChart = ({
               fill={showTrue ? trueColor : showFalse ? falseColor : barColor}
               barSize={barSize}
               isAnimationActive={false}
-              radius={[3, 3, 0, 0]} // added rounded corners to the top of bars
+              radius={[1, 1, 0, 0]} // changed from 3px to 1px rounded corners
             >
               {data.map((entry, index) => (
                 <BarChartCell 
@@ -167,7 +167,7 @@ const BarChart = ({
                 fill={trueColor}
                 barSize={barSize}
                 isAnimationActive={false}
-                radius={[3, 3, 0, 0]} // added rounded corners to the top of bars
+                radius={[1, 1, 0, 0]} // changed from 3px to 1px rounded corners
               />
               <Bar
                 dataKey="valueFalse"
