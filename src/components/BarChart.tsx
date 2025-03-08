@@ -117,6 +117,7 @@ const BarChart = ({
               />
             }
             trigger="hover"
+            isAnimationActive={false}
           />
           
           {referenceLineMarkers.map((marker, index) => (

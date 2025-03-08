@@ -27,7 +27,6 @@ const CustomTooltip = ({
   showAverage
 }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
-    // Log to inspect the payload structure
     console.log("Tooltip payload:", payload);
     
     return (
