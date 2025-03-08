@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import LeftSidebar from './LeftSidebar';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -12,7 +11,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     <div className="flex h-screen w-full overflow-hidden">
       {/* Left Navigation - fixed width sidebar */}
       <div className="fixed left-0 top-0 h-full w-[244px] bg-white border-r border-border z-10">
-        <LeftSidebar />
+        <img 
+          src="/lovable-uploads/d7b57556-8338-4df5-b726-151da5a62c8f.png" 
+          alt="Sidebar" 
+          className="w-full object-contain"
+        />
       </div>
       
       {/* Main Content with padding to account for sidebars */}
