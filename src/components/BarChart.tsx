@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -69,17 +68,6 @@ const BarChart = ({
   
   const trueColor = '#2BB7D2';
   const falseColor = '#FFD099';
-
-  // Custom dataKey functions to add slight vertical offset to one of the lines
-  const getTrueValue = (dataPoint: DataPoint) => {
-    return dataPoint.valueTrue;
-  };
-
-  const getFalseValue = (dataPoint: DataPoint) => {
-    // Add a small offset (1px equivalent in chart scale) to the false value
-    // This makes the false line visible even when it overlaps with the true line
-    return dataPoint.valueFalse ? dataPoint.valueFalse + 0.05 : undefined;
-  };
 
   return (
     <div className="w-full h-full">
@@ -191,7 +179,7 @@ const BarChart = ({
           {useLineChart && showTrue && (
             <Line
               type="monotone"
-              dataKey={getTrueValue}
+              dataKey="valueTrue"
               name="True"
               stroke={trueColor}
               strokeWidth={2}
@@ -204,7 +192,7 @@ const BarChart = ({
           {useLineChart && showFalse && (
             <Line
               type="monotone"
-              dataKey={getFalseValue}
+              dataKey="valueFalse"
               name="False"
               stroke={falseColor}
               strokeWidth={2}
