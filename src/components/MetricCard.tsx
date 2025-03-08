@@ -51,6 +51,9 @@ const MetricCard = ({
   chartType = 'stacked',
   metricType
 }: MetricCardProps) => {
+  // Determine if we should show average values (only for conversion and error rate when both variants selected)
+  const showAverage = showTrue && showFalse && (metricType === 'conversion' || metricType === 'errorRate');
+  
   return (
     <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", className)}>
       <CardHeader className="pb-2">

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   BarChart as RechartsBarChart,
@@ -9,6 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Line,
+  ReferenceLine,
 } from 'recharts';
 import { cn } from '@/lib/utils';
 import VersionMarker from './VersionMarker';
@@ -71,6 +71,23 @@ const BarChart = ({
   console.log("Show True:", showTrue);
   console.log("Show False:", showFalse);
 
+  // Process data to calculate average values when both variants are selected
+  const processedData = filteredData.map(item => {
+    if (showTrue && showFalse && (metricType === 'conversion' || metricType === 'errorRate')) {
+      // When both variants are selected for conversion or error rate, calculate average
+      const trueVal = item.valueTrue || 0;
+      const falseVal = item.valueFalse || 0;
+      
+      // Only calculate average if both values exist
+      if (trueVal !== 0 || falseVal !== 0) {
+        const divisor = (trueVal !== 0 && falseVal !== 0) ? 2 : (trueVal !== 0 ? 1 : (falseVal !== 0 ? 1 : 1));
+        const avgValue = (trueVal + falseVal) / divisor;
+        return { ...item, valueAvg: avgValue };
+      }
+    }
+    return item;
+  });
+
   const handleMouseOver = (data: any, index: number) => {
     setActiveIndex(index);
   };
@@ -114,15 +131,20 @@ const BarChart = ({
 
   const trueColor = "#2BB7D2";
   const falseColor = "#FFD099";
+  // Main color for combined view (when both are selected)
+  const combinedColor = "#6E6F96";
 
   // Determine chart type based on selected variants and metric type
   const effectiveChartType = (chartType === 'mixed' && showTrue && showFalse) ? 'mixed' : 'bar';
+
+  // Determine if we should show average values (only for conversion and error rate when both variants selected)
+  const showAverage = showTrue && showFalse && (metricType === 'conversion' || metricType === 'errorRate');
 
   return (
     <div className={cn("w-full h-full chart-container", className)}>
       <ResponsiveContainer width="100%" height={height}>
         <RechartsBarChart
-          data={filteredData}
+          data={processedData}
           margin={{ top: 30, right: 16, left: 0, bottom: 24 }}
           barSize={getBarSize(filteredData.length)}
           barGap={2}
@@ -168,10 +190,14 @@ const BarChart = ({
                 showFalse={showFalse}
                 chartType={chartType}
                 metricType={metricType}
+                showAverage={showAverage}
               />
             )}
             cursor={{ fill: 'hsl(var(--muted))', opacity: 0.4 }}
           />
+          
+          {/* Y-axis baseline - horizontal line at 0 */}
+          <ReferenceLine y={0} stroke="#6C727A" strokeWidth={1} />
           
           {/* Render based on chart type */}
           {chartType === 'stacked' ? (
@@ -202,24 +228,36 @@ const BarChart = ({
               )}
             </>
           ) : (
-            // Mixed Chart (Bar for True, Line for False)
+            // Mixed Chart (Bar for True/Avg, Line for False)
             <>
-              {/* Always render True as bars */}
-              {showTrue && (
+              {/* When both variants are selected for conversion/error rate, use average value with combined color */}
+              {showAverage ? (
                 <Bar 
-                  dataKey="valueTrue" 
-                  name="True"
+                  dataKey="valueAvg" 
+                  name="Average"
                   radius={[2, 2, 0, 0]} 
                   isAnimationActive={false}
                   onMouseOver={handleMouseOver}
-                  fill={trueColor}
+                  fill={combinedColor}
                 />
+              ) : (
+                // Otherwise show True as bars (if selected)
+                showTrue && (
+                  <Bar 
+                    dataKey="valueTrue" 
+                    name="True"
+                    radius={[2, 2, 0, 0]} 
+                    isAnimationActive={false}
+                    onMouseOver={handleMouseOver}
+                    fill={trueColor}
+                  />
+                )
               )}
               
               {/* Render False as line when both variants are shown, as bars when only False is shown */}
-              {showFalse && (
+              {showFalse && !showAverage && (
                 showTrue ? (
-                  // Line chart when both True and False are selected
+                  // Line chart when both True and False are selected but not showing average
                   <Line
                     type="monotone"
                     dataKey="valueFalse"
@@ -241,6 +279,20 @@ const BarChart = ({
                     fill={falseColor}
                   />
                 )
+              )}
+              
+              {/* If both are selected and we're showing average, also show False as a line */}
+              {showAverage && showFalse && (
+                <Line
+                  type="monotone"
+                  dataKey="valueFalse"
+                  name="False"
+                  stroke={falseColor}
+                  strokeWidth={2}
+                  dot={{ fill: falseColor, r: 4 }}
+                  activeDot={{ r: 6 }}
+                  isAnimationActive={false}
+                />
               )}
             </>
           )}
