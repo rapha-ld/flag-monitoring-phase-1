@@ -6,18 +6,24 @@ const devices = ['windows', 'macos', 'linux', 'ios', 'android'];
 
 // Generate conversion rate data for the past 90 days
 export const conversionData = generatePastDates(90).map((date, index) => {
-  // Create some variations in the data
+  // Create some variations in the data with more oscillation
   let value: number;
 
-  if (index < 40) {
-    // First 40 days - moderate conversion rate
-    value = 18 + Math.random() * 3;
-  } else if (index < 70) {
-    // Days 40-70 - improved conversion after version change
-    value = 22 + Math.random() * 4;
+  if (index < 20) {
+    // First 20 days - oscillating conversion rate
+    value = 1.8 + Math.sin(index * 0.3) * 0.5 + Math.random() * 0.3;
+  } else if (index < 40) {
+    // Days 20-40 - gradual improvement with fluctuations
+    value = 2.0 + (index - 20) * 0.03 + Math.sin(index * 0.4) * 0.4 + Math.random() * 0.2;
+  } else if (index < 60) {
+    // Days 40-60 - improved conversion after version change with some volatility
+    value = 2.5 + Math.sin(index * 0.5) * 0.6 + Math.random() * 0.3;
+  } else if (index < 80) {
+    // Days 60-80 - new peak followed by plateau
+    value = 2.8 + Math.sin((index - 60) * 0.4) * 0.7 + Math.random() * 0.2;
   } else {
-    // Days 70-90 - stabilizing at a higher level
-    value = 24 + Math.random() * 3;
+    // Days 80-90 - stabilizing with minor oscillations
+    value = 3.0 + Math.sin(index * 0.6) * 0.4 + Math.random() * 0.2;
   }
 
   return {

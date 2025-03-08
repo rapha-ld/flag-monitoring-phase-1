@@ -1,3 +1,4 @@
+
 // Calculate optimal interval for the X axis based on data length
 export const getXAxisInterval = (dataLength: number) => {
   if (dataLength > 60) return 14;
@@ -18,9 +19,9 @@ export const getBarSize = (dataLength: number) => {
 // Predetermined max y-axis values for each metric type
 // These values are based on the highest possible values when all variants are shown
 const FIXED_Y_AXIS_MAX = {
-  evaluations: 70, // Maximum for stacked evaluations
+  evaluations: 75, // Maximum for stacked evaluations
   conversion: 4,   // Maximum for conversion rate
-  errorRate: 4     // Maximum for error rate
+  errorRate: 5     // Maximum for error rate
 };
 
 // Calculate Y axis domain with some padding based on which data series are visible

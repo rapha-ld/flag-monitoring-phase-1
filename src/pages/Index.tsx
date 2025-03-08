@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { cn } from "@/lib/utils";
 import Header from '@/components/Header';
@@ -142,6 +143,7 @@ const Index = () => {
                 showFalse={showFalse}
                 chartType="stacked"
                 metricType="evaluations"
+                timeframe={timeframe}
               />
             )}
             {selectedMetrics.includes('conversion') && (
@@ -162,6 +164,7 @@ const Index = () => {
                 showFalse={showFalse}
                 chartType="mixed"
                 metricType="conversion"
+                timeframe={timeframe}
               />
             )}
             {selectedMetrics.includes('errorRate') && (
@@ -185,6 +188,7 @@ const Index = () => {
                 showFalse={showFalse}
                 chartType="mixed"
                 metricType="errorRate"
+                timeframe={timeframe}
               />
             )}
           </div>

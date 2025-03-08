@@ -3,7 +3,12 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { Info } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { 
+  Tooltip, 
+  TooltipContent, 
+  TooltipProvider, 
+  TooltipTrigger 
+} from '@/components/ui/tooltip';
 import BarChart from './BarChart';
 import { DataPoint, VersionChange } from './BarChart';
 
@@ -53,6 +58,17 @@ const MetricCard = ({
 }: MetricCardProps) => {
   // Determine if we should show average values (only for conversion and error rate when both variants selected)
   const showAverage = showTrue && showFalse && (metricType === 'conversion' || metricType === 'errorRate');
+
+  // Extract the number of days from the timeframe
+  const getDaysFromTimeframe = () => {
+    if (!timeframe) return 14; // Default to 14 days
+    
+    if (timeframe.startsWith('custom-')) {
+      return parseInt(timeframe.replace('custom-', '').replace('d', ''));
+    } else {
+      return parseInt(timeframe.replace('d', ''));
+    }
+  };
   
   return (
     <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", className)}>
@@ -79,16 +95,25 @@ const MetricCard = ({
             {value}
           </CardDescription>
           {change && (
-            <span 
-              className={cn(
-                "text-xs font-medium rounded-full px-1.5 py-0.5 flex items-center",
-                change.trend === 'up' ? 'text-green-600 bg-green-100' : 
-                change.trend === 'down' ? 'text-red-600 bg-red-100' : 
-                'text-gray-600 bg-gray-100'
-              )}
-            >
-              {change.value > 0 ? '+' : ''}{change.value}%
-            </span>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span 
+                    className={cn(
+                      "text-xs font-medium rounded-full px-1.5 py-0.5 flex items-center cursor-help",
+                      change.trend === 'up' ? 'text-green-600 bg-green-100' : 
+                      change.trend === 'down' ? 'text-red-600 bg-red-100' : 
+                      'text-gray-600 bg-gray-100'
+                    )}
+                  >
+                    {change.value > 0 ? '+' : ''}{change.value}%
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p className="text-xs">Change from previous {getDaysFromTimeframe()} days</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
         </div>
       </CardHeader>
