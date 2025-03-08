@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 
@@ -24,12 +23,18 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       </div>
       
       {/* Right Sidebar - fixed width navigation */}
-      <div className="fixed right-0 top-0 h-full w-[300px] bg-white border-l border-border z-10">
-        <img 
-          src="/lovable-uploads/8481db1a-24b4-402f-95c5-235ada172dfa.png" 
-          alt="App Navigation" 
-          className="w-full object-contain"
-        />
+      <div className="fixed right-0 top-0 h-full w-[300px] z-10 flex flex-col">
+        {/* White background area for the top section */}
+        <div className="bg-white border-l border-border">
+          <img 
+            src="/lovable-uploads/4e775057-b64f-42a8-83d9-29ae33ed1a2d.png" 
+            alt="App Navigation" 
+            className="w-full object-contain"
+          />
+        </div>
+        
+        {/* Rest of the sidebar with the original background */}
+        <div className="flex-1 bg-sidebar border-l border-border"></div>
       </div>
     </div>
   );
