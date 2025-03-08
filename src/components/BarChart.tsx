@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -65,13 +64,11 @@ const BarChart = ({
     change.position >= 0 && change.position < data.length
   );
   
-  // Determine if we should use line chart for this metric
   const useLineChart = (metricType === 'conversion' || metricType === 'errorRate');
   
-  // Line colors
   const trueColor = '#2BB7D2';
-  const falseColor = '#FFD099'; // reverted to original color
-  
+  const falseColor = '#FFD099';
+
   return (
     <div className="w-full h-full">
       <ResponsiveContainer width="100%" height={height}>
@@ -137,7 +134,6 @@ const BarChart = ({
             />
           ))}
           
-          {/* For evaluation metrics, use bar chart */}
           {metricType === 'evaluations' && !(showTrue && showFalse) && (
             <Bar
               dataKey={showTrue ? 'valueTrue' : showFalse ? 'valueFalse' : 'value'}
@@ -145,7 +141,7 @@ const BarChart = ({
               fill={showTrue ? trueColor : showFalse ? falseColor : barColor}
               barSize={barSize}
               isAnimationActive={false}
-              radius={[1, 1, 0, 0]} // changed from 3px to 1px rounded corners
+              radius={[1, 1, 0, 0]}
             >
               {data.map((entry, index) => (
                 <BarChartCell 
@@ -157,7 +153,6 @@ const BarChart = ({
             </Bar>
           )}
           
-          {/* For stacked bar charts (only for evaluations) */}
           {metricType === 'evaluations' && showTrue && showFalse && (
             <>
               <Bar
@@ -167,7 +162,7 @@ const BarChart = ({
                 fill={trueColor}
                 barSize={barSize}
                 isAnimationActive={false}
-                radius={[1, 1, 0, 0]} // changed from 3px to 1px rounded corners
+                radius={[1, 1, 0, 0]}
               />
               <Bar
                 dataKey="valueFalse"
@@ -176,20 +171,19 @@ const BarChart = ({
                 fill={falseColor}
                 barSize={barSize}
                 isAnimationActive={false}
-                radius={[0, 0, 0, 0]} // only top bars need rounded corners in stack
+                radius={[0, 0, 0, 0]}
               />
             </>
           )}
           
-          {/* For conversion and error rates, use line charts */}
           {useLineChart && showTrue && (
             <Line
               type="monotone"
               dataKey="valueTrue"
               name="True"
               stroke={trueColor}
-              strokeWidth={2}
-              dot={false} // removed dots
+              strokeWidth={3.5}
+              dot={false}
               activeDot={{ r: 5 }}
               isAnimationActive={false}
             />
@@ -202,8 +196,8 @@ const BarChart = ({
               name="False"
               stroke={falseColor}
               strokeWidth={2}
-              dot={false} // removed dots
-              activeDot={{ r: 5 }}
+              dot={false}
+              activeDot={{ r: 4 }}
               isAnimationActive={false}
             />
           )}
