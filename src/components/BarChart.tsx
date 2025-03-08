@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
   BarChart as RechartsBarChart,
@@ -101,7 +102,8 @@ const BarChart = ({
     return <div className="flex items-center justify-center h-full">No data available</div>;
   }
 
-  const yAxisDomain = calculateYAxisDomain(filteredData, showTrue, showFalse);
+  // Pass the metricType to calculateYAxisDomain to get a fixed max value
+  const yAxisDomain = calculateYAxisDomain(filteredData, showTrue, showFalse, metricType);
 
   // Find the February 21 position in the data array
   const feb21Position = filteredData.findIndex(item => item.name === "Feb 21");
