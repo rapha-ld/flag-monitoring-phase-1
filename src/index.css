@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
+    --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
@@ -34,7 +34,7 @@
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
+    --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
     --sidebar-primary-foreground: 0 0% 98%;
@@ -81,69 +81,64 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
-}
 
-@layer base {
-  * {
-    @apply border-border;
+  @layer base {
+    * {
+      @apply border-border;
+    }
+
+    body {
+      @apply bg-white text-textBase;
+      font-feature-settings: "rlig" 1, "calt" 1;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .recharts-cartesian-grid-horizontal line,
+    .recharts-cartesian-grid-vertical line {
+      @apply stroke-border/50;
+    }
+
+    .recharts-tooltip-wrapper {
+      @apply !shadow-none outline-none;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      @apply bg-transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/30 transition-colors;
+    }
+
+    .chart-container {
+      @apply transition-all duration-300 ease-out;
+    }
+    
+    .chart-container:hover {
+      @apply shadow-md;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      @apply tracking-tight;
+    }
+    
+    .text-balance {
+      text-wrap: balance;
+    }
   }
 
-  body {
-    @apply bg-background text-textBase;
-    font-feature-settings: "rlig" 1, "calt" 1;
-    font-family: 'Inter', sans-serif;
-  }
-
-  /* Chart styles */
-  .recharts-cartesian-grid-horizontal line,
-  .recharts-cartesian-grid-vertical line {
-    @apply stroke-border/50;
-  }
-
-  .recharts-tooltip-wrapper {
-    @apply !shadow-none outline-none;
-  }
-
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  ::-webkit-scrollbar-track {
-    @apply bg-transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/30 transition-colors;
-  }
-
-  /* Card and chart container animations */
-  .chart-container {
-    @apply transition-all duration-300 ease-out;
-  }
-  
-  .chart-container:hover {
-    @apply shadow-md;
-  }
-
-  /* Typography refinements */
-  h1, h2, h3, h4, h5, h6 {
-    @apply tracking-tight;
-  }
-  
-  .text-balance {
-    text-wrap: balance;
-  }
-}
-
-/* Version marker animation */
-@layer components {
-  .version-marker {
-    @apply transition-all duration-300;
-  }
-  
-  .version-marker:hover {
-    @apply scale-105 cursor-pointer;
+  @layer components {
+    .version-marker {
+      @apply transition-all duration-300;
+    }
+    
+    .version-marker:hover {
+      @apply scale-105 cursor-pointer;
+    }
   }
 }
