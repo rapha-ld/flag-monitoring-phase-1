@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { BarChart3, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import MetricsModal from '@/components/MetricsModal';
+import MetricsModal from '@/components/metrics/MetricsModal';
 
 interface MetricsSelectorProps {
   selectedMetrics: string[];
@@ -24,7 +23,6 @@ const MetricsSelector = ({
   const [metricModalOpen, setMetricModalOpen] = useState(false);
 
   const handleMetricToggle = (metric: string) => {
-    // Toggle visibility instead of removing the metric
     onMetricVisibilityChange(metric, hiddenMetrics.includes(metric));
   };
 
@@ -93,7 +91,6 @@ const MetricsSelector = ({
         </PopoverContent>
       </Popover>
 
-      {/* Metrics Selection Modal */}
       <MetricsModal 
         open={metricModalOpen}
         onOpenChange={setMetricModalOpen}
