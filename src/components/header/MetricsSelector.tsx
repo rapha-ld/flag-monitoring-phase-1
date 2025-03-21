@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { BarChart3, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import MetricsModal from '@/components/MetricsModal';
 
@@ -57,14 +56,12 @@ const MetricsSelector = ({ selectedMetrics, onMetricsChange }: MetricsSelectorPr
             <div className="space-y-2">
               {selectedMetrics.map(metric => (
                 <div key={metric} className="flex items-center space-x-2 group">
-                  <Checkbox 
-                    id={`metrics-${metric}`} 
-                    checked={selectedMetrics.includes(metric)}
-                    onCheckedChange={() => handleMetricToggle(metric)}
-                  />
-                  <Label htmlFor={`metrics-${metric}`} className="text-sm cursor-pointer flex-grow">
-                    {getMetricDisplayName(metric)}
-                  </Label>
+                  <div 
+                    className="p-1 rounded-sm cursor-pointer hover:bg-muted flex-grow"
+                    onClick={() => handleMetricToggle(metric)}
+                  >
+                    <span className="text-sm">{getMetricDisplayName(metric)}</span>
+                  </div>
                   <button 
                     onClick={() => handleMetricRemove(metric)}
                     className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-muted rounded-sm"
