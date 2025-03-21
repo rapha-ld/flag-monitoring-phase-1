@@ -5,6 +5,7 @@ import VersionMarker from './VersionMarker';
 import CustomTooltip from './chart/CustomTooltip';
 import { referenceLineMarkers, thresholdLines } from '@/utils/chartReferenceLines';
 import { format } from 'date-fns';
+import BarChartCell from './chart/BarChartCell';
 
 export interface DataPoint {
   name: string;
@@ -75,11 +76,9 @@ const BarChart = ({
 
   const thresholdLine = metricType ? thresholdLines.find(t => t.metricType === metricType) : undefined;
 
-  // Find the data point name that corresponds to the selected timestamp
   const findSelectedDataPoint = () => {
     if (!selectedTimestamp || data.length === 0) return null;
     
-    // Convert all data points' dates to timestamps for comparison
     const dataPoints = data.map(point => {
       const pointDate = new Date(point.date || point.name);
       return {
@@ -88,7 +87,6 @@ const BarChart = ({
       };
     });
     
-    // Find the closest data point to the selected timestamp
     const selectedTime = selectedTimestamp.getTime();
     let closestPoint = dataPoints[0];
     let minDiff = Math.abs(dataPoints[0].timestamp - selectedTime);
@@ -127,11 +125,10 @@ const BarChart = ({
             axisLine={false}
             tickLine={false}
             tickFormatter={(value) => {
-              // Parse the date from value (which could be in various formats)
               const date = new Date(value);
               return isNaN(date.getTime()) 
-                ? value // If not a valid date, use the original value
-                : `${date.getMonth() + 1}/${date.getDate()}`; // Format as "M/D"
+                ? value
+                : `${date.getMonth() + 1}/${date.getDate()}`;
             }}
             interval={interval}
             padding={{ left: 10, right: 10 }}
@@ -194,7 +191,6 @@ const BarChart = ({
             />
           )}
           
-          {/* Selected timestamp vertical reference line */}
           {hasSelectedTimestamp && selectedPoint && (
             <ReferenceLine
               x={selectedPoint.name}
