@@ -16,7 +16,7 @@ const TimeframeSelector = ({ timeframe, onTimeframeChange }: TimeframeSelectorPr
         className="h-9"
         onClick={() => onTimeframeChange("7d")}
       >
-        7d
+        7D
       </Button>
       <Button 
         variant={timeframe === "14d" ? "default" : "outline"} 
@@ -24,7 +24,7 @@ const TimeframeSelector = ({ timeframe, onTimeframeChange }: TimeframeSelectorPr
         className="h-9"
         onClick={() => onTimeframeChange("14d")}
       >
-        14d
+        14D
       </Button>
       <Button 
         variant={timeframe === "30d" ? "default" : "outline"} 
@@ -32,7 +32,7 @@ const TimeframeSelector = ({ timeframe, onTimeframeChange }: TimeframeSelectorPr
         className="h-9"
         onClick={() => onTimeframeChange("30d")}
       >
-        30d
+        1M
       </Button>
       <Button 
         variant={timeframe === "90d" ? "default" : "outline"} 
@@ -40,7 +40,7 @@ const TimeframeSelector = ({ timeframe, onTimeframeChange }: TimeframeSelectorPr
         className="h-9"
         onClick={() => onTimeframeChange("90d")}
       >
-        90d
+        3M
       </Button>
     </div>
   );
