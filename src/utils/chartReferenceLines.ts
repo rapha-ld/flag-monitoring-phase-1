@@ -1,5 +1,27 @@
 
-export const referenceLineMarkers = [
+// Define types for reference line markers and threshold lines
+interface ReferenceLineMarker {
+  date: string;
+  label: string;
+  color: string;
+}
+
+interface LabelPosition {
+  position: string;
+  offset: number;
+  align: string;
+}
+
+interface ThresholdLine {
+  metricType: string;
+  value: number;
+  label: string;
+  color: string;
+  strokeDasharray: string;
+  labelPosition: LabelPosition;
+}
+
+export const referenceLineMarkers: ReferenceLineMarker[] = [
   {
     date: "2023-06-10",
     label: "Feature Release",
@@ -17,7 +39,7 @@ export const referenceLineMarkers = [
   }
 ];
 
-export const thresholdLines = [
+export const thresholdLines: ThresholdLine[] = [
   {
     metricType: "errorRate",
     value: 3,

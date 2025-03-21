@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -144,7 +145,7 @@ const BarChart = ({
               y={thresholdLine.value}
               label={{
                 value: thresholdLine.label,
-                position: thresholdLine.labelPosition.position,
+                position: thresholdLine.labelPosition.position as any,
                 offset: thresholdLine.labelPosition.offset,
                 fill: thresholdLine.color,
                 fontSize: 12,
