@@ -47,7 +47,7 @@ const historyData: HistoryEvent[] = [
     id: '4',
     type: 'settings',
     title: 'Rules changed',
-    description: 'Create new rule: LD users',
+    description: 'New rule "LD users" was created',
     timestamp: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000) // 2 months ago
   },
   {
