@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -76,30 +77,41 @@ const BarChart = ({
 
   const thresholdLine = metricType ? thresholdLines.find(t => t.metricType === metricType) : undefined;
 
+  // Enhanced function to find the closest data point to the selected timestamp
   const findSelectedDataPoint = () => {
     if (!selectedTimestamp || data.length === 0) return null;
     
-    const dataPoints = data.map(point => {
-      const pointDate = new Date(point.date || point.name);
+    // Parse all dates from data points
+    const dataPoints = data.map((point, index) => {
+      const pointDate = point.date ? new Date(point.date) : 
+                       (point.name && !isNaN(new Date(point.name).getTime()) ? 
+                       new Date(point.name) : null);
+      
       return {
         ...point,
-        timestamp: pointDate.getTime()
+        index,
+        timestamp: pointDate ? pointDate.getTime() : null
       };
-    });
+    }).filter(point => point.timestamp !== null);
+    
+    if (dataPoints.length === 0) return null;
     
     const selectedTime = selectedTimestamp.getTime();
     let closestPoint = dataPoints[0];
-    let minDiff = Math.abs(dataPoints[0].timestamp - selectedTime);
+    let minDiff = Math.abs(dataPoints[0].timestamp! - selectedTime);
     
     for (let i = 1; i < dataPoints.length; i++) {
-      const diff = Math.abs(dataPoints[i].timestamp - selectedTime);
+      const diff = Math.abs(dataPoints[i].timestamp! - selectedTime);
       if (diff < minDiff) {
         minDiff = diff;
         closestPoint = dataPoints[i];
       }
     }
     
-    return closestPoint;
+    return {
+      ...closestPoint,
+      exactTime: selectedTimestamp
+    };
   };
   
   const selectedPoint = findSelectedDataPoint();
@@ -197,7 +209,7 @@ const BarChart = ({
               stroke="#7c5cfc"
               strokeWidth={2}
               label={{
-                value: format(selectedTimestamp!, "MMM d, h:mm a"),
+                value: format(selectedPoint.exactTime, "MMM d, h:mm a"),
                 position: 'top',
                 fill: '#7c5cfc',
                 fontSize: 12,

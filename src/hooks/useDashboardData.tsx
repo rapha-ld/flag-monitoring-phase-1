@@ -54,10 +54,12 @@ export const useDashboardData = () => {
     
     console.log(`Filtering data for ${days} days`);
     
+    // Get the filtered data based on timeframe, environment, and device
     const filteredEval = getFilteredData(evaluationData, days, environment, selectedDevice);
     const filteredConv = getFilteredData(conversionData, days, environment, selectedDevice);
     const filteredError = getFilteredData(errorRateData, days, environment, selectedDevice);
     
+    // Process the true/false values for each data set
     const processedEval = processTrueFalseValues(filteredEval);
     const processedConv = processTrueFalseValues(filteredConv);
     const processedError = processTrueFalseValues(filteredError);
@@ -68,20 +70,27 @@ export const useDashboardData = () => {
     setFilteredConversionData(processedConv);
     setFilteredErrorRateData(processedError);
     
+    // Calculate the current metrics for display
     const metrics = calculateMetrics(filteredEval, filteredConv, filteredError, days);
     setCurrentMetrics(metrics);
   }, [timeframe, environment, selectedDevice]);
 
   const handleTimeframeChange = (value: string) => {
     setTimeframe(value);
+    // Clear timestamp selection when timeframe changes
+    setSelectedTimestamp(null);
   };
 
   const handleEnvironmentChange = (value: string) => {
     setEnvironment(value);
+    // Clear timestamp selection when environment changes
+    setSelectedTimestamp(null);
   };
 
   const handleDeviceChange = (value: string) => {
     setSelectedDevice(value);
+    // Clear timestamp selection when device changes
+    setSelectedTimestamp(null);
   };
 
   const handleMetricsChange = (metrics: string[]) => {
