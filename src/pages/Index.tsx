@@ -15,7 +15,6 @@ const Index = () => {
     environment,
     selectedDevice,
     selectedMetrics,
-    visibleMetrics,
     showTrue,
     showFalse,
     filteredEvaluationData,
@@ -30,8 +29,7 @@ const Index = () => {
     handleDeviceChange,
     handleMetricsChange,
     handleToggleTrue,
-    handleToggleFalse,
-    handleMetricVisibilityChange
+    handleToggleFalse
   } = useDashboardData();
 
   return (
@@ -54,11 +52,10 @@ const Index = () => {
             showFalse={showFalse}
             onToggleTrue={handleToggleTrue}
             onToggleFalse={handleToggleFalse}
-            onMetricVisibilityChange={handleMetricVisibilityChange}
           />
           
           <DashboardMetrics 
-            selectedMetrics={visibleMetrics}
+            selectedMetrics={selectedMetrics}
             currentMetrics={currentMetrics}
             filteredEvaluationData={filteredEvaluationData}
             filteredConversionData={filteredConversionData}
