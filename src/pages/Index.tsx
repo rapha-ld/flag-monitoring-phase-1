@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import DashboardMetrics from '@/components/dashboard/DashboardMetrics';
 import DashboardFooter from '@/components/dashboard/DashboardFooter';
+import FeatureFlagHistory from '@/components/dashboard/FeatureFlagHistory';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { referenceLineMarkers } from '@/utils/chartReferenceLines';
 
@@ -72,6 +73,9 @@ const Index = () => {
             showFalse={showFalse}
             timeframe={timeframe}
           />
+          
+          {/* Add Feature Flag History table */}
+          <FeatureFlagHistory />
           
           <DashboardFooter />
         </div>
