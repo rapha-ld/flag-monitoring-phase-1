@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -21,6 +20,9 @@ const metricCategories = {
     { id: 'cpuUsage', name: 'CPU Usage' },
     { id: 'networkRequests', name: 'Network Requests' },
     { id: 'errorRate', name: 'Avg. Error Rate' },
+    { id: 'p95FrontendLatency', name: 'P95 Frontend Latency' },
+    { id: 'p90FrontendLatency', name: 'P90 Frontend Latency' },
+    { id: 'p85FrontendLatency', name: 'P85 Frontend Latency' },
   ],
   business: [
     { id: 'evaluations', name: 'Total Evaluations' },
