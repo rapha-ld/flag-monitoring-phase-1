@@ -18,6 +18,8 @@ interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   onDeviceChange?: (value: string) => void;
   selectedMetrics?: string[];
   onMetricsChange?: (metrics: string[]) => void;
+  hiddenMetrics?: string[];
+  onMetricVisibilityChange?: (metric: string, visible: boolean) => void;
   showTrue?: boolean;
   showFalse?: boolean;
   onToggleTrue?: () => void;
@@ -33,6 +35,8 @@ const Header = ({
   onDeviceChange = () => {},
   selectedMetrics = ['evaluations', 'conversion', 'errorRate'],
   onMetricsChange = () => {},
+  hiddenMetrics = [],
+  onMetricVisibilityChange = () => {},
   showTrue = true,
   showFalse = false,
   onToggleTrue = () => {},
@@ -77,6 +81,8 @@ const Header = ({
         <MetricsSelector 
           selectedMetrics={selectedMetrics}
           onMetricsChange={onMetricsChange}
+          hiddenMetrics={hiddenMetrics}
+          onMetricVisibilityChange={onMetricVisibilityChange}
         />
       </div>
     </header>
