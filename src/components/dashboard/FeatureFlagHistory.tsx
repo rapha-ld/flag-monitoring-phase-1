@@ -28,6 +28,13 @@ const historyData: HistoryEvent[] = [
     timestamp: new Date(2024, 6, 15, 14, 30) // July 15, 2024
   },
   {
+    id: '6',
+    type: 'enabled', 
+    title: 'Flag enabled',
+    description: 'New checkout flow was enabled for production',
+    timestamp: new Date(2024, 6, 1, 10, 15) // July 1, 2024
+  },
+  {
     id: '2',
     type: 'updated',
     title: 'Flag updated',
@@ -38,14 +45,14 @@ const historyData: HistoryEvent[] = [
     id: '3',
     type: 'disabled',
     title: 'Flag disabled',
-    description: 'Old payment gateway was disabled',
+    description: 'New checkout flow was disabled for production',
     timestamp: new Date(2024, 5, 12, 16, 20) // June 12, 2024
   },
   {
     id: '4',
     type: 'settings',
-    title: 'Settings changed',
-    description: 'Changed rollout strategy to gradual',
+    title: 'Rules changed',
+    description: 'Added progressive rollout',
     timestamp: new Date(2024, 4, 27, 11, 15) // May 27, 2024
   },
   {
