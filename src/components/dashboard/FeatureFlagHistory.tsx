@@ -1,8 +1,10 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
 
 // Define the interface for history events
 interface HistoryEvent {
@@ -101,6 +103,8 @@ const formatTimestamp = (date: Date) => {
 };
 
 const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, selectedTimestamp }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+
   // Handle row click
   const handleRowClick = (event: HistoryEvent) => {
     // If the timestamp is already selected, deselect it
@@ -116,9 +120,30 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
     return selectedTimestamp && selectedTimestamp.getTime() === event.timestamp.getTime();
   };
 
+  // Filter the history data based on search query
+  const filteredHistoryData = historyData.filter(event => {
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      event.title.toLowerCase().includes(searchLower) ||
+      event.description.toLowerCase().includes(searchLower) ||
+      event.type.toLowerCase().includes(searchLower)
+    );
+  });
+
   return (
     <div className="space-y-4 animate-fade-in">
-      <h2 className="text-[15px] font-semibold">History</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-[15px] font-semibold">History</h2>
+        <div className="relative w-72">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search history..."
+            className="pl-8"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
@@ -128,22 +153,30 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
           </TableRow>
         </TableHeader>
         <TableBody>
-          {historyData.map((event) => (
-            <TableRow 
-              key={event.id}
-              onClick={() => handleRowClick(event)}
-              className={`cursor-pointer transition-colors ${isRowSelected(event) ? 'bg-primary/10' : ''}`}
-            >
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  {getEventIcon(event.type)}
-                  <span className="font-medium">{event.title}</span>
-                </div>
+          {filteredHistoryData.length > 0 ? (
+            filteredHistoryData.map((event) => (
+              <TableRow 
+                key={event.id}
+                onClick={() => handleRowClick(event)}
+                className={`cursor-pointer transition-colors ${isRowSelected(event) ? 'bg-primary/10' : ''}`}
+              >
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    {getEventIcon(event.type)}
+                    <span className="font-medium">{event.title}</span>
+                  </div>
+                </TableCell>
+                <TableCell>{event.description}</TableCell>
+                <TableCell className="text-right">{formatTimestamp(event.timestamp)}</TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={3} className="text-center py-6 text-muted-foreground">
+                No results found for "{searchQuery}"
               </TableCell>
-              <TableCell>{event.description}</TableCell>
-              <TableCell className="text-right">{formatTimestamp(event.timestamp)}</TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>
