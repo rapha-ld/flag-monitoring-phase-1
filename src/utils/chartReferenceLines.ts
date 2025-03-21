@@ -1,3 +1,4 @@
+
 // Define types for reference line markers and threshold lines
 interface ReferenceLineMarker {
   date: string;
