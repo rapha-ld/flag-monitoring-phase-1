@@ -1,4 +1,3 @@
-
 // Define types for reference line markers and threshold lines
 interface ReferenceLineMarker {
   date: string;
@@ -49,7 +48,7 @@ export const thresholdLines: ThresholdLine[] = [
     labelPosition: {
       position: "top",
       offset: -14,
-      align: "right"
+      align: "left"
     }
   }
 ];
