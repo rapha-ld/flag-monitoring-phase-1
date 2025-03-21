@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag } from 'lucide-react';
@@ -20,49 +19,49 @@ interface FeatureFlagHistoryProps {
   selectedTimestamp: Date | null;
 }
 
-// Sample data for the history table - using more recent dates
+// Sample data for the history table - using more recent dates (within last 4 months)
 const historyData: HistoryEvent[] = [
   {
     id: '1',
     type: 'enabled',
     title: 'Flag enabled',
     description: 'New checkout flow was enabled for production',
-    timestamp: new Date(2024, 6, 15, 14, 30) // July 15, 2024
+    timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // 1 week ago
   },
   {
     id: '2',
     type: 'updated',
     title: 'Flag updated',
     description: 'Target audience changed from 10% to 25% of users',
-    timestamp: new Date(2024, 5, 28, 9, 45) // June 28, 2024
+    timestamp: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // 1 month ago
   },
   {
     id: '3',
     type: 'disabled',
     title: 'Flag disabled',
     description: 'New checkout flow was disabled for production',
-    timestamp: new Date(2024, 5, 12, 16, 20) // June 12, 2024
+    timestamp: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000) // 1.5 months ago
   },
   {
     id: '4',
     type: 'settings',
     title: 'Rules changed',
     description: 'Added progressive rollout',
-    timestamp: new Date(2024, 4, 27, 11, 15) // May 27, 2024
+    timestamp: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000) // 2 months ago
   },
   {
     id: '6',
     type: 'enabled', 
     title: 'Flag enabled',
-    description: 'New checkout flow was enabled for production',
-    timestamp: new Date(2024, 6, 1, 10, 15) // July 1, 2024
+    description: 'New checkout flow was enabled for testing',
+    timestamp: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000) // 3 months ago
   },
   {
     id: '5',
     type: 'created',
     title: 'Flag created',
     description: 'New feature flag "checkout-v2" was created',
-    timestamp: new Date(2024, 4, 5, 10, 0) // May 5, 2024
+    timestamp: new Date(Date.now() - 115 * 24 * 60 * 60 * 1000) // ~3.8 months ago
   }
 ];
 
