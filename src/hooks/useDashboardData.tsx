@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { 
   evaluationData, 
@@ -18,6 +19,7 @@ export const useDashboardData = () => {
   const [environment, setEnvironment] = useState("production");
   const [selectedDevice, setSelectedDevice] = useState("all");
   const [selectedMetrics, setSelectedMetrics] = useState(['evaluations', 'conversion', 'errorRate']);
+  const [hiddenMetrics, setHiddenMetrics] = useState<string[]>([]);
   const [showTrue, setShowTrue] = useState(true);
   const [showFalse, setShowFalse] = useState(true);
   const [filteredEvaluationData, setFilteredEvaluationData] = useState<DataPoint[]>(evaluationData);
@@ -28,6 +30,9 @@ export const useDashboardData = () => {
     conversion: { value: 0, change: { value: 0, trend: 'up' as 'up' | 'down' } },
     errorRate: { value: 0, change: { value: 0, trend: 'up' as 'up' | 'down' } }
   });
+
+  // Compute visible metrics (selected metrics that aren't hidden)
+  const visibleMetrics = selectedMetrics.filter(metric => !hiddenMetrics.includes(metric));
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -79,7 +84,20 @@ export const useDashboardData = () => {
   };
 
   const handleMetricsChange = (metrics: string[]) => {
+    // When metrics are removed, also remove them from hiddenMetrics
+    const removedMetrics = selectedMetrics.filter(m => !metrics.includes(m));
+    if (removedMetrics.length > 0) {
+      setHiddenMetrics(current => current.filter(m => !removedMetrics.includes(m)));
+    }
     setSelectedMetrics(metrics);
+  };
+
+  const handleMetricVisibilityChange = (metric: string, visible: boolean) => {
+    if (visible) {
+      setHiddenMetrics(current => current.filter(m => m !== metric));
+    } else {
+      setHiddenMetrics(current => [...current, metric]);
+    }
   };
 
   const handleToggleTrue = () => {
@@ -102,6 +120,7 @@ export const useDashboardData = () => {
     environment,
     selectedDevice,
     selectedMetrics,
+    visibleMetrics,
     showTrue,
     showFalse,
     filteredEvaluationData,
@@ -116,6 +135,7 @@ export const useDashboardData = () => {
     handleDeviceChange,
     handleMetricsChange,
     handleToggleTrue,
-    handleToggleFalse
+    handleToggleFalse,
+    handleMetricVisibilityChange
   };
 };

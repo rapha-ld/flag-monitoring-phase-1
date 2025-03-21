@@ -1,9 +1,7 @@
-
 import React, { useState } from 'react';
-import { BarChart3, Plus, X } from 'lucide-react';
+import { BarChart3, Plus, X, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import MetricsModal from '@/components/MetricsModal';
 
@@ -15,15 +13,13 @@ interface MetricsSelectorProps {
 const MetricsSelector = ({ selectedMetrics, onMetricsChange }: MetricsSelectorProps) => {
   const [metricsOpen, setMetricsOpen] = useState(false);
   const [metricModalOpen, setMetricModalOpen] = useState(false);
+  const [hiddenMetrics, setHiddenMetrics] = useState<string[]>([]);
 
   const handleMetricToggle = (metric: string) => {
-    const updatedMetrics = selectedMetrics.includes(metric)
-      ? selectedMetrics.filter(m => m !== metric)
-      : [...selectedMetrics, metric];
-    
-    // Ensure at least one metric is selected
-    if (updatedMetrics.length > 0) {
-      onMetricsChange(updatedMetrics);
+    if (hiddenMetrics.includes(metric)) {
+      setHiddenMetrics(hiddenMetrics.filter(m => m !== metric));
+    } else {
+      setHiddenMetrics([...hiddenMetrics, metric]);
     }
   };
 
@@ -31,6 +27,9 @@ const MetricsSelector = ({ selectedMetrics, onMetricsChange }: MetricsSelectorPr
     if (selectedMetrics.length > 1) {
       const updatedMetrics = selectedMetrics.filter(m => m !== metric);
       onMetricsChange(updatedMetrics);
+      if (hiddenMetrics.includes(metric)) {
+        setHiddenMetrics(hiddenMetrics.filter(m => m !== metric));
+      }
     }
   };
 
@@ -42,6 +41,14 @@ const MetricsSelector = ({ selectedMetrics, onMetricsChange }: MetricsSelectorPr
     return metric.charAt(0).toUpperCase() + metric.slice(1).replace(/([A-Z])/g, ' $1');
   };
 
+  const visibleMetrics = selectedMetrics.filter(metric => !hiddenMetrics.includes(metric));
+
+  const handleMetricsChangeFromModal = (metrics: string[]) => {
+    onMetricsChange(metrics);
+    const newMetrics = metrics.filter(m => !selectedMetrics.includes(m));
+    setHiddenMetrics(hiddenMetrics.filter(m => metrics.includes(m)));
+  };
+
   return (
     <div className="ml-auto">
       <Popover open={metricsOpen} onOpenChange={setMetricsOpen}>
@@ -51,26 +58,34 @@ const MetricsSelector = ({ selectedMetrics, onMetricsChange }: MetricsSelectorPr
             <span>Metrics</span>
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-2 z-50" align="end">
+        <PopoverContent className="w-[220px] p-2 z-50" align="end">
           <div className="space-y-2">
             <div className="text-sm font-medium pb-1 border-b mb-1">Display Metrics</div>
             <div className="space-y-2">
               {selectedMetrics.map(metric => (
-                <div key={metric} className="flex items-center space-x-2 group">
-                  <Checkbox 
-                    id={`metrics-${metric}`} 
-                    checked={selectedMetrics.includes(metric)}
-                    onCheckedChange={() => handleMetricToggle(metric)}
-                  />
-                  <Label htmlFor={`metrics-${metric}`} className="text-sm cursor-pointer flex-grow">
+                <div key={metric} className="flex items-center justify-between space-x-2 group py-1 px-1 hover:bg-muted rounded-md">
+                  <Label className="text-sm cursor-pointer flex-grow">
                     {getMetricDisplayName(metric)}
                   </Label>
-                  <button 
-                    onClick={() => handleMetricRemove(metric)}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-muted rounded-sm"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
+                  <div className="flex items-center space-x-1">
+                    <button 
+                      onClick={() => handleMetricToggle(metric)}
+                      className="p-1 hover:bg-muted rounded-sm text-muted-foreground hover:text-foreground"
+                      title={hiddenMetrics.includes(metric) ? "Show metric" : "Hide metric"}
+                    >
+                      {hiddenMetrics.includes(metric) ? 
+                        <EyeOff className="h-3.5 w-3.5" /> : 
+                        <Eye className="h-3.5 w-3.5" />
+                      }
+                    </button>
+                    <button 
+                      onClick={() => handleMetricRemove(metric)}
+                      className="p-1 hover:bg-muted rounded-sm text-muted-foreground hover:text-foreground"
+                      title="Remove metric"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -92,12 +107,11 @@ const MetricsSelector = ({ selectedMetrics, onMetricsChange }: MetricsSelectorPr
         </PopoverContent>
       </Popover>
 
-      {/* Metrics Selection Modal */}
       <MetricsModal 
         open={metricModalOpen}
         onOpenChange={setMetricModalOpen}
         selectedMetrics={selectedMetrics}
-        onMetricsChange={onMetricsChange}
+        onMetricsChange={handleMetricsChangeFromModal}
       />
     </div>
   );
