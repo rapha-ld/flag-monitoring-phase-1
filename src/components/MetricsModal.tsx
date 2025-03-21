@@ -7,26 +7,30 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 
-// List of available metrics
-const availableMetrics = [
-  { id: 'evaluations', name: 'Total Evaluations' },
-  { id: 'conversion', name: 'Avg. Checkout Conversion Rate' },
-  { id: 'errorRate', name: 'Avg. Error Rate' },
-  { id: 'pageLoadTime', name: 'Page Load Time' },
-  { id: 'timeToInteractive', name: 'Time to Interactive' },
-  { id: 'firstContentfulPaint', name: 'First Contentful Paint' },
-  { id: 'largestContentfulPaint', name: 'Largest Contentful Paint' },
-  { id: 'cumulativeLayoutShift', name: 'Cumulative Layout Shift' },
-  { id: 'firstInputDelay', name: 'First Input Delay' },
-  { id: 'sessionDuration', name: 'Average Session Duration' },
-  { id: 'bounceRate', name: 'Bounce Rate' },
-  { id: 'apiResponseTime', name: 'API Response Time' },
-  { id: 'memoryUsage', name: 'Memory Usage' },
-  { id: 'cpuUsage', name: 'CPU Usage' },
-  { id: 'networkRequests', name: 'Network Requests' },
-  { id: 'userSatisfactionScore', name: 'User Satisfaction Score' },
-  { id: 'timeOnPage', name: 'Time on Page' },
-];
+// List of available metrics categorized
+const metricCategories = {
+  performance: [
+    { id: 'pageLoadTime', name: 'Page Load Time' },
+    { id: 'timeToInteractive', name: 'Time to Interactive' },
+    { id: 'firstContentfulPaint', name: 'First Contentful Paint' },
+    { id: 'largestContentfulPaint', name: 'Largest Contentful Paint' },
+    { id: 'cumulativeLayoutShift', name: 'Cumulative Layout Shift' },
+    { id: 'firstInputDelay', name: 'First Input Delay' },
+    { id: 'apiResponseTime', name: 'API Response Time' },
+    { id: 'memoryUsage', name: 'Memory Usage' },
+    { id: 'cpuUsage', name: 'CPU Usage' },
+    { id: 'networkRequests', name: 'Network Requests' },
+    { id: 'errorRate', name: 'Avg. Error Rate' },
+  ],
+  business: [
+    { id: 'evaluations', name: 'Total Evaluations' },
+    { id: 'conversion', name: 'Avg. Checkout Conversion Rate' },
+    { id: 'sessionDuration', name: 'Average Session Duration' },
+    { id: 'bounceRate', name: 'Bounce Rate' },
+    { id: 'userSatisfactionScore', name: 'User Satisfaction Score' },
+    { id: 'timeOnPage', name: 'Time on Page' },
+  ]
+};
 
 interface MetricsModalProps {
   open: boolean;
@@ -44,10 +48,23 @@ const MetricsModal = ({
   const [localSelectedMetrics, setLocalSelectedMetrics] = useState<string[]>(selectedMetrics);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Get recently used metrics (those that are currently selected)
+  const recentlyUsedMetrics = selectedMetrics.map(metricId => {
+    // Find the metric in any category
+    for (const category of Object.values(metricCategories)) {
+      const metric = category.find(m => m.id === metricId);
+      if (metric) return metric;
+    }
+    // Fallback for any metric not found in categories
+    return { id: metricId, name: metricId.charAt(0).toUpperCase() + metricId.slice(1) };
+  });
+
   // Filter metrics based on search query
-  const filteredMetrics = availableMetrics.filter(metric => 
-    metric.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const getFilteredMetrics = (metrics: typeof metricCategories.performance) => {
+    return metrics.filter(metric => 
+      metric.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  };
 
   const handleMetricToggle = (metricId: string) => {
     setLocalSelectedMetrics(current => 
@@ -67,6 +84,12 @@ const MetricsModal = ({
     onOpenChange(false);
   };
 
+  // Check if there are any filtered metrics for a search
+  const hasFilteredMetrics = 
+    getFilteredMetrics(recentlyUsedMetrics).length > 0 ||
+    getFilteredMetrics(metricCategories.performance).length > 0 ||
+    getFilteredMetrics(metricCategories.business).length > 0;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -84,23 +107,81 @@ const MetricsModal = ({
           />
         </div>
 
-        <div className="max-h-[300px] overflow-y-auto pr-1 space-y-1">
-          {filteredMetrics.map(metric => (
-            <div key={metric.id} className="flex items-center space-x-2 p-2 hover:bg-muted rounded-md">
-              <Checkbox 
-                id={`modal-metric-${metric.id}`}
-                checked={localSelectedMetrics.includes(metric.id)}
-                onCheckedChange={() => handleMetricToggle(metric.id)}
-              />
-              <Label 
-                htmlFor={`modal-metric-${metric.id}`}
-                className="flex-grow cursor-pointer"
-              >
-                {metric.name}
-              </Label>
+        <div className="max-h-[300px] overflow-y-auto pr-1 space-y-4">
+          {/* Recently Used Metrics */}
+          {recentlyUsedMetrics.length > 0 && getFilteredMetrics(recentlyUsedMetrics).length > 0 && (
+            <div>
+              <h3 className="text-sm font-semibold mb-1 text-muted-foreground">Recently Used</h3>
+              <div className="space-y-1">
+                {getFilteredMetrics(recentlyUsedMetrics).map(metric => (
+                  <div key={metric.id} className="flex items-center space-x-2 p-2 hover:bg-muted rounded-md">
+                    <Checkbox 
+                      id={`modal-metric-${metric.id}`}
+                      checked={localSelectedMetrics.includes(metric.id)}
+                      onCheckedChange={() => handleMetricToggle(metric.id)}
+                    />
+                    <Label 
+                      htmlFor={`modal-metric-${metric.id}`}
+                      className="flex-grow cursor-pointer"
+                    >
+                      {metric.name}
+                    </Label>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-          {filteredMetrics.length === 0 && (
+          )}
+          
+          {/* Performance Metrics */}
+          {getFilteredMetrics(metricCategories.performance).length > 0 && (
+            <div>
+              <h3 className="text-sm font-semibold mb-1 text-muted-foreground">Performance</h3>
+              <div className="space-y-1">
+                {getFilteredMetrics(metricCategories.performance).map(metric => (
+                  <div key={metric.id} className="flex items-center space-x-2 p-2 hover:bg-muted rounded-md">
+                    <Checkbox 
+                      id={`modal-metric-${metric.id}`}
+                      checked={localSelectedMetrics.includes(metric.id)}
+                      onCheckedChange={() => handleMetricToggle(metric.id)}
+                    />
+                    <Label 
+                      htmlFor={`modal-metric-${metric.id}`}
+                      className="flex-grow cursor-pointer"
+                    >
+                      {metric.name}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Business Metrics */}
+          {getFilteredMetrics(metricCategories.business).length > 0 && (
+            <div>
+              <h3 className="text-sm font-semibold mb-1 text-muted-foreground">Business</h3>
+              <div className="space-y-1">
+                {getFilteredMetrics(metricCategories.business).map(metric => (
+                  <div key={metric.id} className="flex items-center space-x-2 p-2 hover:bg-muted rounded-md">
+                    <Checkbox 
+                      id={`modal-metric-${metric.id}`}
+                      checked={localSelectedMetrics.includes(metric.id)}
+                      onCheckedChange={() => handleMetricToggle(metric.id)}
+                    />
+                    <Label 
+                      htmlFor={`modal-metric-${metric.id}`}
+                      className="flex-grow cursor-pointer"
+                    >
+                      {metric.name}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* No results message */}
+          {!hasFilteredMetrics && (
             <div className="text-center py-4 text-muted-foreground">
               No metrics found matching your search
             </div>
