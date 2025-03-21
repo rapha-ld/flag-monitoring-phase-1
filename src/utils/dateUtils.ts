@@ -30,7 +30,7 @@ export const ensureContinuousDates = (data: any[], days: number) => {
     dateMap.set(formattedDate, {
       name: formattedDate,
       value: 0,
-      date: date.toISOString(),
+      date: date.toISOString(), // Store the full date as ISO string
       environment: data[0]?.environment || 'production', // Use first data point's environment or default
       device: data[0]?.device || 'all' // Use first data point's device or default
     });
@@ -42,7 +42,9 @@ export const ensureContinuousDates = (data: any[], days: number) => {
       dateMap.set(item.name, {
         ...item,
         // Ensure these properties exist even if they're 0
-        value: item.value || 0
+        value: item.value || 0,
+        // Make sure we store the date as ISO string
+        date: item.date || new Date(item.name).toISOString()
       });
     }
   });

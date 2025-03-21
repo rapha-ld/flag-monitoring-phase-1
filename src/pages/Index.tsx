@@ -7,7 +7,6 @@ import DashboardMetrics from '@/components/dashboard/DashboardMetrics';
 import DashboardFooter from '@/components/dashboard/DashboardFooter';
 import FeatureFlagHistory from '@/components/dashboard/FeatureFlagHistory';
 import { useDashboardData } from '@/hooks/useDashboardData';
-import { referenceLineMarkers } from '@/utils/chartReferenceLines';
 
 const Index = () => {
   const {

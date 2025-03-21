@@ -1,10 +1,8 @@
-
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
 import VersionMarker from './VersionMarker';
 import CustomTooltip from './chart/CustomTooltip';
-import BarChartCell from './chart/BarChartCell';
 import { referenceLineMarkers, thresholdLines } from '@/utils/chartReferenceLines';
 import { format } from 'date-fns';
 
@@ -14,6 +12,7 @@ export interface DataPoint {
   valueTrue?: number;
   valueFalse?: number;
   valueAvg?: number;
+  date?: string;
   [key: string]: any;
 }
 
@@ -76,29 +75,37 @@ const BarChart = ({
 
   const thresholdLine = metricType ? thresholdLines.find(t => t.metricType === metricType) : undefined;
 
-  // Find the closest data point to the selected timestamp
-  const findSelectedDataIndex = () => {
-    if (!selectedTimestamp || data.length === 0) return -1;
+  // Find the data point name that corresponds to the selected timestamp
+  const findSelectedDataPoint = () => {
+    if (!selectedTimestamp || data.length === 0) return null;
     
-    const selectedTime = selectedTimestamp.getTime();
-    let closestIndex = -1;
-    let minDiff = Infinity;
-    
-    data.forEach((point, index) => {
-      const pointDate = new Date(point.name);
-      const diff = Math.abs(pointDate.getTime() - selectedTime);
-      if (diff < minDiff) {
-        minDiff = diff;
-        closestIndex = index;
-      }
+    // Convert all data points' dates to timestamps for comparison
+    const dataPoints = data.map(point => {
+      const pointDate = new Date(point.date || point.name);
+      return {
+        ...point,
+        timestamp: pointDate.getTime()
+      };
     });
     
-    return closestIndex;
+    // Find the closest data point to the selected timestamp
+    const selectedTime = selectedTimestamp.getTime();
+    let closestPoint = dataPoints[0];
+    let minDiff = Math.abs(dataPoints[0].timestamp - selectedTime);
+    
+    for (let i = 1; i < dataPoints.length; i++) {
+      const diff = Math.abs(dataPoints[i].timestamp - selectedTime);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestPoint = dataPoints[i];
+      }
+    }
+    
+    return closestPoint;
   };
   
-  const selectedDataIndex = findSelectedDataIndex();
-  const hasSelectedTimestamp = selectedDataIndex !== -1;
-  const selectedDataPoint = hasSelectedTimestamp ? data[selectedDataIndex] : null;
+  const selectedPoint = findSelectedDataPoint();
+  const hasSelectedTimestamp = !!selectedPoint;
 
   return (
     <div className="w-full h-full">
@@ -120,8 +127,11 @@ const BarChart = ({
             axisLine={false}
             tickLine={false}
             tickFormatter={(value) => {
+              // Parse the date from value (which could be in various formats)
               const date = new Date(value);
-              return `${date.getMonth() + 1}/${date.getDate()}`;
+              return isNaN(date.getTime()) 
+                ? value // If not a valid date, use the original value
+                : `${date.getMonth() + 1}/${date.getDate()}`; // Format as "M/D"
             }}
             interval={interval}
             padding={{ left: 10, right: 10 }}
@@ -185,13 +195,13 @@ const BarChart = ({
           )}
           
           {/* Selected timestamp vertical reference line */}
-          {hasSelectedTimestamp && selectedDataPoint && (
+          {hasSelectedTimestamp && selectedPoint && (
             <ReferenceLine
-              x={selectedDataPoint.name}
+              x={selectedPoint.name}
               stroke="#7c5cfc"
               strokeWidth={2}
               label={{
-                value: format(new Date(selectedDataPoint.name), "MMM d, h:mm a"),
+                value: format(selectedTimestamp!, "MMM d, h:mm a"),
                 position: 'top',
                 fill: '#7c5cfc',
                 fontSize: 12,

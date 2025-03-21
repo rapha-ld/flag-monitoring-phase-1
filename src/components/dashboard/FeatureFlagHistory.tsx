@@ -18,49 +18,49 @@ interface FeatureFlagHistoryProps {
   selectedTimestamp: Date | null;
 }
 
-// Sample data for the history table
+// Sample data for the history table - using dates that match our chart data
 const historyData: HistoryEvent[] = [
   {
     id: '1',
     type: 'enabled',
     title: 'Feature flag enabled',
     description: 'New checkout flow was enabled for production',
-    timestamp: new Date(2023, 10, 15, 14, 30)
+    timestamp: new Date(2023, 5, 20, 14, 30) // Corresponds to Jun 20 (Major Update marker)
   },
   {
     id: '2',
     type: 'updated',
     title: 'Feature flag updated',
     description: 'Target audience changed from 10% to 25% of users',
-    timestamp: new Date(2023, 10, 14, 9, 45)
+    timestamp: new Date(2023, 5, 15, 9, 45) // Corresponds to Jun 15 (Bug Fix marker)
   },
   {
     id: '3',
     type: 'disabled',
     title: 'Feature flag disabled',
     description: 'Old payment gateway was disabled',
-    timestamp: new Date(2023, 10, 12, 16, 20)
+    timestamp: new Date(2023, 5, 12, 16, 20) // Between dates
   },
   {
     id: '4',
     type: 'settings',
     title: 'Settings changed',
     description: 'Changed rollout strategy to gradual',
-    timestamp: new Date(2023, 10, 10, 11, 15)
+    timestamp: new Date(2023, 5, 10, 11, 15) // Corresponds to Jun 10 (Feature Release marker)
   },
   {
     id: '5',
     type: 'shared',
     title: 'Flag shared',
     description: 'Flag was shared with the marketing team',
-    timestamp: new Date(2023, 10, 8, 13, 50)
+    timestamp: new Date(2023, 5, 8, 13, 50) // Between dates
   },
   {
     id: '6',
     type: 'created',
     title: 'Flag created',
     description: 'New feature flag "checkout-v2" was created',
-    timestamp: new Date(2023, 10, 5, 10, 0)
+    timestamp: new Date(2023, 5, 5, 10, 0) // Between dates
   }
 ];
 
