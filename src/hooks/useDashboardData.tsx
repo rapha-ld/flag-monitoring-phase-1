@@ -25,6 +25,7 @@ export const useDashboardData = () => {
   const [filteredEvaluationData, setFilteredEvaluationData] = useState<DataPoint[]>(evaluationData);
   const [filteredConversionData, setFilteredConversionData] = useState<DataPoint[]>(conversionData);
   const [filteredErrorRateData, setFilteredErrorRateData] = useState<DataPoint[]>(errorRateData);
+  const [selectedTimestamp, setSelectedTimestamp] = useState<Date | null>(null);
   const [currentMetrics, setCurrentMetrics] = useState({
     evaluations: { value: 0, change: { value: 0, trend: 'up' as 'up' | 'down' } },
     conversion: { value: 0, change: { value: 0, trend: 'up' as 'up' | 'down' } },
@@ -109,6 +110,10 @@ export const useDashboardData = () => {
     }
   };
 
+  const handleTimestampSelect = (timestamp: Date | null) => {
+    setSelectedTimestamp(timestamp);
+  };
+
   return {
     isLoaded,
     timeframe,
@@ -126,12 +131,14 @@ export const useDashboardData = () => {
     evaluationVersionChanges,
     conversionVersionChanges,
     errorRateVersionChanges,
+    selectedTimestamp,
     handleTimeframeChange,
     handleEnvironmentChange,
     handleDeviceChange,
     handleMetricsChange,
     handleMetricVisibilityChange,
     handleToggleTrue,
-    handleToggleFalse
+    handleToggleFalse,
+    handleTimestampSelect
   };
 };

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -5,6 +6,7 @@ import VersionMarker from './VersionMarker';
 import CustomTooltip from './chart/CustomTooltip';
 import BarChartCell from './chart/BarChartCell';
 import { referenceLineMarkers, thresholdLines } from '@/utils/chartReferenceLines';
+import { format } from 'date-fns';
 
 export interface DataPoint {
   name: string;
@@ -34,6 +36,7 @@ interface BarChartProps {
   showFalse?: boolean;
   chartType?: 'stacked' | 'mixed';
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
+  selectedTimestamp?: Date | null;
 }
 
 const BarChart = ({
@@ -47,7 +50,8 @@ const BarChart = ({
   showTrue = true,
   showFalse = false,
   chartType = 'stacked',
-  metricType
+  metricType,
+  selectedTimestamp
 }: BarChartProps) => {
   const interval = getXAxisInterval(data.length);
   const calculatedBarSize = getBarSize(data.length);
@@ -71,6 +75,30 @@ const BarChart = ({
   const falseColor = '#FFD099';
 
   const thresholdLine = metricType ? thresholdLines.find(t => t.metricType === metricType) : undefined;
+
+  // Find the closest data point to the selected timestamp
+  const findSelectedDataIndex = () => {
+    if (!selectedTimestamp || data.length === 0) return -1;
+    
+    const selectedTime = selectedTimestamp.getTime();
+    let closestIndex = -1;
+    let minDiff = Infinity;
+    
+    data.forEach((point, index) => {
+      const pointDate = new Date(point.name);
+      const diff = Math.abs(pointDate.getTime() - selectedTime);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestIndex = index;
+      }
+    });
+    
+    return closestIndex;
+  };
+  
+  const selectedDataIndex = findSelectedDataIndex();
+  const hasSelectedTimestamp = selectedDataIndex !== -1;
+  const selectedDataPoint = hasSelectedTimestamp ? data[selectedDataIndex] : null;
 
   return (
     <div className="w-full h-full">
@@ -153,6 +181,21 @@ const BarChart = ({
               stroke={thresholdLine.color}
               strokeDasharray={thresholdLine.strokeDasharray}
               strokeWidth={1.5}
+            />
+          )}
+          
+          {/* Selected timestamp vertical reference line */}
+          {hasSelectedTimestamp && selectedDataPoint && (
+            <ReferenceLine
+              x={selectedDataPoint.name}
+              stroke="#7c5cfc"
+              strokeWidth={2}
+              label={{
+                value: format(new Date(selectedDataPoint.name), "MMM d, h:mm a"),
+                position: 'top',
+                fill: '#7c5cfc',
+                fontSize: 12,
+              }}
             />
           )}
           

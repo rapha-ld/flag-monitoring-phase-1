@@ -13,6 +13,11 @@ interface HistoryEvent {
   timestamp: Date;
 }
 
+interface FeatureFlagHistoryProps {
+  onEventSelect: (timestamp: Date | null) => void;
+  selectedTimestamp: Date | null;
+}
+
 // Sample data for the history table
 const historyData: HistoryEvent[] = [
   {
@@ -97,7 +102,22 @@ const formatTimestamp = (date: Date) => {
   );
 };
 
-const FeatureFlagHistory = () => {
+const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, selectedTimestamp }) => {
+  // Handle row click
+  const handleRowClick = (event: HistoryEvent) => {
+    // If the timestamp is already selected, deselect it
+    if (selectedTimestamp && selectedTimestamp.getTime() === event.timestamp.getTime()) {
+      onEventSelect(null);
+    } else {
+      onEventSelect(event.timestamp);
+    }
+  };
+
+  // Check if a row is selected
+  const isRowSelected = (event: HistoryEvent) => {
+    return selectedTimestamp && selectedTimestamp.getTime() === event.timestamp.getTime();
+  };
+
   return (
     <div className="space-y-4 animate-fade-in">
       <h2 className="text-xl font-semibold">History</h2>
@@ -111,7 +131,11 @@ const FeatureFlagHistory = () => {
         </TableHeader>
         <TableBody>
           {historyData.map((event) => (
-            <TableRow key={event.id}>
+            <TableRow 
+              key={event.id}
+              onClick={() => handleRowClick(event)}
+              className={`cursor-pointer transition-colors ${isRowSelected(event) ? 'bg-primary/10' : ''}`}
+            >
               <TableCell>
                 <div className="flex items-center gap-2">
                   {getEventIcon(event.type)}

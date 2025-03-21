@@ -19,6 +19,7 @@ interface DashboardMetricsProps {
   showTrue: boolean;
   showFalse: boolean;
   timeframe: string;
+  selectedTimestamp?: Date | null;
 }
 
 const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
@@ -32,7 +33,8 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   errorRateVersionChanges,
   showTrue,
   showFalse,
-  timeframe
+  timeframe,
+  selectedTimestamp
 }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -55,6 +57,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
           chartType="stacked"
           metricType="evaluations"
           timeframe={timeframe}
+          selectedTimestamp={selectedTimestamp}
         />
       )}
       
@@ -77,6 +80,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
           chartType="mixed"
           metricType="conversion"
           timeframe={timeframe}
+          selectedTimestamp={selectedTimestamp}
         />
       )}
       
@@ -102,6 +106,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
           chartType="mixed"
           metricType="errorRate"
           timeframe={timeframe}
+          selectedTimestamp={selectedTimestamp}
         />
       )}
     </div>

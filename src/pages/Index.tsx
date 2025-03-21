@@ -27,13 +27,15 @@ const Index = () => {
     evaluationVersionChanges,
     conversionVersionChanges,
     errorRateVersionChanges,
+    selectedTimestamp,
     handleTimeframeChange,
     handleEnvironmentChange,
     handleDeviceChange,
     handleMetricsChange,
     handleMetricVisibilityChange,
     handleToggleTrue,
-    handleToggleFalse
+    handleToggleFalse,
+    handleTimestampSelect
   } = useDashboardData();
 
   return (
@@ -72,10 +74,11 @@ const Index = () => {
             showTrue={showTrue}
             showFalse={showFalse}
             timeframe={timeframe}
+            selectedTimestamp={selectedTimestamp}
           />
           
-          {/* Add Feature Flag History table */}
-          <FeatureFlagHistory />
+          {/* Feature Flag History table */}
+          <FeatureFlagHistory onEventSelect={handleTimestampSelect} selectedTimestamp={selectedTimestamp} />
           
           <DashboardFooter />
         </div>
