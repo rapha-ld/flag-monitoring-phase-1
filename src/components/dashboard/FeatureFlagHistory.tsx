@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag } from 'lucide-react';
+import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag, AlertTriangle } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
@@ -9,7 +9,7 @@ import { Search } from 'lucide-react';
 // Define the interface for history events
 interface HistoryEvent {
   id: string;
-  type: 'enabled' | 'disabled' | 'updated' | 'settings' | 'created';
+  type: 'enabled' | 'disabled' | 'updated' | 'settings' | 'created' | 'alert';
   title: string;
   description: string;
   timestamp: Date;
@@ -42,6 +42,13 @@ const historyData: HistoryEvent[] = [
     title: 'Flag disabled',
     description: 'New checkout flow was disabled for production',
     timestamp: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000) // 1.5 months ago
+  },
+  {
+    id: '7',
+    type: 'alert',
+    title: 'Alert',
+    description: 'Avg. Error Rate exceeded alert threshold',
+    timestamp: new Date(Date.now() - 50 * 24 * 60 * 60 * 1000) // ~1.7 months ago
   },
   {
     id: '4',
@@ -79,6 +86,8 @@ const getEventIcon = (type: HistoryEvent['type']) => {
       return <Settings className="h-5 w-5 text-gray-500" />;
     case 'created':
       return <Flag className="h-5 w-5 text-amber-500" />;
+    case 'alert':
+      return <AlertTriangle className="h-5 w-5 text-orange-500" />;
   }
 };
 
