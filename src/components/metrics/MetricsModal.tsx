@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 import MetricSearch from './MetricSearch';
 import MetricsList from './MetricsList';
 import { metricCategories, findMetricById } from './metricData';
@@ -46,8 +47,12 @@ const MetricsModal = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader>
+        <DialogHeader className="flex flex-row items-center justify-between">
           <DialogTitle>Select Metrics</DialogTitle>
+          <Button variant="outline" size="sm" className="h-8">
+            <Plus className="mr-1 h-3.5 w-3.5" />
+            Create New Metric
+          </Button>
         </DialogHeader>
         
         <MetricSearch 
