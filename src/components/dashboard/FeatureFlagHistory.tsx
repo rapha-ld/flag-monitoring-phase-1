@@ -28,13 +28,6 @@ const historyData: HistoryEvent[] = [
     timestamp: new Date(2024, 6, 15, 14, 30) // July 15, 2024
   },
   {
-    id: '6',
-    type: 'enabled', 
-    title: 'Flag enabled',
-    description: 'New checkout flow was enabled for production',
-    timestamp: new Date(2024, 6, 1, 10, 15) // July 1, 2024
-  },
-  {
     id: '2',
     type: 'updated',
     title: 'Flag updated',
@@ -54,6 +47,13 @@ const historyData: HistoryEvent[] = [
     title: 'Rules changed',
     description: 'Added progressive rollout',
     timestamp: new Date(2024, 4, 27, 11, 15) // May 27, 2024
+  },
+  {
+    id: '6',
+    type: 'enabled', 
+    title: 'Flag enabled',
+    description: 'New checkout flow was enabled for production',
+    timestamp: new Date(2024, 6, 1, 10, 15) // July 1, 2024
   },
   {
     id: '5',
