@@ -1,13 +1,13 @@
 
 import React from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { CheckCircle, XCircle, RefreshCw, Share2, Settings, Flag } from 'lucide-react';
+import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 // Define the interface for history events
 interface HistoryEvent {
   id: string;
-  type: 'enabled' | 'disabled' | 'updated' | 'shared' | 'settings' | 'created';
+  type: 'enabled' | 'disabled' | 'updated' | 'settings' | 'created';
   title: string;
   description: string;
   timestamp: Date;
@@ -18,49 +18,42 @@ interface FeatureFlagHistoryProps {
   selectedTimestamp: Date | null;
 }
 
-// Sample data for the history table - using dates that match our chart data
+// Sample data for the history table - using more recent dates
 const historyData: HistoryEvent[] = [
   {
     id: '1',
     type: 'enabled',
-    title: 'Feature flag enabled',
+    title: 'Flag enabled',
     description: 'New checkout flow was enabled for production',
-    timestamp: new Date(2023, 5, 20, 14, 30) // Corresponds to Jun 20 (Major Update marker)
+    timestamp: new Date(2024, 6, 15, 14, 30) // July 15, 2024
   },
   {
     id: '2',
     type: 'updated',
-    title: 'Feature flag updated',
+    title: 'Flag updated',
     description: 'Target audience changed from 10% to 25% of users',
-    timestamp: new Date(2023, 5, 15, 9, 45) // Corresponds to Jun 15 (Bug Fix marker)
+    timestamp: new Date(2024, 5, 28, 9, 45) // June 28, 2024
   },
   {
     id: '3',
     type: 'disabled',
-    title: 'Feature flag disabled',
+    title: 'Flag disabled',
     description: 'Old payment gateway was disabled',
-    timestamp: new Date(2023, 5, 12, 16, 20) // Between dates
+    timestamp: new Date(2024, 5, 12, 16, 20) // June 12, 2024
   },
   {
     id: '4',
     type: 'settings',
     title: 'Settings changed',
     description: 'Changed rollout strategy to gradual',
-    timestamp: new Date(2023, 5, 10, 11, 15) // Corresponds to Jun 10 (Feature Release marker)
+    timestamp: new Date(2024, 4, 27, 11, 15) // May 27, 2024
   },
   {
     id: '5',
-    type: 'shared',
-    title: 'Flag shared',
-    description: 'Flag was shared with the marketing team',
-    timestamp: new Date(2023, 5, 8, 13, 50) // Between dates
-  },
-  {
-    id: '6',
     type: 'created',
     title: 'Flag created',
     description: 'New feature flag "checkout-v2" was created',
-    timestamp: new Date(2023, 5, 5, 10, 0) // Between dates
+    timestamp: new Date(2024, 4, 5, 10, 0) // May 5, 2024
   }
 ];
 
@@ -68,13 +61,11 @@ const historyData: HistoryEvent[] = [
 const getEventIcon = (type: HistoryEvent['type']) => {
   switch (type) {
     case 'enabled':
-      return <CheckCircle className="h-5 w-5 text-green-500" />;
+      return <ToggleRight className="h-5 w-5 text-green-500" />;
     case 'disabled':
-      return <XCircle className="h-5 w-5 text-red-500" />;
+      return <ToggleLeft className="h-5 w-5 text-red-500" />;
     case 'updated':
       return <RefreshCw className="h-5 w-5 text-blue-500" />;
-    case 'shared':
-      return <Share2 className="h-5 w-5 text-purple-500" />;
     case 'settings':
       return <Settings className="h-5 w-5 text-gray-500" />;
     case 'created':
@@ -120,7 +111,7 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
 
   return (
     <div className="space-y-4 animate-fade-in">
-      <h2 className="text-xl font-semibold">History</h2>
+      <h2 className="text-[15px] font-semibold">History</h2>
       <Table>
         <TableHeader>
           <TableRow>
