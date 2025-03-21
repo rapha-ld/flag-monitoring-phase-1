@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag } from 'lucide-react';
@@ -60,7 +61,7 @@ const historyData: HistoryEvent[] = [
     id: '5',
     type: 'created',
     title: 'Flag created',
-    description: 'New feature flag "checkout-v2" was created',
+    description: 'New feature flag "New Checkout" was created',
     timestamp: new Date(Date.now() - 115 * 24 * 60 * 60 * 1000) // ~3.8 months ago
   }
 ];
