@@ -5,7 +5,7 @@ import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/char
 import VersionMarker from './VersionMarker';
 import CustomTooltip from './chart/CustomTooltip';
 import BarChartCell from './chart/BarChartCell';
-import { referenceLineMarkers } from '@/utils/chartReferenceLines';
+import { referenceLineMarkers, thresholdLines } from '@/utils/chartReferenceLines';
 
 export interface DataPoint {
   name: string;
@@ -71,6 +71,9 @@ const BarChart = ({
   
   const trueColor = '#2BB7D2';
   const falseColor = '#FFD099';
+
+  // Get the threshold line for this metric type, if any
+  const thresholdLine = metricType ? thresholdLines.find(t => t.metricType === metricType) : undefined;
 
   return (
     <div className="w-full h-full">
@@ -138,6 +141,22 @@ const BarChart = ({
               }}
             />
           ))}
+          
+          {/* Horizontal threshold line for error rate */}
+          {thresholdLine && (
+            <ReferenceLine
+              y={thresholdLine.value}
+              label={{
+                value: thresholdLine.label,
+                position: 'right',
+                fill: thresholdLine.color,
+                fontSize: 12,
+              }}
+              stroke={thresholdLine.color}
+              strokeDasharray={thresholdLine.strokeDasharray}
+              strokeWidth={1.5}
+            />
+          )}
           
           {metricType === 'evaluations' && !(showTrue && showFalse) && (
             <Bar

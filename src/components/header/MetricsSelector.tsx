@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { BarChart3, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -34,7 +35,7 @@ const MetricsSelector = ({
   };
 
   const getMetricDisplayName = (metric: string) => {
-    if (metric === 'evaluations') return 'Total Evaluations';
+    if (metric === 'evaluations') return 'Unique Users';
     if (metric === 'conversion') return 'Avg. Checkout Conversion Rate';
     if (metric === 'errorRate') return 'Avg. Error Rate';
     

@@ -28,7 +28,7 @@ export const metricCategories: MetricCategories = {
     { id: 'p85FrontendLatency', name: 'P85 Frontend Latency' },
   ],
   business: [
-    { id: 'evaluations', name: 'Total Evaluations' },
+    { id: 'evaluations', name: 'Unique Users' },
     { id: 'conversion', name: 'Avg. Checkout Conversion Rate' },
     { id: 'sessionDuration', name: 'Average Session Duration' },
     { id: 'bounceRate', name: 'Bounce Rate' },

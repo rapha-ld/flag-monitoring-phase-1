@@ -38,10 +38,10 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {selectedMetrics.includes('evaluations') && (
         <MetricCard 
-          title="Total Evaluations" 
+          title="Unique Users" 
           value={currentMetrics.evaluations.value}
           change={currentMetrics.evaluations.change}
-          info="Total evaluation score for the selected time period"
+          info="Total unique users for the selected time period"
           className="animate-slide-up [animation-delay:100ms]"
           chartData={filteredEvaluationData}
           versionChanges={evaluationVersionChanges.filter(change => 

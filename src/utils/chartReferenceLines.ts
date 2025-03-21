@@ -16,3 +16,13 @@ export const referenceLineMarkers = [
     color: "#F43F5E"
   }
 ];
+
+export const thresholdLines = [
+  {
+    metricType: "errorRate",
+    value: 3,
+    label: "Alert Threshold",
+    color: "#F43F5E",
+    strokeDasharray: "5 5"
+  }
+];
