@@ -23,6 +23,11 @@ export const thresholdLines = [
     value: 3,
     label: "Alert Threshold",
     color: "#F43F5E",
-    strokeDasharray: "5 5"
+    strokeDasharray: "5 5",
+    labelPosition: {
+      position: "top",
+      offset: -5,
+      align: "right"
+    }
   }
 ];
