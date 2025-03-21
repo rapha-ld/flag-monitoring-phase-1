@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { ChevronRight, BarChart3, Plus, X } from 'lucide-react';
+import { ChevronRight, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -42,18 +42,6 @@ const Header = ({
 }: HeaderProps) => {
   const [activeTab, setActiveTab] = useState("monitoring");
   const [metricsOpen, setMetricsOpen] = useState(false);
-  
-  // All available metrics
-  const allMetrics = [
-    { id: 'evaluations', label: 'Total Evaluations' },
-    { id: 'conversion', label: 'Avg. Checkout Conversion Rate' },
-    { id: 'errorRate', label: 'Avg. Error Rate' }
-  ];
-  
-  // Get metrics that are not currently selected
-  const availableMetrics = allMetrics.filter(
-    metric => !selectedMetrics.includes(metric.id)
-  );
 
   const handleMetricToggle = (metric: string) => {
     const updatedMetrics = selectedMetrics.includes(metric)
@@ -63,18 +51,6 @@ const Header = ({
     // Ensure at least one metric is selected
     if (updatedMetrics.length > 0) {
       onMetricsChange(updatedMetrics);
-    }
-  };
-  
-  const handleMetricRemove = (metric: string) => {
-    if (selectedMetrics.length > 1) {
-      onMetricsChange(selectedMetrics.filter(m => m !== metric));
-    }
-  };
-  
-  const handleAddMetric = (metric: string) => {
-    if (!selectedMetrics.includes(metric)) {
-      onMetricsChange([...selectedMetrics, metric]);
     }
   };
 
@@ -186,63 +162,35 @@ const Header = ({
                 <span>Metrics</span>
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[240px] p-3 z-50" align="end">
-              <div className="space-y-3">
+            <PopoverContent className="w-[200px] p-2 z-50" align="end">
+              <div className="space-y-2">
                 <div className="text-sm font-medium pb-1 border-b mb-1">Display Metrics</div>
-                <div className="space-y-1">
-                  {allMetrics.map((metric) => {
-                    const isSelected = selectedMetrics.includes(metric.id);
-                    
-                    return (
-                      <div key={metric.id} className="group relative flex items-center space-x-2 py-1">
-                        <Checkbox 
-                          id={`metrics-${metric.id}`} 
-                          checked={isSelected}
-                          onCheckedChange={() => handleMetricToggle(metric.id)}
-                        />
-                        <Label 
-                          htmlFor={`metrics-${metric.id}`} 
-                          className="text-sm cursor-pointer flex-1"
-                        >
-                          {metric.label}
-                        </Label>
-                        {isSelected && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                            onClick={() => handleMetricRemove(metric.id)}
-                          >
-                            <X className="h-4 w-4 text-muted-foreground hover:text-destructive" />
-                            <span className="sr-only">Remove metric</span>
-                          </Button>
-                        )}
-                      </div>
-                    );
-                  })}
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="metrics-evaluations" 
+                      checked={selectedMetrics.includes('evaluations')}
+                      onCheckedChange={() => handleMetricToggle('evaluations')}
+                    />
+                    <Label htmlFor="metrics-evaluations" className="text-sm cursor-pointer">Total Evaluations</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="metrics-conversion" 
+                      checked={selectedMetrics.includes('conversion')}
+                      onCheckedChange={() => handleMetricToggle('conversion')}
+                    />
+                    <Label htmlFor="metrics-conversion" className="text-sm cursor-pointer">Avg. Checkout Conversion Rate</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="metrics-error" 
+                      checked={selectedMetrics.includes('errorRate')}
+                      onCheckedChange={() => handleMetricToggle('errorRate')}
+                    />
+                    <Label htmlFor="metrics-error" className="text-sm cursor-pointer">Avg. Error Rate</Label>
+                  </div>
                 </div>
-                
-                {availableMetrics.length > 0 && (
-                  <>
-                    <div className="border-t my-2"></div>
-                    <div className="flex justify-center">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full flex items-center justify-center gap-1.5 h-8"
-                        onClick={() => {
-                          if (availableMetrics.length > 0) {
-                            handleAddMetric(availableMetrics[0].id);
-                          }
-                        }}
-                      >
-                        <Plus className="h-4 w-4" />
-                        <span>Add Metric{availableMetrics.length > 1 ? 's' : ''}</span>
-                      </Button>
-                    </div>
-                  </>
-                )}
-                
               </div>
             </PopoverContent>
           </Popover>
