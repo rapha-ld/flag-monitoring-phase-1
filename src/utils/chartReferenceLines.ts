@@ -21,12 +21,12 @@ export const thresholdLines = [
   {
     metricType: "errorRate",
     value: 3,
-    label: "Alert Threshold",
+    label: "Alert Threshold: 3%",
     color: "#F43F5E",
     strokeDasharray: "5 5",
     labelPosition: {
       position: "top",
-      offset: -5,
+      offset: -14,
       align: "right"
     }
   }

@@ -51,7 +51,6 @@ const BarChart = ({
 }: BarChartProps) => {
   const interval = getXAxisInterval(data.length);
   const calculatedBarSize = getBarSize(data.length);
-  // Make bars 10% more narrow
   const barSize = Math.floor(calculatedBarSize * 0.9);
   const showAverage = showTrue && showFalse && (metricType === 'conversion' || metricType === 'errorRate');
   
@@ -71,7 +70,6 @@ const BarChart = ({
   const trueColor = '#2BB7D2';
   const falseColor = '#FFD099';
 
-  // Get the threshold line for this metric type, if any
   const thresholdLine = metricType ? thresholdLines.find(t => t.metricType === metricType) : undefined;
 
   return (
@@ -81,7 +79,7 @@ const BarChart = ({
           data={data}
           margin={{ top: 20, right: 10, left: 0, bottom: 0 }}
           barGap={0}
-          barCategoryGap={barSize * 2} // Increased gap between bar groups by 100%
+          barCategoryGap={barSize * 2}
         >
           <CartesianGrid 
             strokeDasharray="3 3" 
@@ -141,17 +139,16 @@ const BarChart = ({
             />
           ))}
           
-          {/* Horizontal threshold line for error rate */}
           {thresholdLine && (
             <ReferenceLine
               y={thresholdLine.value}
               label={{
                 value: thresholdLine.label,
-                position: thresholdLine.labelPosition?.position || 'right',
-                offset: thresholdLine.labelPosition?.offset,
+                position: thresholdLine.labelPosition.position,
+                offset: thresholdLine.labelPosition.offset,
                 fill: thresholdLine.color,
                 fontSize: 12,
-                dx: thresholdLine.labelPosition?.align === 'right' ? 50 : 0
+                dx: thresholdLine.labelPosition.align === 'right' ? 50 : 0
               }}
               stroke={thresholdLine.color}
               strokeDasharray={thresholdLine.strokeDasharray}
