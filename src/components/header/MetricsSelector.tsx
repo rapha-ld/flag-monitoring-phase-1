@@ -10,21 +10,22 @@ import MetricsModal from '@/components/MetricsModal';
 interface MetricsSelectorProps {
   selectedMetrics: string[];
   onMetricsChange: (metrics: string[]) => void;
+  hiddenMetrics: string[];
+  onMetricVisibilityChange: (metric: string, visible: boolean) => void;
 }
 
-const MetricsSelector = ({ selectedMetrics, onMetricsChange }: MetricsSelectorProps) => {
+const MetricsSelector = ({ 
+  selectedMetrics, 
+  onMetricsChange, 
+  hiddenMetrics, 
+  onMetricVisibilityChange 
+}: MetricsSelectorProps) => {
   const [metricsOpen, setMetricsOpen] = useState(false);
   const [metricModalOpen, setMetricModalOpen] = useState(false);
 
   const handleMetricToggle = (metric: string) => {
-    const updatedMetrics = selectedMetrics.includes(metric)
-      ? selectedMetrics.filter(m => m !== metric)
-      : [...selectedMetrics, metric];
-    
-    // Ensure at least one metric is selected
-    if (updatedMetrics.length > 0) {
-      onMetricsChange(updatedMetrics);
-    }
+    // Toggle visibility instead of removing the metric
+    onMetricVisibilityChange(metric, hiddenMetrics.includes(metric));
   };
 
   const handleMetricRemove = (metric: string) => {
@@ -59,7 +60,7 @@ const MetricsSelector = ({ selectedMetrics, onMetricsChange }: MetricsSelectorPr
                 <div key={metric} className="flex items-center space-x-2 group">
                   <Checkbox 
                     id={`metrics-${metric}`} 
-                    checked={selectedMetrics.includes(metric)}
+                    checked={!hiddenMetrics.includes(metric)}
                     onCheckedChange={() => handleMetricToggle(metric)}
                   />
                   <Label htmlFor={`metrics-${metric}`} className="text-sm cursor-pointer flex-grow">

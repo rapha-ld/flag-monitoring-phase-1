@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { 
   evaluationData, 
@@ -18,6 +19,7 @@ export const useDashboardData = () => {
   const [environment, setEnvironment] = useState("production");
   const [selectedDevice, setSelectedDevice] = useState("all");
   const [selectedMetrics, setSelectedMetrics] = useState(['evaluations', 'conversion', 'errorRate']);
+  const [hiddenMetrics, setHiddenMetrics] = useState<string[]>([]);
   const [showTrue, setShowTrue] = useState(true);
   const [showFalse, setShowFalse] = useState(true);
   const [filteredEvaluationData, setFilteredEvaluationData] = useState<DataPoint[]>(evaluationData);
@@ -28,6 +30,9 @@ export const useDashboardData = () => {
     conversion: { value: 0, change: { value: 0, trend: 'up' as 'up' | 'down' } },
     errorRate: { value: 0, change: { value: 0, trend: 'up' as 'up' | 'down' } }
   });
+
+  // Calculate visible metrics (selected metrics that aren't hidden)
+  const visibleMetrics = selectedMetrics.filter(metric => !hiddenMetrics.includes(metric));
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -82,6 +87,14 @@ export const useDashboardData = () => {
     setSelectedMetrics(metrics);
   };
 
+  const handleMetricVisibilityChange = (metric: string, visible: boolean) => {
+    setHiddenMetrics(prev => 
+      visible 
+        ? prev.filter(m => m !== metric) // Remove from hidden if now visible
+        : [...prev, metric] // Add to hidden if now hidden
+    );
+  };
+
   const handleToggleTrue = () => {
     setShowTrue(!showTrue);
     if (!showTrue === false && !showFalse) {
@@ -102,6 +115,8 @@ export const useDashboardData = () => {
     environment,
     selectedDevice,
     selectedMetrics,
+    hiddenMetrics,
+    visibleMetrics,
     showTrue,
     showFalse,
     filteredEvaluationData,
@@ -115,6 +130,7 @@ export const useDashboardData = () => {
     handleEnvironmentChange,
     handleDeviceChange,
     handleMetricsChange,
+    handleMetricVisibilityChange,
     handleToggleTrue,
     handleToggleFalse
   };
