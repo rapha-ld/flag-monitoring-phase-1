@@ -47,8 +47,8 @@ export const thresholdLines: ThresholdLine[] = [
     color: "#F43F5E",
     strokeDasharray: "5 5",
     labelPosition: {
-      position: "top",
-      offset: -10,
+      position: "insideTopLeft",
+      offset: 10,
       align: "left"
     }
   }
