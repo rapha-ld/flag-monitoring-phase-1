@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface CustomTooltipProps {
@@ -30,7 +29,7 @@ const CustomTooltip = ({
     console.log("Tooltip payload:", payload);
     
     return (
-      <div className="bg-popover border border-border shadow-md rounded-md p-2 text-xs">
+      <div className="bg-popover border border-border shadow-md rounded-md p-2 text-xs z-[100]">
         <p className="font-medium">{tooltipLabelFormatter(label || '')}</p>
         
         {/* For stacked or mixed charts when showing true/false values */}
