@@ -154,6 +154,10 @@ const BarChart = ({
   
   const showReferenceArea = firstPoint && lastPoint;
 
+  const renderCustomLabel = (date: Date, icon: React.ReactNode) => {
+    return `${format(date, "MMM d")}`;
+  };
+
   return (
     <div className="w-full h-full">
       <ResponsiveContainer width="100%" height={height}>
@@ -251,29 +255,7 @@ const BarChart = ({
           
           {hasSelectedPoints && selectedPoints.map((point, index) => {
             const icon = getEventIcon(point.exactTime);
-            
-            const labelContent = () => (
-              <g>
-                <text
-                  x="0"
-                  y="0"
-                  fill={textGray}
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  fontSize="12"
-                  fontFamily="Inter, sans-serif"
-                >
-                  <tspan x="14" y="0" className="font-medium">
-                    {format(point.exactTime, "MMM d")}
-                  </tspan>
-                </text>
-                <foreignObject width="12" height="12" x="-3" y="-6">
-                  <div className="text-[#545A62]">
-                    {icon}
-                  </div>
-                </foreignObject>
-              </g>
-            );
+            const labelText = format(point.exactTime, "MMM d");
             
             return (
               <ReferenceLine
@@ -281,10 +263,15 @@ const BarChart = ({
                 x={point.name}
                 stroke={textGray}
                 strokeWidth={1.5}
-                label={index === 0 || index === selectedPoints.length - 1 ? {
+                label={{
                   position: 'top',
-                  value: labelContent()
-                } : undefined}
+                  value: labelText,
+                  fill: textGray,
+                  fontSize: 12,
+                  fontFamily: "Inter, sans-serif",
+                  fontWeight: "medium",
+                  className: "flex items-center"
+                }}
               />
             );
           })}
