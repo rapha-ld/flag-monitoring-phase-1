@@ -33,7 +33,9 @@ export const getFilteredData = (
   // Make sure names match exactly with our required dates
   const sortedResult = result.map((item, index) => ({
     ...item,
-    name: requiredDates[index]
+    name: requiredDates[index],
+    // Ensure the value is never undefined, use 0 as fallback
+    value: item.value !== undefined ? item.value : 0
   }));
   
   return sortedResult;
@@ -47,14 +49,14 @@ export const calculateMetrics = (
   days: number
 ) => {
   // For evaluations, calculate the total
-  const evalTotal = evaluationData.reduce((sum, item) => sum + item.value, 0);
+  const evalTotal = evaluationData.reduce((sum, item) => sum + (item.value || 0), 0);
   
   // For conversion, calculate the average
-  const convSum = conversionData.reduce((sum, item) => sum + item.value, 0);
+  const convSum = conversionData.reduce((sum, item) => sum + (item.value || 0), 0);
   const convAvg = parseFloat((convSum / conversionData.length).toFixed(1));
   
   // For error rate, calculate the average
-  const errorSum = errorRateData.reduce((sum, item) => sum + item.value, 0);
+  const errorSum = errorRateData.reduce((sum, item) => sum + (item.value || 0), 0);
   const errorAvg = parseFloat((errorSum / errorRateData.length).toFixed(1));
   
   // Calculate change (comparing to the first half of the period)
@@ -63,8 +65,8 @@ export const calculateMetrics = (
   // For evaluations, compare totals
   const evalFirstHalf = evaluationData.slice(0, middleIndex);
   const evalSecondHalf = evaluationData.slice(middleIndex);
-  const evalFirstTotal = evalFirstHalf.reduce((sum, item) => sum + item.value, 0);
-  const evalSecondTotal = evalSecondHalf.reduce((sum, item) => sum + item.value, 0);
+  const evalFirstTotal = evalFirstHalf.reduce((sum, item) => sum + (item.value || 0), 0);
+  const evalSecondTotal = evalSecondHalf.reduce((sum, item) => sum + (item.value || 0), 0);
   
   let evalChange = 0;
   if (evalFirstTotal > 0) {
@@ -75,10 +77,10 @@ export const calculateMetrics = (
   const convFirstHalf = conversionData.slice(0, middleIndex);
   const convSecondHalf = conversionData.slice(middleIndex);
   const convFirstAvg = convFirstHalf.length 
-    ? convFirstHalf.reduce((sum, item) => sum + item.value, 0) / convFirstHalf.length 
+    ? convFirstHalf.reduce((sum, item) => sum + (item.value || 0), 0) / convFirstHalf.length 
     : convAvg;
   const convSecondAvg = convSecondHalf.length 
-    ? convSecondHalf.reduce((sum, item) => sum + item.value, 0) / convSecondHalf.length 
+    ? convSecondHalf.reduce((sum, item) => sum + (item.value || 0), 0) / convSecondHalf.length 
     : convAvg;
   const convChange = parseFloat(((convSecondAvg / convFirstAvg - 1) * 100).toFixed(1));
   
@@ -86,10 +88,10 @@ export const calculateMetrics = (
   const errorFirstHalf = errorRateData.slice(0, middleIndex);
   const errorSecondHalf = errorRateData.slice(middleIndex);
   const errorFirstAvg = errorFirstHalf.length 
-    ? errorFirstHalf.reduce((sum, item) => sum + item.value, 0) / errorFirstHalf.length 
+    ? errorFirstHalf.reduce((sum, item) => sum + (item.value || 0), 0) / errorFirstHalf.length 
     : errorAvg;
   const errorSecondAvg = errorSecondHalf.length 
-    ? errorSecondHalf.reduce((sum, item) => sum + item.value, 0) / errorSecondHalf.length 
+    ? errorSecondHalf.reduce((sum, item) => sum + (item.value || 0), 0) / errorSecondHalf.length 
     : errorAvg;
   const errorChange = parseFloat(((errorSecondAvg / errorFirstAvg - 1) * 100).toFixed(1));
   
@@ -121,15 +123,18 @@ export const calculateMetrics = (
 // Process the data to ensure true/false values and calculate averages properly
 export const processTrueFalseValues = (data: any[]) => {
   return data.map(item => {
-    const trueValue = Math.round(item.value * 0.6); // 60% true
-    const falseValue = Math.round(item.value * 0.4); // 40% false
+    // Use 0 as the default value if value is undefined
+    const value = item.value !== undefined ? item.value : 0;
+    const trueValue = Math.round(value * 0.6); // 60% true
+    const falseValue = Math.round(value * 0.4); // 40% false
     
     return {
       ...item,
+      value, // Ensure the value is not undefined
       valueTrue: trueValue,
       valueFalse: falseValue,
       // Add an average value - this is the true mathematical average (not sum)
-      valueAvg: trueValue && falseValue ? (trueValue + falseValue) / 2 : item.value,
+      valueAvg: trueValue + falseValue > 0 ? (trueValue + falseValue) / 2 : 0,
     };
   });
 };
