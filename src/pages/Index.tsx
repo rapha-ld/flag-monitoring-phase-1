@@ -7,11 +7,8 @@ import DashboardMetrics from '@/components/dashboard/DashboardMetrics';
 import DashboardFooter from '@/components/dashboard/DashboardFooter';
 import FeatureFlagHistory from '@/components/dashboard/FeatureFlagHistory';
 import { useDashboardData } from '@/hooks/useDashboardData';
-import { useToast } from '@/components/ui/use-toast';
 
 const Index = () => {
-  const { toast } = useToast();
-  
   const {
     isLoaded,
     timeframe,
@@ -40,18 +37,6 @@ const Index = () => {
     handleToggleFalse,
     handleTimestampSelect
   } = useDashboardData();
-
-  const handleRangeSelect = (dates: Date[]) => {
-    console.log("Range selected in Index:", dates);
-    if (dates.length > 0) {
-      handleTimestampSelect(dates);
-      toast({
-        title: "Time range selected",
-        description: `${dates.length} data points selected`,
-        variant: "default"
-      });
-    }
-  };
 
   return (
     <DashboardLayout>
@@ -91,11 +76,12 @@ const Index = () => {
             timeframe={timeframe}
             selectedTimestamp={selectedTimestamp}
             selectedTimestamps={selectedTimestamps}
-            onRangeSelect={handleRangeSelect}
           />
           
+          {/* Footer moved between charts and history table */}
           <DashboardFooter />
           
+          {/* Feature Flag History table */}
           <FeatureFlagHistory 
             onEventSelect={handleTimestampSelect} 
             selectedTimestamp={selectedTimestamp}
