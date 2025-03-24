@@ -73,14 +73,14 @@ const VersionMarker = ({
               strokeDasharray="3 3"
             />
             
-            {/* Date text at the top */}
+            {/* Date text at the top - positioned higher */}
             {formattedDate && (
               <text
                 x="0"
-                y="-25"
+                y="-35"
                 textAnchor="middle"
                 fill={color}
-                fontSize="10"
+                fontSize="12"
                 fontWeight="500"
               >
                 {formattedDate}

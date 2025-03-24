@@ -361,6 +361,7 @@ const BarChart = ({
               eventType={change.eventType}
               date={change.date}
               color="#8E9196"
+              height={height * 0.9}
             />
           ))}
         </ComposedChart>
