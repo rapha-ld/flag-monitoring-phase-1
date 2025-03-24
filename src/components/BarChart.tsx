@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -373,6 +374,7 @@ const BarChart = ({
       );
     });
     
+    // Add the threshold line last so it appears on top
     if (thresholdLine) {
       components.push(
         <ReferenceLine
@@ -409,14 +411,16 @@ const BarChart = ({
         </ComposedChart>
       </ResponsiveContainer>
       
-      <style jsx>{`
-        :global(.recharts-reference-line:last-child) {
-          z-index: 10;
-        }
-        :global(.recharts-reference-line:last-child line) {
-          stroke-width: 2;
-        }
-      `}</style>
+      <style>
+        {`
+          .recharts-reference-line:last-child {
+            z-index: 10;
+          }
+          .recharts-reference-line:last-child line {
+            stroke-width: 2;
+          }
+        `}
+      </style>
     </div>
   );
 };
