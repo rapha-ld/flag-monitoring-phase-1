@@ -30,6 +30,7 @@ export interface MetricCardProps {
   chartType?: 'stacked' | 'mixed';
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
   selectedTimestamp?: Date | null;
+  selectedTimestamps?: Date[] | null;
 }
 
 const MetricCard = ({ 
@@ -51,7 +52,8 @@ const MetricCard = ({
   showFalse,
   chartType = 'stacked',
   metricType,
-  selectedTimestamp
+  selectedTimestamp,
+  selectedTimestamps
 }: MetricCardProps) => {
   // Determine if we should show average values (only for conversion and error rate when both variants selected)
   const showAverage = showTrue && showFalse && (metricType === 'conversion' || metricType === 'errorRate');
@@ -83,6 +85,7 @@ const MetricCard = ({
             chartType={chartType}
             metricType={metricType}
             selectedTimestamp={selectedTimestamp}
+            selectedTimestamps={selectedTimestamps}
           />
         ) : children}
       </CardContent>
