@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -40,6 +39,18 @@ interface BarChartProps {
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
+}
+
+interface ChartViewBox {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  cx?: number;
+  cy?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+  [key: string]: any;
 }
 
 const BarChart = ({
@@ -132,7 +143,6 @@ const BarChart = ({
   
   const showReferenceArea = firstPoint && lastPoint;
 
-  // Determine if a data point is within the selected range
   const getPointOpacity = (point: DataPoint) => {
     if (!selectedTimestamps || selectedTimestamps.length === 0) {
       return 1; // No selection, full opacity
@@ -202,7 +212,7 @@ const BarChart = ({
               strokeDasharray="3 3"
               label={{
                 position: 'top',
-                content: ({ viewBox }) => (
+                content: ({ viewBox }: { viewBox: ChartViewBox }) => (
                   <text
                     x={viewBox?.x ?? 0}
                     y={viewBox?.y ?? 0}
@@ -223,7 +233,7 @@ const BarChart = ({
               y={thresholdLine.value}
               label={{
                 position: thresholdLine.labelPosition.position as any,
-                content: ({ viewBox }) => (
+                content: ({ viewBox }: { viewBox: ChartViewBox }) => (
                   <text
                     x={(viewBox?.x ?? 0) + 5}
                     y={viewBox?.y ?? 0}
@@ -264,7 +274,7 @@ const BarChart = ({
                 strokeWidth={1.5}
                 label={index === 0 || index === selectedPoints.length - 1 ? {
                   position: 'top',
-                  content: ({ viewBox }) => (
+                  content: ({ viewBox }: { viewBox: ChartViewBox }) => (
                     <text
                       x={viewBox?.x ?? 0}
                       y={viewBox?.y ?? 0}
