@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -155,6 +154,248 @@ const BarChart = ({
   
   const showReferenceArea = firstPoint && lastPoint;
 
+  const renderComponents = () => {
+    const components = [];
+    
+    components.push(
+      <CartesianGrid 
+        key="grid"
+        strokeDasharray="3 3" 
+        vertical={false} 
+        stroke="#E5E7EB" 
+      />
+    );
+    
+    components.push(
+      <XAxis 
+        key="xaxis"
+        dataKey="name" 
+        fontSize={10}
+        axisLine={false}
+        tickLine={false}
+        tickFormatter={(value) => {
+          const date = new Date(value);
+          return isNaN(date.getTime()) 
+            ? value
+            : `${date.getMonth() + 1}/${date.getDate()}`;
+        }}
+        interval={interval}
+        padding={{ left: 10, right: 10 }}
+      />
+    );
+    
+    components.push(
+      <YAxis 
+        key="yaxis"
+        fontSize={10}
+        axisLine={false}
+        tickLine={false}
+        domain={yAxisDomain}
+        allowDataOverflow={true}
+        tickFormatter={valueFormatter}
+      />
+    );
+    
+    components.push(
+      <Tooltip 
+        key="tooltip"
+        content={
+          <CustomTooltip 
+            tooltipValueFormatter={tooltipValueFormatter}
+            tooltipLabelFormatter={tooltipLabelFormatter}
+            showTrue={showTrue}
+            showFalse={showFalse}
+            chartType={chartType}
+            metricType={metricType}
+            showAverage={showAverage}
+          />
+        }
+        trigger="hover"
+        isAnimationActive={false}
+      />
+    );
+    
+    if (metricType === 'evaluations' && !(showTrue && showFalse)) {
+      components.push(
+        <Bar
+          key="single-bar"
+          dataKey={showTrue ? 'valueTrue' : showFalse ? 'valueFalse' : 'value'}
+          name={showTrue ? 'True' : showFalse ? 'False' : 'Value'}
+          fill={showTrue ? trueColor : showFalse ? falseColor : barColor}
+          barSize={barSize}
+          isAnimationActive={false}
+          radius={[1, 1, 0, 0]}
+        >
+          {data.map((entry, index) => (
+            <BarChartCell 
+              key={`cell-${index}`} 
+              index={index} 
+              barColor={showTrue ? trueColor : showFalse ? falseColor : barColor} 
+            />
+          ))}
+        </Bar>
+      );
+    }
+    
+    if (metricType === 'evaluations' && showTrue && showFalse) {
+      components.push(
+        <Bar
+          key="true-bar"
+          dataKey="valueTrue"
+          name="True"
+          stackId="a"
+          fill={trueColor}
+          barSize={barSize}
+          isAnimationActive={false}
+          radius={[1, 1, 0, 0]}
+          className="stroke-[#2BB7D2] stroke-[1px]"
+        />
+      );
+      
+      components.push(
+        <Bar
+          key="false-bar"
+          dataKey="valueFalse"
+          name="False"
+          stackId="a"
+          fill={falseColor}
+          barSize={barSize}
+          isAnimationActive={false}
+          radius={[0, 0, 0, 0]}
+          className="stroke-[#FFD099] stroke-[1px]"
+        />
+      );
+    }
+    
+    if (useLineChart && showTrue) {
+      components.push(
+        <Line
+          key="true-line"
+          type="monotone"
+          dataKey="valueTrue"
+          name="True"
+          stroke={trueColor}
+          strokeWidth={3.5}
+          dot={false}
+          activeDot={{ r: 5 }}
+          isAnimationActive={false}
+        />
+      );
+    }
+    
+    if (useLineChart && showFalse) {
+      components.push(
+        <Line
+          key="false-line"
+          type="monotone"
+          dataKey="valueFalse"
+          name="False"
+          stroke={falseColor}
+          strokeWidth={2}
+          dot={false}
+          activeDot={{ r: 4 }}
+          isAnimationActive={false}
+        />
+      );
+    }
+    
+    referenceLineMarkers.forEach((marker, index) => {
+      components.push(
+        <ReferenceLine
+          key={`ref-line-${index}`}
+          x={marker.date}
+          stroke={marker.color}
+          strokeWidth={2}
+          strokeDasharray="3 3"
+          label={{
+            value: marker.label,
+            position: 'top',
+            fill: marker.color,
+            fontSize: 16,
+            fontWeight: 'bold',
+          }}
+        />
+      );
+    });
+    
+    if (showReferenceArea) {
+      components.push(
+        <ReferenceArea
+          key="reference-area"
+          x1={firstPoint.name}
+          x2={lastPoint.name}
+          fill="#f1f1f4"
+          fillOpacity={0.5}
+        />
+      );
+    }
+    
+    if (hasSelectedPoints) {
+      selectedPoints.forEach((point, index) => {
+        const icon = getEventIcon(point.exactTime);
+        
+        components.push(
+          <ReferenceLine
+            key={`selected-time-${index}`}
+            x={point.name}
+            stroke={textGray}
+            strokeWidth={1.5}
+            label={{
+              position: 'top',
+              fill: textGray,
+              fontSize: 12,
+              fontFamily: "Inter, sans-serif",
+              fontWeight: "medium",
+              content: (props) => (
+                <g>
+                  <foreignObject width="70" height="20" x="-35" y="-20">
+                    <div className="flex items-center justify-center text-[#545A62]">
+                      <span className="mr-1">{icon}</span>
+                      <span>{format(point.exactTime, "MMM d")}</span>
+                    </div>
+                  </foreignObject>
+                </g>
+              )
+            }}
+          />
+        );
+      });
+    }
+    
+    visibleVersionChanges.forEach((change, index) => {
+      components.push(
+        <VersionMarker 
+          key={`marker-${index}`}
+          x={change.position}
+          version={change.version}
+          details={change.details}
+        />
+      );
+    });
+    
+    if (thresholdLine) {
+      components.push(
+        <ReferenceLine
+          key="threshold-line"
+          y={thresholdLine.value}
+          label={{
+            value: thresholdLine.label,
+            position: thresholdLine.labelPosition.position as any,
+            offset: thresholdLine.labelPosition.offset,
+            fill: thresholdLine.color,
+            fontSize: 11,
+            dx: 5
+          }}
+          stroke={thresholdLine.color}
+          strokeDasharray={thresholdLine.strokeDasharray}
+          strokeWidth={1.5}
+        />
+      );
+    }
+    
+    return components;
+  };
+
   return (
     <div className="w-full h-full">
       <ResponsiveContainer width="100%" height={height}>
@@ -164,211 +405,18 @@ const BarChart = ({
           barGap={0}
           barCategoryGap={barSize * 2}
         >
-          <CartesianGrid 
-            strokeDasharray="3 3" 
-            vertical={false} 
-            stroke="#E5E7EB" 
-          />
-          <XAxis 
-            dataKey="name" 
-            fontSize={10}
-            axisLine={false}
-            tickLine={false}
-            tickFormatter={(value) => {
-              const date = new Date(value);
-              return isNaN(date.getTime()) 
-                ? value
-                : `${date.getMonth() + 1}/${date.getDate()}`;
-            }}
-            interval={interval}
-            padding={{ left: 10, right: 10 }}
-          />
-          <YAxis 
-            fontSize={10}
-            axisLine={false}
-            tickLine={false}
-            domain={yAxisDomain}
-            allowDataOverflow={true}
-            tickFormatter={valueFormatter}
-          />
-          <Tooltip 
-            content={
-              <CustomTooltip 
-                tooltipValueFormatter={tooltipValueFormatter}
-                tooltipLabelFormatter={tooltipLabelFormatter}
-                showTrue={showTrue}
-                showFalse={showFalse}
-                chartType={chartType}
-                metricType={metricType}
-                showAverage={showAverage}
-              />
-            }
-            trigger="hover"
-            isAnimationActive={false}
-          />
-          
-          {metricType === 'evaluations' && !(showTrue && showFalse) && (
-            <Bar
-              dataKey={showTrue ? 'valueTrue' : showFalse ? 'valueFalse' : 'value'}
-              name={showTrue ? 'True' : showFalse ? 'False' : 'Value'}
-              fill={showTrue ? trueColor : showFalse ? falseColor : barColor}
-              barSize={barSize}
-              isAnimationActive={false}
-              radius={[1, 1, 0, 0]}
-            >
-              {data.map((entry, index) => (
-                <BarChartCell 
-                  key={`cell-${index}`} 
-                  index={index} 
-                  barColor={showTrue ? trueColor : showFalse ? falseColor : barColor} 
-                />
-              ))}
-            </Bar>
-          )}
-          
-          {metricType === 'evaluations' && showTrue && showFalse && (
-            <>
-              <Bar
-                dataKey="valueTrue"
-                name="True"
-                stackId="a"
-                fill={trueColor}
-                barSize={barSize}
-                isAnimationActive={false}
-                radius={[1, 1, 0, 0]}
-                className="stroke-[#2BB7D2] stroke-[1px]"
-              />
-              <Bar
-                dataKey="valueFalse"
-                name="False"
-                stackId="a"
-                fill={falseColor}
-                barSize={barSize}
-                isAnimationActive={false}
-                radius={[0, 0, 0, 0]}
-                className="stroke-[#FFD099] stroke-[1px]"
-              />
-            </>
-          )}
-          
-          {useLineChart && showTrue && (
-            <Line
-              type="monotone"
-              dataKey="valueTrue"
-              name="True"
-              stroke={trueColor}
-              strokeWidth={3.5}
-              dot={false}
-              activeDot={{ r: 5 }}
-              isAnimationActive={false}
-            />
-          )}
-          
-          {useLineChart && showFalse && (
-            <Line
-              type="monotone"
-              dataKey="valueFalse"
-              name="False"
-              stroke={falseColor}
-              strokeWidth={2}
-              dot={false}
-              activeDot={{ r: 4 }}
-              isAnimationActive={false}
-            />
-          )}
-          
-          {referenceLineMarkers.map((marker, index) => (
-            <ReferenceLine
-              key={`ref-line-${index}`}
-              x={marker.date}
-              stroke={marker.color}
-              strokeWidth={2}
-              strokeDasharray="3 3"
-              label={{
-                value: marker.label,
-                position: 'top',
-                fill: marker.color,
-                fontSize: 16,
-                fontWeight: 'bold',
-              }}
-            />
-          ))}
-          
-          {showReferenceArea && (
-            <ReferenceArea
-              x1={firstPoint.name}
-              x2={lastPoint.name}
-              fill="#f1f1f4"
-              fillOpacity={0.5}
-            />
-          )}
-          
-          {hasSelectedPoints && selectedPoints.map((point, index) => {
-            const icon = getEventIcon(point.exactTime);
-            // Create a custom label with icon and date
-            const labelText = (
-              <div className="flex items-center gap-1">
-                <span className="text-[#545A62]">{format(point.exactTime, "MMM d")}</span>
-              </div>
-            );
-            
-            return (
-              <ReferenceLine
-                key={`selected-time-${index}`}
-                x={point.name}
-                stroke={textGray}
-                strokeWidth={1.5}
-                label={{
-                  position: 'top',
-                  value: format(point.exactTime, "MMM d"),
-                  fill: textGray,
-                  fontSize: 12,
-                  fontFamily: "Inter, sans-serif",
-                  fontWeight: "medium",
-                  content: (props) => (
-                    <g>
-                      <foreignObject width="20" height="16" x="-10" y="-16">
-                        <div className="flex items-center text-[#545A62]">
-                          <span className="mr-0.5">{icon}</span>
-                          <span>{format(point.exactTime, "MMM d")}</span>
-                        </div>
-                      </foreignObject>
-                    </g>
-                  )
-                }}
-              />
-            );
-          })}
-          
-          {/* Threshold line rendered last to appear on top */}
-          {thresholdLine && (
-            <ReferenceLine
-              y={thresholdLine.value}
-              label={{
-                value: thresholdLine.label,
-                position: thresholdLine.labelPosition.position as any,
-                offset: thresholdLine.labelPosition.offset,
-                fill: thresholdLine.color,
-                fontSize: 11,
-                dx: 5
-              }}
-              stroke={thresholdLine.color}
-              strokeDasharray={thresholdLine.strokeDasharray}
-              strokeWidth={1.5}
-              zIndex={9999}
-            />
-          )}
-          
-          {visibleVersionChanges.map((change, index) => (
-            <VersionMarker 
-              key={`marker-${index}`}
-              x={change.position}
-              version={change.version}
-              details={change.details}
-            />
-          ))}
+          {renderComponents()}
         </ComposedChart>
       </ResponsiveContainer>
+      
+      <style jsx>{`
+        :global(.recharts-reference-line:last-child) {
+          z-index: 10;
+        }
+        :global(.recharts-reference-line:last-child line) {
+          stroke-width: 2;
+        }
+      `}</style>
     </div>
   );
 };
