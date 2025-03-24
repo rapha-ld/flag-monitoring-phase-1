@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag, AlertTriangle } from 'lucide-react';
@@ -16,7 +15,7 @@ interface HistoryEvent {
 }
 
 interface FeatureFlagHistoryProps {
-  onEventSelect: (timestamps: Date[] | null) => void;
+  onEventSelect: (timestamps: Date[] | null, eventTypes?: string[] | null) => void;
   selectedTimestamp: Date | null;
 }
 
@@ -182,11 +181,19 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
     } else {
       const selectedEvents = sortedHistoryData.filter(event => selectedRows.includes(event.id));
       const selectedTimestamps = selectedEvents.map(event => event.timestamp);
+      const eventTypes = selectedEvents.map(event => event.type);
       
       // Sort timestamps chronologically for displaying the range correctly
-      selectedTimestamps.sort((a, b) => a.getTime() - b.getTime());
+      // Also sort event types in the same order
+      const sortedIndices = selectedTimestamps
+        .map((timestamp, index) => ({ timestamp, index }))
+        .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime())
+        .map(item => item.index);
       
-      onEventSelect(selectedTimestamps);
+      const sortedTimestamps = sortedIndices.map(index => selectedTimestamps[index]);
+      const sortedEventTypes = sortedIndices.map(index => eventTypes[index]);
+      
+      onEventSelect(sortedTimestamps, sortedEventTypes);
     }
   }, [selectedRows, sortedHistoryData, onEventSelect]);
 

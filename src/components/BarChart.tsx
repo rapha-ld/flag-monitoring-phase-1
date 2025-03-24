@@ -6,7 +6,7 @@ import CustomTooltip from './chart/CustomTooltip';
 import { referenceLineMarkers, thresholdLines } from '@/utils/chartReferenceLines';
 import { format } from 'date-fns';
 import BarChartCell from './chart/BarChartCell';
-import { Flag, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Flag, AlertTriangle, RefreshCw, Settings } from 'lucide-react';
 
 export interface DataPoint {
   name: string;
@@ -40,6 +40,7 @@ interface BarChartProps {
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
+  selectedEventTypes?: string[] | null;
 }
 
 const BarChart = ({
@@ -55,7 +56,8 @@ const BarChart = ({
   chartType = 'stacked',
   metricType,
   selectedTimestamp,
-  selectedTimestamps
+  selectedTimestamps,
+  selectedEventTypes
 }: BarChartProps) => {
   const interval = getXAxisInterval(data.length);
   const calculatedBarSize = getBarSize(data.length);
@@ -101,7 +103,7 @@ const BarChart = ({
     
     if (dataPoints.length === 0) return null;
     
-    return timestamps.map(selectedTime => {
+    return timestamps.map((selectedTime, idx) => {
       const selectedTimeMs = selectedTime.getTime();
       let closestPoint = dataPoints[0];
       let minDiff = Math.abs(dataPoints[0].timestamp! - selectedTimeMs);
@@ -116,7 +118,8 @@ const BarChart = ({
       
       return {
         ...closestPoint,
-        exactTime: selectedTime
+        exactTime: selectedTime,
+        eventType: selectedEventTypes && selectedEventTypes[idx] ? selectedEventTypes[idx] : undefined
       };
     }).sort((a, b) => a.timestamp! - b.timestamp!);
   };
@@ -139,6 +142,16 @@ const BarChart = ({
         return <AlertTriangle size={14} />;
       case 'update':
         return <RefreshCw size={14} />;
+      case 'enabled':
+        return <Flag size={14} />;
+      case 'disabled':
+        return <AlertTriangle size={14} />;
+      case 'settings':
+        return <Settings size={14} />;
+      case 'created':
+        return <Flag size={14} />;
+      case 'alert':
+        return <AlertTriangle size={14} />;
       default:
         return <Flag size={14} />;
     }
@@ -224,9 +237,7 @@ const BarChart = ({
                 content: () => (
                   <foreignObject width={16} height={16} x={-8} y={-20}>
                     <div className="flex justify-center items-center" style={{ color: "#8E9196" }}>
-                      {marker.eventType === 'feature' && <Flag size={14} />}
-                      {marker.eventType === 'bug' && <AlertTriangle size={14} />}
-                      {marker.eventType === 'update' && <RefreshCw size={14} />}
+                      {getEventIcon(marker.eventType)}
                     </div>
                   </foreignObject>
                 ),
@@ -262,25 +273,29 @@ const BarChart = ({
             />
           )}
           
-          {hasSelectedPoints && selectedPoints.map((point, index) => (
-            <ReferenceLine
-              key={`selected-time-${index}`}
-              x={point.name}
-              stroke="#8E9196"
-              strokeWidth={2}
-              className="selected-time-marker"
-              label={index === 0 || index === selectedPoints.length - 1 ? {
-                position: 'top',
-                content: () => (
-                  <foreignObject width={16} height={16} x={-8} y={-20}>
-                    <div className="flex justify-center items-center" style={{ color: "#8E9196" }}>
-                      {getEventIcon('feature')}
-                    </div>
-                  </foreignObject>
-                )
-              } : undefined}
-            />
-          ))}
+          {hasSelectedPoints && selectedPoints.map((point, index) => {
+            const eventType = point.eventType || 'feature';
+            
+            return (
+              <ReferenceLine
+                key={`selected-time-${index}`}
+                x={point.name}
+                stroke="#8E9196"
+                strokeWidth={2}
+                className="selected-time-marker"
+                label={{
+                  position: 'top',
+                  content: () => (
+                    <foreignObject width={16} height={16} x={-8} y={-20}>
+                      <div className="flex justify-center items-center" style={{ color: "#8E9196" }}>
+                        {getEventIcon(eventType)}
+                      </div>
+                    </foreignObject>
+                  )
+                }}
+              />
+            );
+          })}
           
           {metricType === 'evaluations' && !(showTrue && showFalse) && (
             <Bar
@@ -369,4 +384,3 @@ const BarChart = ({
 };
 
 export default BarChart;
-

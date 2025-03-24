@@ -1,4 +1,3 @@
-
 import React from 'react';
 import MetricCard from '@/components/metric/MetricCard';
 import { DataPoint, VersionChange } from '@/components/BarChart';
@@ -21,6 +20,7 @@ interface DashboardMetricsProps {
   timeframe: string;
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
+  selectedEventTypes?: string[] | null;
 }
 
 const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
@@ -36,10 +36,11 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   showFalse,
   timeframe,
   selectedTimestamp,
-  selectedTimestamps
+  selectedTimestamps,
+  selectedEventTypes
 }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 gap-6 animate-fade-in">
       {selectedMetrics.includes('evaluations') && (
         <MetricCard 
           title="Unique Users" 

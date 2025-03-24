@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from "@/lib/utils";
 import Header from '@/components/Header';
@@ -28,6 +27,7 @@ const Index = () => {
     errorRateVersionChanges,
     selectedTimestamp,
     selectedTimestamps,
+    selectedEventTypes,
     handleTimeframeChange,
     handleEnvironmentChange,
     handleDeviceChange,
@@ -76,12 +76,11 @@ const Index = () => {
             timeframe={timeframe}
             selectedTimestamp={selectedTimestamp}
             selectedTimestamps={selectedTimestamps}
+            selectedEventTypes={selectedEventTypes}
           />
           
-          {/* Footer moved between charts and history table */}
           <DashboardFooter />
           
-          {/* Feature Flag History table */}
           <FeatureFlagHistory onEventSelect={handleTimestampSelect} selectedTimestamp={selectedTimestamp} />
         </div>
       </div>
