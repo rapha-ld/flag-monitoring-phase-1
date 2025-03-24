@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Play, Search } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
@@ -11,6 +10,11 @@ interface Session {
   account: string;
   os: string;
   timestamp: Date;
+}
+
+interface SessionsTableProps {
+  selectedTimestamp?: Date | null;
+  selectedTimestamps?: Date[] | null;
 }
 
 // Sample data for the sessions table
@@ -45,7 +49,6 @@ const sessionsData: Session[] = [
     os: 'Android 14',
     timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) // 3 days ago
   },
-  // Additional 15 sessions
   {
     id: '6',
     account: 'marketing.team@example.com',
@@ -158,22 +161,51 @@ const formatTimestamp = (date: Date) => {
   );
 };
 
-const SessionsTable: React.FC = () => {
+const SessionsTable: React.FC<SessionsTableProps> = ({ 
+  selectedTimestamp, 
+  selectedTimestamps 
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [filteredSessions, setFilteredSessions] = useState(sessionsData);
 
-  // Filter sessions based on search query
-  const filteredSessions = sessionsData.filter(session => {
-    const query = searchQuery.toLowerCase();
-    return (
-      session.account.toLowerCase().includes(query) ||
-      session.os.toLowerCase().includes(query)
+  useEffect(() => {
+    // Filter sessions based on search query
+    let filtered = sessionsData.filter(session => {
+      const query = searchQuery.toLowerCase();
+      return (
+        session.account.toLowerCase().includes(query) ||
+        session.os.toLowerCase().includes(query)
+      );
+    });
+
+    // If we have time range selection, filter by the time range
+    if (selectedTimestamps && selectedTimestamps.length >= 2) {
+      const startTime = selectedTimestamps[0].getTime();
+      const endTime = selectedTimestamps[selectedTimestamps.length - 1].getTime();
+      
+      filtered = filtered.filter(session => {
+        const sessionTime = session.timestamp.getTime();
+        return sessionTime >= startTime && sessionTime <= endTime;
+      });
+    } 
+    // If we have single timestamp selection, show sessions closest to that time
+    else if (selectedTimestamp) {
+      const selectedTime = selectedTimestamp.getTime();
+      const dayInMs = 24 * 60 * 60 * 1000;
+      
+      filtered = filtered.filter(session => {
+        const sessionTime = session.timestamp.getTime();
+        return Math.abs(sessionTime - selectedTime) <= dayInMs; // Within a day of the selected time
+      });
+    }
+    
+    // Sort the filtered sessions data by timestamp in descending order
+    const sortedFilteredSessions = [...filtered].sort((a, b) => 
+      b.timestamp.getTime() - a.timestamp.getTime()
     );
-  });
-
-  // Sort the filtered sessions data by timestamp in descending order
-  const sortedSessionsData = [...filteredSessions].sort((a, b) => 
-    b.timestamp.getTime() - a.timestamp.getTime()
-  );
+    
+    setFilteredSessions(sortedFilteredSessions);
+  }, [searchQuery, selectedTimestamp, selectedTimestamps]);
 
   return (
     <div className="space-y-4 animate-fade-in">
@@ -198,8 +230,8 @@ const SessionsTable: React.FC = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedSessionsData.length > 0 ? (
-            sortedSessionsData.map((session) => (
+          {filteredSessions.length > 0 ? (
+            filteredSessions.map((session) => (
               <TableRow key={session.id}>
                 <TableCell className="font-medium">{session.account}</TableCell>
                 <TableCell>{session.os}</TableCell>
@@ -214,7 +246,9 @@ const SessionsTable: React.FC = () => {
           ) : (
             <TableRow>
               <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">
-                No results found for "{searchQuery}"
+                {selectedTimestamp || selectedTimestamps?.length 
+                  ? "No sessions found in the selected time range" 
+                  : `No results found for "${searchQuery}"`}
               </TableCell>
             </TableRow>
           )}

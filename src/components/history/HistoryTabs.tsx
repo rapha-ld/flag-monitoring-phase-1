@@ -22,7 +22,7 @@ const HistoryTabs = ({ activeTab, onChange }: HistoryTabsProps) => {
         className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-[#425EFF] data-[state=active]:text-foreground data-[state=active]:shadow-none text-muted-foreground"
       >
         <div className="flex items-center gap-1.5">
-          History
+          Flag history
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>

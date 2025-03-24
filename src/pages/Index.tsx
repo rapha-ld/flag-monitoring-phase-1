@@ -82,7 +82,11 @@ const Index = () => {
           <DashboardFooter />
           
           {/* Feature Flag History table */}
-          <FeatureFlagHistory onEventSelect={handleTimestampSelect} selectedTimestamp={selectedTimestamp} />
+          <FeatureFlagHistory 
+            onEventSelect={handleTimestampSelect} 
+            selectedTimestamp={selectedTimestamp}
+            selectedTimestamps={selectedTimestamps}
+          />
         </div>
       </div>
     </DashboardLayout>

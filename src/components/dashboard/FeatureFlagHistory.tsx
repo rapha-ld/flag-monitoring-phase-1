@@ -19,6 +19,7 @@ interface HistoryEvent {
 interface FeatureFlagHistoryProps {
   onEventSelect: (timestamps: Date[] | null) => void;
   selectedTimestamp: Date | null;
+  selectedTimestamps: Date[] | null;
 }
 
 const historyData: HistoryEvent[] = [
@@ -109,7 +110,11 @@ const formatTimestamp = (date: Date) => {
   );
 };
 
-const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, selectedTimestamp }) => {
+const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ 
+  onEventSelect, 
+  selectedTimestamp,
+  selectedTimestamps
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
@@ -184,7 +189,6 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
     setActiveTab(value);
     if (value !== 'history') {
       setSelectedRows([]);
-      onEventSelect(null);
     }
   };
 
@@ -245,7 +249,10 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
         </TabsContent>
         
         <TabsContent value="sessions" className="mt-0">
-          <SessionsTable />
+          <SessionsTable 
+            selectedTimestamp={selectedTimestamp}
+            selectedTimestamps={selectedTimestamps}
+          />
         </TabsContent>
         
         <TabsContent value="feedback" className="mt-0">
