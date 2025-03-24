@@ -1,28 +1,28 @@
-
 import { DataPoint } from '@/components/BarChart';
 import { format } from 'date-fns';
 import { Flag, Settings, AlertTriangle, ToggleLeft, RefreshCw, ToggleRight } from 'lucide-react';
+import React from 'react';
 
 export const getEventIcon = (timestamp: Date) => {
   const timeMs = timestamp.getTime();
   
   if (timeMs > Date.now() - 10 * 24 * 60 * 60 * 1000) {
-    return <ToggleRight className="h-4 w-4" />;
+    return React.createElement(ToggleRight, { className: "h-4 w-4" });
   }
   else if (timeMs > Date.now() - 40 * 24 * 60 * 60 * 1000) {
-    return <RefreshCw className="h-4 w-4" />;
+    return React.createElement(RefreshCw, { className: "h-4 w-4" });
   }
   else if (timeMs > Date.now() - 47 * 24 * 60 * 60 * 1000) {
-    return <ToggleLeft className="h-4 w-4" />;
+    return React.createElement(ToggleLeft, { className: "h-4 w-4" });
   }
   else if (timeMs > Date.now() - 55 * 24 * 60 * 60 * 1000) {
-    return <AlertTriangle className="h-4 w-4" />;
+    return React.createElement(AlertTriangle, { className: "h-4 w-4" });
   }
   else if (timeMs > Date.now() - 80 * 24 * 60 * 60 * 1000) {
-    return <Settings className="h-4 w-4" />;
+    return React.createElement(Settings, { className: "h-4 w-4" });
   }
   else {
-    return <Flag className="h-4 w-4" />;
+    return React.createElement(Flag, { className: "h-4 w-4" });
   }
 };
 
