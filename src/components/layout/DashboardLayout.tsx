@@ -8,13 +8,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children
 }) => {
   return <div className="flex h-screen w-full overflow-hidden bg-white">
-      {/* Left Navigation - fixed width sidebar with lower z-index */}
-      <div className="fixed left-0 top-0 h-full w-[244px] bg-white border-r border-border z-[1]">
+      {/* Left Navigation - fixed width sidebar */}
+      <div className="fixed left-0 top-0 h-full w-[244px] bg-white border-r border-border z-10">
         <img alt="Sidebar" className="w-full object-contain" src="/lovable-uploads/1b00cb07-3221-4941-b360-90318154102b.png" />
       </div>
       
-      {/* Main Content with padding to account for sidebars and higher z-index */}
-      <div className="fixed inset-0 pt-0 pb-0 pl-[244px] pr-[300px] overflow-y-auto bg-white z-[2]">
+      {/* Main Content with padding to account for sidebars */}
+      <div className="fixed inset-0 pt-0 pb-0 pl-[244px] pr-[300px] overflow-y-auto bg-white">
         {children}
       </div>
       
