@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { formatDistanceToNow } from 'date-fns';
@@ -208,7 +209,7 @@ const FeedbackSummary = ({ feedbackData }: { feedbackData: Feedback[] }) => {
         <h3 className="text-md font-medium">Feedback Summary</h3>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-3">
         <div>
           <h4 className="text-sm font-medium mb-1">Sentiment Distribution</h4>
           <div className="text-sm space-y-2">
@@ -218,7 +219,7 @@ const FeedbackSummary = ({ feedbackData }: { feedbackData: Feedback[] }) => {
                 <span>{positivePercentage}% ({sentimentCounts.positive || 0})</span>
               </div>
               <Progress value={positivePercentage} className="h-2 bg-gray-200" 
-                style={{ color: 'rgb(34, 197, 94)' }}
+                color="rgb(34, 197, 94)"
               />
             </div>
             <div className="space-y-1">
@@ -227,7 +228,7 @@ const FeedbackSummary = ({ feedbackData }: { feedbackData: Feedback[] }) => {
                 <span>{neutralPercentage}% ({sentimentCounts.neutral || 0})</span>
               </div>
               <Progress value={neutralPercentage} className="h-2 bg-gray-200" 
-                style={{ color: 'rgb(245, 158, 11)' }}
+                color="rgb(245, 158, 11)"
               />
             </div>
             <div className="space-y-1">
@@ -236,7 +237,7 @@ const FeedbackSummary = ({ feedbackData }: { feedbackData: Feedback[] }) => {
                 <span>{negativePercentage}% ({sentimentCounts.negative || 0})</span>
               </div>
               <Progress value={negativePercentage} className="h-2 bg-gray-200" 
-                style={{ color: 'rgb(239, 68, 68)' }}
+                color="rgb(239, 68, 68)"
               />
             </div>
           </div>
