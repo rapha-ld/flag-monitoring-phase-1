@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag, AlertTriangle, Search } from 'lucide-react';
@@ -7,6 +8,7 @@ import { Tabs, TabsContent } from '@/components/ui/tabs';
 import HistoryTabs from '@/components/history/HistoryTabs';
 import SessionsTable from '@/components/history/SessionsTable';
 import UserFeedbackTable from '@/components/history/UserFeedbackTable';
+import { toast } from '@/components/ui/use-toast';
 
 interface HistoryEvent {
   id: string;
@@ -119,32 +121,103 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>('history');
+  const [filteredHistoryData, setFilteredHistoryData] = useState<HistoryEvent[]>([]);
 
-  const filteredHistoryData = historyData.filter(event => {
-    const searchLower = searchQuery.toLowerCase();
-    return (
-      event.title.toLowerCase().includes(searchLower) ||
-      event.description.toLowerCase().includes(searchLower) ||
-      event.type.toLowerCase().includes(searchLower)
+  // Filter and sort history data based on search query and selected timestamps
+  useEffect(() => {
+    let filtered = historyData.filter(event => {
+      const searchLower = searchQuery.toLowerCase();
+      return (
+        event.title.toLowerCase().includes(searchLower) ||
+        event.description.toLowerCase().includes(searchLower) ||
+        event.type.toLowerCase().includes(searchLower)
+      );
+    });
+
+    // Apply timestamp filtering if we have selectedTimestamps
+    if (selectedTimestamps && selectedTimestamps.length >= 2) {
+      const startTime = selectedTimestamps[0].getTime();
+      const endTime = selectedTimestamps[selectedTimestamps.length - 1].getTime();
+      
+      const filteredByTime = filtered.filter(event => {
+        const eventTime = event.timestamp.getTime();
+        return eventTime >= startTime && eventTime <= endTime;
+      });
+
+      if (filteredByTime.length > 0) {
+        filtered = filteredByTime;
+        // Auto-select these events
+        const newSelectedRows = filteredByTime.map(event => event.id);
+        setSelectedRows(newSelectedRows);
+      } else if (filteredByTime.length === 0 && selectedTimestamps.length > 0) {
+        // No events in selected timeframe
+        toast({
+          title: "No events found",
+          description: "No events found in the selected time range",
+          variant: "default"
+        });
+      }
+    } 
+    // If we have a single timestamp selection
+    else if (selectedTimestamp) {
+      const selectedTime = selectedTimestamp.getTime();
+      const dayInMs = 24 * 60 * 60 * 1000;
+      
+      const filteredByTime = filtered.filter(event => {
+        const eventTime = event.timestamp.getTime();
+        return Math.abs(eventTime - selectedTime) <= dayInMs; // Within a day of the selected time
+      });
+      
+      if (filteredByTime.length > 0) {
+        filtered = filteredByTime;
+        // Auto-select the event closest to the selected timestamp
+        const closestEvent = filteredByTime.reduce((prev, curr) => {
+          const prevDiff = Math.abs(prev.timestamp.getTime() - selectedTime);
+          const currDiff = Math.abs(curr.timestamp.getTime() - selectedTime);
+          return prevDiff < currDiff ? prev : curr;
+        });
+        setSelectedRows([closestEvent.id]);
+      }
+    }
+
+    // Sort by timestamp (newest first)
+    const sorted = [...filtered].sort((a, b) => 
+      b.timestamp.getTime() - a.timestamp.getTime()
     );
-  });
+    
+    setFilteredHistoryData(sorted);
+  }, [searchQuery, selectedTimestamp, selectedTimestamps]);
 
-  const sortedHistoryData = [...filteredHistoryData].sort((a, b) => 
-    b.timestamp.getTime() - a.timestamp.getTime()
-  );
+  // Sync selected rows with parent component when they change
+  useEffect(() => {
+    if (selectedRows.length === 0) {
+      // Only clear selection if we don't have selected timestamps
+      if (!selectedTimestamps || selectedTimestamps.length === 0) {
+        onEventSelect(null);
+      }
+    } else {
+      const selectedEvents = historyData.filter(event => selectedRows.includes(event.id));
+      const selectedTimestamps = selectedEvents.map(event => event.timestamp);
+      
+      selectedTimestamps.sort((a, b) => a.getTime() - b.getTime());
+      
+      console.log("Selected events timestamps:", selectedTimestamps);
+      onEventSelect(selectedTimestamps);
+    }
+  }, [selectedRows, onEventSelect, selectedTimestamps]);
 
   const handleRowClick = (event: React.MouseEvent<HTMLTableRowElement>, historyEvent: HistoryEvent) => {
     const id = historyEvent.id;
     
     if (event.shiftKey && lastSelectedId) {
-      const currentIdIndex = sortedHistoryData.findIndex(item => item.id === id);
-      const lastSelectedIdIndex = sortedHistoryData.findIndex(item => item.id === lastSelectedId);
+      const currentIdIndex = filteredHistoryData.findIndex(item => item.id === id);
+      const lastSelectedIdIndex = filteredHistoryData.findIndex(item => item.id === lastSelectedId);
       
       if (currentIdIndex >= 0 && lastSelectedIdIndex >= 0) {
         const startIndex = Math.min(currentIdIndex, lastSelectedIdIndex);
         const endIndex = Math.max(currentIdIndex, lastSelectedIdIndex);
         
-        const newSelectedRows = sortedHistoryData
+        const newSelectedRows = filteredHistoryData
           .slice(startIndex, endIndex + 1)
           .map(item => item.id);
         
@@ -172,23 +245,11 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (selectedRows.length === 0) {
-      onEventSelect(null);
-    } else {
-      const selectedEvents = sortedHistoryData.filter(event => selectedRows.includes(event.id));
-      const selectedTimestamps = selectedEvents.map(event => event.timestamp);
-      
-      selectedTimestamps.sort((a, b) => a.getTime() - b.getTime());
-      
-      onEventSelect(selectedTimestamps);
-    }
-  }, [selectedRows, sortedHistoryData, onEventSelect]);
-
   const handleTabChange = (value: string) => {
     setActiveTab(value);
     if (value !== 'history') {
-      setSelectedRows([]);
+      // Don't clear selection when changing tabs
+      // setSelectedRows([]);
     }
   };
 
@@ -218,8 +279,8 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sortedHistoryData.length > 0 ? (
-                sortedHistoryData.map((event) => (
+              {filteredHistoryData.length > 0 ? (
+                filteredHistoryData.map((event) => (
                   <TableRow 
                     key={event.id}
                     onClick={(e) => handleRowClick(e, event)}
@@ -240,7 +301,9 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
               ) : (
                 <TableRow>
                   <TableCell colSpan={3} className="text-center py-6 text-muted-foreground">
-                    No results found for "{searchQuery}"
+                    {selectedTimestamp || (selectedTimestamps && selectedTimestamps.length > 0)
+                      ? "No events found in the selected time range"
+                      : `No results found for "${searchQuery}"`}
                   </TableCell>
                 </TableRow>
               )}

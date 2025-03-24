@@ -41,7 +41,8 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   onRangeSelect
 }) => {
   const handleRangeSelect = (startIndex: number, endIndex: number, dates: Date[]) => {
-    if (onRangeSelect) {
+    console.log("Range selected in DashboardMetrics:", dates);
+    if (onRangeSelect && dates.length > 0) {
       onRangeSelect(dates);
     }
   };

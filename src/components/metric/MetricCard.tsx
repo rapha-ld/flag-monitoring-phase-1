@@ -63,6 +63,13 @@ const MetricCard = ({
   // Get the display value based on the selected variants
   const displayValue = calculateDisplayValue(value, chartData, showTrue, showFalse, metricType);
   
+  const handleRangeSelect = (startIndex: number, endIndex: number, dates: Date[]) => {
+    console.log(`Range selected in ${title} card:`, startIndex, endIndex, dates);
+    if (onRangeSelect && dates.length > 0) {
+      onRangeSelect(startIndex, endIndex, dates);
+    }
+  };
+
   return (
     <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", className)}>
       <MetricCardHeader 
@@ -88,7 +95,7 @@ const MetricCard = ({
             metricType={metricType}
             selectedTimestamp={selectedTimestamp}
             selectedTimestamps={selectedTimestamps}
-            onRangeSelect={onRangeSelect}
+            onRangeSelect={handleRangeSelect}
           />
         ) : children}
       </CardContent>

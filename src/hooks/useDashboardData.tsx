@@ -74,6 +74,10 @@ export const useDashboardData = () => {
     // Calculate the current metrics for display
     const metrics = calculateMetrics(filteredEval, filteredConv, filteredError, days);
     setCurrentMetrics(metrics);
+    
+    // Clear timestamp selections when data changes
+    setSelectedTimestamp(null);
+    setSelectedTimestamps(null);
   }, [timeframe, environment, selectedDevice]);
 
   const handleTimeframeChange = (value: string) => {
@@ -124,6 +128,8 @@ export const useDashboardData = () => {
   };
 
   const handleTimestampSelect = (timestamps: Date[] | null) => {
+    console.log("Timestamps selected:", timestamps);
+    
     if (!timestamps) {
       setSelectedTimestamp(null);
       setSelectedTimestamps(null);
@@ -131,8 +137,10 @@ export const useDashboardData = () => {
       setSelectedTimestamp(timestamps[0]);
       setSelectedTimestamps(null);
     } else {
+      // Sort timestamps chronologically
+      const sortedTimestamps = [...timestamps].sort((a, b) => a.getTime() - b.getTime());
       setSelectedTimestamp(null);
-      setSelectedTimestamps(timestamps);
+      setSelectedTimestamps(sortedTimestamps);
     }
   };
 
