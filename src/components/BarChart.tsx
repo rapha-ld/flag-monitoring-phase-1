@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -349,10 +348,9 @@ const BarChart = ({
               fontWeight: "medium",
               content: (props) => (
                 <g>
-                  <foreignObject width="70" height="20" x="-35" y="-20">
+                  <foreignObject width="20" height="20" x="-10" y="-20">
                     <div className="flex items-center justify-center text-[#545A62]">
-                      <span className="mr-1">{icon}</span>
-                      <span>{format(point.exactTime, "MMM d")}</span>
+                      {icon}
                     </div>
                   </foreignObject>
                 </g>
@@ -374,7 +372,6 @@ const BarChart = ({
       );
     });
     
-    // Add the threshold line last so it appears on top
     if (thresholdLine) {
       components.push(
         <ReferenceLine
