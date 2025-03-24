@@ -64,15 +64,15 @@ const VersionMarker = ({
               v{version}
             </text>
             
-            {/* Event name with explicit inline font size to ensure it's applied */}
+            {/* Event name using same styling as X-axis */}
             {eventName && (
               <text
                 x="0"
                 y="28"
                 dominantBaseline="middle"
                 textAnchor="middle"
-                fill="#666"
-                className="event-name-text"
+                fill="#545A62"
+                style={{ fontSize: "10px" }}
               >
                 {eventName}
               </text>

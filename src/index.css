@@ -140,13 +140,5 @@
     .version-marker:hover {
       @apply scale-105 cursor-pointer;
     }
-    
-    .event-name-text {
-      font-size: 11px !important;
-    }
-    
-    .version-marker .event-name-text {
-      font-size: 11px !important;
-    }
   }
 }
