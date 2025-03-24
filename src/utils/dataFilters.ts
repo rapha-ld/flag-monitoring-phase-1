@@ -30,12 +30,12 @@ export const getFilteredData = (
     console.error(`Data filtering error: Expected exactly ${days} data points but got ${result.length}`);
   }
   
-  // Make sure names match exactly with our required dates
+  // Make sure names match exactly with our required dates and ensure minimum values
   const sortedResult = result.map((item, index) => ({
     ...item,
     name: requiredDates[index],
-    // Ensure the value is never undefined, use 0 as fallback
-    value: item.value !== undefined ? item.value : 0
+    // Ensure no zero values - use a minimum value of 1
+    value: Math.max((item.value !== undefined ? item.value : 0), 1)
   }));
   
   return sortedResult;
@@ -123,18 +123,19 @@ export const calculateMetrics = (
 // Process the data to ensure true/false values and calculate averages properly
 export const processTrueFalseValues = (data: any[]) => {
   return data.map(item => {
-    // Use 0 as the default value if value is undefined
-    const value = item.value !== undefined ? item.value : 0;
-    const trueValue = Math.round(value * 0.6); // 60% true
-    const falseValue = Math.round(value * 0.4); // 40% false
+    // Ensure minimum value of 1 to always show a bar
+    const value = Math.max((item.value !== undefined ? item.value : 0), 1);
+    // Calculate true/false values, ensuring they're never zero
+    const trueValue = Math.max(Math.round(value * 0.6), 1); // 60% true, minimum 1
+    const falseValue = Math.max(Math.round(value * 0.4), 1); // 40% false, minimum 1
     
     return {
       ...item,
-      value, // Ensure the value is not undefined
+      value, // Ensure the value is never zero
       valueTrue: trueValue,
       valueFalse: falseValue,
       // Add an average value - this is the true mathematical average (not sum)
-      valueAvg: trueValue + falseValue > 0 ? (trueValue + falseValue) / 2 : 0,
+      valueAvg: (trueValue + falseValue) / 2,
     };
   });
 };

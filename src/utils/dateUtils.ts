@@ -24,25 +24,25 @@ export const ensureContinuousDates = (data: any[], days: number) => {
   const allDates = generatePastDates(days);
   const dateMap = new Map();
   
-  // Initialize with all dates and zero values
+  // Initialize with all dates and minimum values of 1 (no zeros)
   allDates.forEach(date => {
     const formattedDate = formatDate(date);
     dateMap.set(formattedDate, {
       name: formattedDate,
-      value: 0,
+      value: 1, // Minimum value of 1 instead of 0
       date: date.toISOString(), // Store the full date as ISO string
       environment: data[0]?.environment || 'production', // Use first data point's environment or default
       device: data[0]?.device || 'all' // Use first data point's device or default
     });
   });
   
-  // Fill in actual values from the data
+  // Fill in actual values from the data, ensuring no zeros
   data.forEach(item => {
     if (dateMap.has(item.name)) {
       dateMap.set(item.name, {
         ...item,
-        // Ensure these properties exist even if they're 0
-        value: item.value || 0,
+        // Ensure value is at least 1
+        value: Math.max(item.value || 1, 1),
         // Make sure we store the date as ISO string
         date: item.date || new Date(item.name).toISOString()
       });
