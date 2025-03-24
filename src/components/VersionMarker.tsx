@@ -28,7 +28,7 @@ const VersionMarker = ({
   date, 
   details,
   eventType,
-  color = "#8E9196", // Changed to match primary gray
+  color = "#8E9196", // Primary gray for fonts
   className 
 }: VersionMarkerProps) => {
   // Determine which icon to render based on eventType or details

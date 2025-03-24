@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -152,10 +153,13 @@ const BarChart = ({
             z-index: 1;
           }
           .threshold-line {
-            z-index: 10 !important;
+            z-index: 20 !important;
           }
           .version-marker {
             z-index: 5;
+          }
+          .selected-time-marker {
+            z-index: 15;
           }
         `}
       </style>
@@ -265,6 +269,7 @@ const BarChart = ({
               x={point.name}
               stroke="#7c5cfc"
               strokeWidth={2}
+              className="selected-time-marker"
               label={index === 0 || index === selectedPoints.length - 1 ? {
                 value: format(point.exactTime, "MMM d, h:mm a"),
                 position: 'top',
