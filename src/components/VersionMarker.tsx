@@ -64,15 +64,15 @@ const VersionMarker = ({
               v{version}
             </text>
             
-            {/* Event name using same styling as X-axis */}
+            {/* Event name using exact X-axis label styling from BarChart */}
             {eventName && (
               <text
                 x="0"
                 y="28"
+                fontSize={10}
                 dominantBaseline="middle"
                 textAnchor="middle"
                 fill="#545A62"
-                style={{ fontSize: "10px" }}
               >
                 {eventName}
               </text>
