@@ -1,14 +1,12 @@
-
 import React from 'react';
-import { CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
+import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
 import VersionMarker from './VersionMarker';
 import CustomTooltip from './chart/CustomTooltip';
 import { referenceLineMarkers, thresholdLines } from '@/utils/chartReferenceLines';
-import { getEventNameFromVersion } from '@/utils/eventUtils';
-import { findSelectedDataPoints } from '@/utils/chartSelectionUtils';
-import ChartReferenceElements from './chart/ChartReferenceElements';
-import ChartSeries from './chart/ChartSeries';
+import { format } from 'date-fns';
+import BarChartCell from './chart/BarChartCell';
+import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag, AlertTriangle } from 'lucide-react';
 
 export interface DataPoint {
   name: string;
@@ -43,6 +41,29 @@ interface BarChartProps {
   selectedTimestamps?: Date[] | null;
 }
 
+const getEventIcon = (date: Date) => {
+  const timestamp = date.getTime();
+  
+  if (timestamp > Date.now() - 10 * 24 * 60 * 60 * 1000) {
+    return <ToggleRight className="h-4 w-4" />;
+  }
+  else if (timestamp > Date.now() - 40 * 24 * 60 * 60 * 1000) {
+    return <RefreshCw className="h-4 w-4" />;
+  }
+  else if (timestamp > Date.now() - 47 * 24 * 60 * 60 * 1000) {
+    return <ToggleLeft className="h-4 w-4" />;
+  }
+  else if (timestamp > Date.now() - 55 * 24 * 60 * 60 * 1000) {
+    return <AlertTriangle className="h-4 w-4" />;
+  }
+  else if (timestamp > Date.now() - 80 * 24 * 60 * 60 * 1000) {
+    return <Settings className="h-4 w-4" />;
+  }
+  else {
+    return <Flag className="h-4 w-4" />;
+  }
+};
+
 const BarChart = ({
   data,
   height = 350,
@@ -74,13 +95,64 @@ const BarChart = ({
     change.position >= 0 && change.position < data.length
   );
   
+  const useLineChart = (metricType === 'conversion' || metricType === 'errorRate');
+  
   const trueColor = '#2BB7D2';
   const falseColor = '#FFD099';
   const textGray = '#545A62';
 
   const thresholdLine = metricType ? thresholdLines.find(t => t.metricType === metricType) : undefined;
 
-  const selectedPoints = findSelectedDataPoints(data, selectedTimestamp, selectedTimestamps);
+  const findSelectedDataPoints = () => {
+    if ((!selectedTimestamp && !selectedTimestamps) || data.length === 0) return null;
+    
+    const timestamps = selectedTimestamps || (selectedTimestamp ? [selectedTimestamp] : []);
+    
+    if (timestamps.length === 0) return null;
+    
+    const dataPoints = data.map((point, index) => {
+      const pointDate = point.date ? new Date(point.date) : 
+                       (point.name && !isNaN(new Date(point.name).getTime()) ? 
+                       new Date(point.name) : null);
+      
+      return {
+        ...point,
+        index,
+        timestamp: pointDate ? pointDate.getTime() : null
+      };
+    }).filter(point => point.timestamp !== null);
+    
+    if (dataPoints.length === 0) return null;
+    
+    return timestamps.map(selectedTime => {
+      const selectedTimeMs = selectedTime.getTime();
+      let closestPoint = dataPoints[0];
+      let minDiff = Math.abs(dataPoints[0].timestamp! - selectedTimeMs);
+      
+      for (let i = 1; i < dataPoints.length; i++) {
+        const diff = Math.abs(dataPoints[i].timestamp! - selectedTimeMs);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestPoint = dataPoints[i];
+        }
+      }
+      
+      return {
+        ...closestPoint,
+        exactTime: selectedTime
+      };
+    }).sort((a, b) => a.timestamp! - b.timestamp!);
+  };
+  
+  const selectedPoints = findSelectedDataPoints();
+  const hasSelectedPoints = selectedPoints && selectedPoints.length > 0;
+  
+  const firstPoint = hasSelectedPoints ? selectedPoints[0] : null;
+  const lastPoint = hasSelectedPoints && selectedPoints.length > 1 
+    ? selectedPoints[selectedPoints.length - 1] 
+    : null;
+  
+  const showReferenceArea = firstPoint && lastPoint;
 
   return (
     <div className="w-full h-full">
@@ -151,22 +223,121 @@ const BarChart = ({
             />
           ))}
           
-          <ChartReferenceElements 
-            thresholdLine={thresholdLine}
-            selectedPoints={selectedPoints}
-            textGray={textGray}
-          />
+          {thresholdLine && (
+            <ReferenceLine
+              y={thresholdLine.value}
+              label={{
+                value: thresholdLine.label,
+                position: thresholdLine.labelPosition.position as any,
+                offset: thresholdLine.labelPosition.offset,
+                fill: thresholdLine.color,
+                fontSize: 11,
+                dx: 5
+              }}
+              stroke={thresholdLine.color}
+              strokeDasharray={thresholdLine.strokeDasharray}
+              strokeWidth={1.5}
+            />
+          )}
           
-          <ChartSeries 
-            data={data}
-            metricType={metricType}
-            showTrue={showTrue}
-            showFalse={showFalse}
-            barSize={barSize}
-            trueColor={trueColor}
-            falseColor={falseColor}
-            barColor={barColor}
-          />
+          {showReferenceArea && (
+            <ReferenceArea
+              x1={firstPoint.name}
+              x2={lastPoint.name}
+              fill="#f1f1f4"
+              fillOpacity={0.5}
+            />
+          )}
+          
+          {hasSelectedPoints && selectedPoints.map((point, index) => {
+            const icon = getEventIcon(point.exactTime);
+            const formattedDate = format(point.exactTime, "MMM d");
+            
+            const eventName = determineEventName(point.exactTime);
+            
+            return (
+              <ReferenceLine
+                key={`selected-time-${index}`}
+                x={point.name}
+                stroke={textGray}
+                strokeWidth={1.5}
+                label={index === 0 || index === selectedPoints.length - 1 ? {
+                  position: 'top',
+                  value: eventName || formattedDate
+                } : undefined}
+              />
+            );
+          })}
+          
+          {metricType === 'evaluations' && !(showTrue && showFalse) && (
+            <Bar
+              dataKey={showTrue ? 'valueTrue' : showFalse ? 'valueFalse' : 'value'}
+              name={showTrue ? 'True' : showFalse ? 'False' : 'Value'}
+              fill={showTrue ? trueColor : showFalse ? falseColor : barColor}
+              barSize={barSize}
+              isAnimationActive={false}
+              radius={[1, 1, 0, 0]}
+            >
+              {data.map((entry, index) => (
+                <BarChartCell 
+                  key={`cell-${index}`} 
+                  index={index} 
+                  barColor={showTrue ? trueColor : showFalse ? falseColor : barColor} 
+                />
+              ))}
+            </Bar>
+          )}
+          
+          {metricType === 'evaluations' && showTrue && showFalse && (
+            <>
+              <Bar
+                dataKey="valueTrue"
+                name="True"
+                stackId="a"
+                fill={trueColor}
+                barSize={barSize}
+                isAnimationActive={false}
+                radius={[1, 1, 0, 0]}
+                className="stroke-[#2BB7D2] stroke-[1px]"
+              />
+              <Bar
+                dataKey="valueFalse"
+                name="False"
+                stackId="a"
+                fill={falseColor}
+                barSize={barSize}
+                isAnimationActive={false}
+                radius={[0, 0, 0, 0]}
+                className="stroke-[#FFD099] stroke-[1px]"
+              />
+            </>
+          )}
+          
+          {useLineChart && showTrue && (
+            <Line
+              type="monotone"
+              dataKey="valueTrue"
+              name="True"
+              stroke={trueColor}
+              strokeWidth={3.5}
+              dot={false}
+              activeDot={{ r: 5 }}
+              isAnimationActive={false}
+            />
+          )}
+          
+          {useLineChart && showFalse && (
+            <Line
+              type="monotone"
+              dataKey="valueFalse"
+              name="False"
+              stroke={falseColor}
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 4 }}
+              isAnimationActive={false}
+            />
+          )}
           
           {visibleVersionChanges.map((change, index) => (
             <VersionMarker 
@@ -183,5 +354,41 @@ const BarChart = ({
     </div>
   );
 };
+
+function determineEventName(timestamp: Date): string {
+  const timeMs = timestamp.getTime();
+  
+  if (timeMs > Date.now() - 10 * 24 * 60 * 60 * 1000) {
+    return "Flag enabled";
+  }
+  else if (timeMs > Date.now() - 40 * 24 * 60 * 60 * 1000) {
+    return "Flag updated";
+  }
+  else if (timeMs > Date.now() - 47 * 24 * 60 * 60 * 1000) {
+    return "Flag disabled";
+  }
+  else if (timeMs > Date.now() - 55 * 24 * 60 * 60 * 1000) {
+    return "Alert";
+  }
+  else if (timeMs > Date.now() - 80 * 24 * 60 * 60 * 1000) {
+    return "Rules changed";
+  }
+  else {
+    return "Flag created";
+  }
+}
+
+function getEventNameFromVersion(version: string): string {
+  const versionMap: Record<string, string> = {
+    "1.0": "Flag created",
+    "1.1": "Rules changed",
+    "1.2": "Alert",
+    "1.3": "Flag disabled",
+    "1.4": "Flag updated",
+    "1.5": "Flag enabled"
+  };
+  
+  return versionMap[version] || "Version update";
+}
 
 export default BarChart;
