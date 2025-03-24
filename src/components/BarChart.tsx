@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -6,7 +7,7 @@ import CustomTooltip from './chart/CustomTooltip';
 import { referenceLineMarkers, thresholdLines } from '@/utils/chartReferenceLines';
 import { format } from 'date-fns';
 import BarChartCell from './chart/BarChartCell';
-import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag, AlertTriangle } from 'lucide-react';
+import { getEventIcon, determineEventName, isPointInSelectedRange } from '@/utils/eventUtils';
 
 export interface DataPoint {
   name: string;
@@ -40,29 +41,6 @@ interface BarChartProps {
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
 }
-
-const getEventIcon = (date: Date) => {
-  const timestamp = date.getTime();
-  
-  if (timestamp > Date.now() - 10 * 24 * 60 * 60 * 1000) {
-    return <ToggleRight className="h-4 w-4" />;
-  }
-  else if (timestamp > Date.now() - 40 * 24 * 60 * 60 * 1000) {
-    return <RefreshCw className="h-4 w-4" />;
-  }
-  else if (timestamp > Date.now() - 47 * 24 * 60 * 60 * 1000) {
-    return <ToggleLeft className="h-4 w-4" />;
-  }
-  else if (timestamp > Date.now() - 55 * 24 * 60 * 60 * 1000) {
-    return <AlertTriangle className="h-4 w-4" />;
-  }
-  else if (timestamp > Date.now() - 80 * 24 * 60 * 60 * 1000) {
-    return <Settings className="h-4 w-4" />;
-  }
-  else {
-    return <Flag className="h-4 w-4" />;
-  }
-};
 
 const BarChart = ({
   data,
@@ -154,6 +132,15 @@ const BarChart = ({
   
   const showReferenceArea = firstPoint && lastPoint;
 
+  // Determine if a data point is within the selected range
+  const getPointOpacity = (point: DataPoint) => {
+    if (!selectedTimestamps || selectedTimestamps.length === 0) {
+      return 1; // No selection, full opacity
+    }
+    
+    return isPointInSelectedRange(point, selectedTimestamps) ? 1 : 0.5;
+  };
+
   return (
     <div className="w-full h-full">
       <ResponsiveContainer width="100%" height={height}>
@@ -214,11 +201,19 @@ const BarChart = ({
               strokeWidth={2}
               strokeDasharray="3 3"
               label={{
-                value: marker.label,
                 position: 'top',
-                fill: marker.color,
-                fontSize: 16,
-                fontWeight: 'bold',
+                content: ({ viewBox }) => (
+                  <text
+                    x={viewBox.x}
+                    y={viewBox.y}
+                    fontSize={11}
+                    textAnchor="middle"
+                    fill={marker.color}
+                    fontWeight="bold"
+                  >
+                    {marker.label}
+                  </text>
+                )
               }}
             />
           ))}
@@ -227,12 +222,18 @@ const BarChart = ({
             <ReferenceLine
               y={thresholdLine.value}
               label={{
-                value: thresholdLine.label,
                 position: thresholdLine.labelPosition.position as any,
-                offset: thresholdLine.labelPosition.offset,
-                fill: thresholdLine.color,
-                fontSize: 11,
-                dx: 5
+                content: ({ viewBox }) => (
+                  <text
+                    x={(viewBox.x || 0) + 5}
+                    y={viewBox.y}
+                    fontSize={11}
+                    textAnchor="start"
+                    fill={thresholdLine.color}
+                  >
+                    {thresholdLine.label}
+                  </text>
+                )
               }}
               stroke={thresholdLine.color}
               strokeDasharray={thresholdLine.strokeDasharray}
@@ -263,7 +264,17 @@ const BarChart = ({
                 strokeWidth={1.5}
                 label={index === 0 || index === selectedPoints.length - 1 ? {
                   position: 'top',
-                  value: eventName || formattedDate
+                  content: ({ viewBox }) => (
+                    <text
+                      x={viewBox.x}
+                      y={viewBox.y}
+                      fontSize={11}
+                      textAnchor="middle"
+                      fill={textGray}
+                    >
+                      {eventName || formattedDate}
+                    </text>
+                  )
                 } : undefined}
               />
             );
@@ -283,6 +294,7 @@ const BarChart = ({
                   key={`cell-${index}`} 
                   index={index} 
                   barColor={showTrue ? trueColor : showFalse ? falseColor : barColor} 
+                  opacity={getPointOpacity(entry)}
                 />
               ))}
             </Bar>
@@ -299,7 +311,16 @@ const BarChart = ({
                 isAnimationActive={false}
                 radius={[1, 1, 0, 0]}
                 className="stroke-[#2BB7D2] stroke-[1px]"
-              />
+              >
+                {data.map((entry, index) => (
+                  <BarChartCell 
+                    key={`true-cell-${index}`} 
+                    index={index} 
+                    barColor={trueColor}
+                    opacity={getPointOpacity(entry)}
+                  />
+                ))}
+              </Bar>
               <Bar
                 dataKey="valueFalse"
                 name="False"
@@ -309,7 +330,16 @@ const BarChart = ({
                 isAnimationActive={false}
                 radius={[0, 0, 0, 0]}
                 className="stroke-[#FFD099] stroke-[1px]"
-              />
+              >
+                {data.map((entry, index) => (
+                  <BarChartCell 
+                    key={`false-cell-${index}`} 
+                    index={index} 
+                    barColor={falseColor}
+                    opacity={getPointOpacity(entry)}
+                  />
+                ))}
+              </Bar>
             </>
           )}
           
@@ -323,6 +353,7 @@ const BarChart = ({
               dot={false}
               activeDot={{ r: 5 }}
               isAnimationActive={false}
+              strokeOpacity={selectedTimestamps && selectedTimestamps.length > 0 ? 0.6 : 1}
             />
           )}
           
@@ -336,6 +367,7 @@ const BarChart = ({
               dot={false}
               activeDot={{ r: 4 }}
               isAnimationActive={false}
+              strokeOpacity={selectedTimestamps && selectedTimestamps.length > 0 ? 0.6 : 1}
             />
           )}
           
@@ -354,41 +386,5 @@ const BarChart = ({
     </div>
   );
 };
-
-function determineEventName(timestamp: Date): string {
-  const timeMs = timestamp.getTime();
-  
-  if (timeMs > Date.now() - 10 * 24 * 60 * 60 * 1000) {
-    return "Flag enabled";
-  }
-  else if (timeMs > Date.now() - 40 * 24 * 60 * 60 * 1000) {
-    return "Flag updated";
-  }
-  else if (timeMs > Date.now() - 47 * 24 * 60 * 60 * 1000) {
-    return "Flag disabled";
-  }
-  else if (timeMs > Date.now() - 55 * 24 * 60 * 60 * 1000) {
-    return "Alert";
-  }
-  else if (timeMs > Date.now() - 80 * 24 * 60 * 60 * 1000) {
-    return "Rules changed";
-  }
-  else {
-    return "Flag created";
-  }
-}
-
-function getEventNameFromVersion(version: string): string {
-  const versionMap: Record<string, string> = {
-    "1.0": "Flag created",
-    "1.1": "Rules changed",
-    "1.2": "Alert",
-    "1.3": "Flag disabled",
-    "1.4": "Flag updated",
-    "1.5": "Flag enabled"
-  };
-  
-  return versionMap[version] || "Version update";
-}
 
 export default BarChart;

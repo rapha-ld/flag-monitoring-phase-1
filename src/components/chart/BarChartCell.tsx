@@ -8,13 +8,15 @@ interface BarChartCellProps {
   barColor: string;
   data?: DataPoint[];
   activeIndex?: number | null;
+  opacity?: number;
 }
 
-const BarChartCell = ({ index, barColor, activeIndex = null }: BarChartCellProps) => {
+const BarChartCell = ({ index, barColor, activeIndex = null, opacity = 1 }: BarChartCellProps) => {
   return (
     <Cell
       key={`cell-${index}`}
-      fill={activeIndex === index ? `${barColor}` : `${barColor}90`}
+      fill={activeIndex === index ? `${barColor}` : `${barColor}`}
+      fillOpacity={opacity}
       className="transition-colors duration-200"
     />
   );
