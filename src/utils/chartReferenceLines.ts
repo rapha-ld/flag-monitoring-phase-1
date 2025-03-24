@@ -4,7 +4,7 @@ interface ReferenceLineMarker {
   date: string;
   label: string;
   color: string;
-  eventName?: string; // Add event name property
+  eventName?: string;
 }
 
 interface LabelPosition {

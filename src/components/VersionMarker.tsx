@@ -18,7 +18,7 @@ interface VersionMarkerProps {
   date?: string;
   details?: string;
   className?: string;
-  eventName?: string;  // Add this new prop for event name
+  eventName?: string;
 }
 
 const VersionMarker = ({ 
@@ -28,7 +28,7 @@ const VersionMarker = ({
   date, 
   details,
   className,
-  eventName  // Add this new prop
+  eventName
 }: VersionMarkerProps) => {
   // Format the date if provided
   const formattedDate = date ? format(parseISO(date), 'MMM d') : '';
@@ -64,12 +64,12 @@ const VersionMarker = ({
               v{version}
             </text>
             
-            {/* Event name instead of date */}
+            {/* Event name with explicitly smaller font size */}
             {eventName && (
               <text
                 x="0"
                 y="28"
-                fontSize="5"
+                style={{ fontSize: '5px' }}
                 textAnchor="middle"
                 fill="#666"
               >
