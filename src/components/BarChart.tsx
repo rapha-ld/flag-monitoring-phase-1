@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -143,13 +144,8 @@ const BarChart = ({
   
   const showReferenceArea = firstPoint && lastPoint;
 
-  const getPointOpacity = (point: DataPoint) => {
-    if (!selectedTimestamps || selectedTimestamps.length === 0) {
-      return 1; // No selection, full opacity
-    }
-    
-    return isPointInSelectedRange(point, selectedTimestamps) ? 1 : 0.5;
-  };
+  // Removing the opacity change for selected ranges
+  const getPointOpacity = () => 1; // Always return full opacity
 
   return (
     <div className="w-full h-full">
@@ -215,7 +211,7 @@ const BarChart = ({
                 content: ({ viewBox }: { viewBox: ChartViewBox }) => (
                   <text
                     x={viewBox?.x ?? 0}
-                    y={viewBox?.y ?? 0}
+                    y={(viewBox?.y ?? 0) - 10} // Increased space between line and label
                     fontSize={11}
                     textAnchor="middle"
                     fill={marker.color}
@@ -277,7 +273,7 @@ const BarChart = ({
                   content: ({ viewBox }: { viewBox: ChartViewBox }) => (
                     <text
                       x={viewBox?.x ?? 0}
-                      y={viewBox?.y ?? 0}
+                      y={(viewBox?.y ?? 0) - 12} // Increased space between line and label
                       fontSize={11}
                       textAnchor="middle"
                       fill={textGray}
@@ -304,7 +300,7 @@ const BarChart = ({
                   key={`cell-${index}`} 
                   index={index} 
                   barColor={showTrue ? trueColor : showFalse ? falseColor : barColor} 
-                  opacity={getPointOpacity(entry)}
+                  opacity={getPointOpacity()}
                 />
               ))}
             </Bar>
@@ -327,7 +323,7 @@ const BarChart = ({
                     key={`true-cell-${index}`} 
                     index={index} 
                     barColor={trueColor}
-                    opacity={getPointOpacity(entry)}
+                    opacity={getPointOpacity()}
                   />
                 ))}
               </Bar>
@@ -346,7 +342,7 @@ const BarChart = ({
                     key={`false-cell-${index}`} 
                     index={index} 
                     barColor={falseColor}
-                    opacity={getPointOpacity(entry)}
+                    opacity={getPointOpacity()}
                   />
                 ))}
               </Bar>
@@ -363,7 +359,7 @@ const BarChart = ({
               dot={false}
               activeDot={{ r: 5 }}
               isAnimationActive={false}
-              strokeOpacity={selectedTimestamps && selectedTimestamps.length > 0 ? 0.6 : 1}
+              strokeOpacity={1} // Removed conditional opacity
             />
           )}
           
@@ -377,7 +373,7 @@ const BarChart = ({
               dot={false}
               activeDot={{ r: 4 }}
               isAnimationActive={false}
-              strokeOpacity={selectedTimestamps && selectedTimestamps.length > 0 ? 0.6 : 1}
+              strokeOpacity={1} // Removed conditional opacity
             />
           )}
           
