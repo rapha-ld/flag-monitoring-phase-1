@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag, AlertTriangle, Search } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, format } from 'date-fns';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import HistoryTabs from '@/components/history/HistoryTabs';
@@ -93,14 +93,7 @@ const getEventIcon = (type: HistoryEvent['type']) => {
 
 const formatTimestamp = (date: Date) => {
   const relativeTime = formatDistanceToNow(date, { addSuffix: true });
-  const absoluteTime = date.toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true
-  });
+  const absoluteTime = format(date, "MMM d ''yy");
   
   return (
     <div className="flex flex-col">
@@ -214,7 +207,7 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
               <TableRow>
                 <TableHead className="w-[300px]">Event</TableHead>
                 <TableHead>Description</TableHead>
-                <TableHead className="text-right w-[200px]">Date</TableHead>
+                <TableHead className="text-right w-[200px]">Time</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

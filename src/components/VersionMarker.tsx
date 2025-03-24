@@ -31,7 +31,7 @@ const VersionMarker = ({
   eventName
 }: VersionMarkerProps) => {
   // Format the date if provided
-  const formattedDate = date ? format(parseISO(date), 'MMM d') : '';
+  const formattedDate = date ? format(parseISO(date), "MMM d ''yy") : '';
 
   // Get the appropriate icon based on the event name
   const getEventIcon = () => {
@@ -98,7 +98,7 @@ const VersionMarker = ({
         </TooltipTrigger>
         <TooltipContent side="top" className="p-3 space-y-1.5 max-w-xs">
           <p className="font-medium text-sm">Version {version}</p>
-          {date && <p className="text-xs text-muted-foreground">{format(parseISO(date), 'MMM d, yyyy')}</p>}
+          {date && <p className="text-xs text-muted-foreground">{format(parseISO(date), "MMM d ''yy")}</p>}
           {details && <p className="text-xs text-muted-foreground">{details}</p>}
           {eventName && <p className="text-xs font-medium">{eventName}</p>}
         </TooltipContent>
