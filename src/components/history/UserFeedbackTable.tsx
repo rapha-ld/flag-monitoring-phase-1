@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { formatDistanceToNow } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
-import { MessageSquareText } from 'lucide-react';
+import { MessageSquareText, Search } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
 
 interface Feedback {
   id: string;
@@ -271,17 +272,34 @@ const FeedbackSummary = ({ feedbackData }: { feedbackData: Feedback[] }) => {
 };
 
 const UserFeedbackTable: React.FC = () => {
-  const sortedFeedbackData = [...feedbackData].sort((a, b) => 
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  const filteredFeedbackData = feedbackData.filter(feedback => {
+    const query = searchQuery.toLowerCase();
+    return (
+      feedback.email.toLowerCase().includes(query) ||
+      feedback.feedback.toLowerCase().includes(query) ||
+      feedback.sentiment.toLowerCase().includes(query)
+    );
+  });
+  
+  const sortedFeedbackData = [...filteredFeedbackData].sort((a, b) => 
     b.timestamp.getTime() - a.timestamp.getTime()
   );
 
   return (
     <div className="space-y-4 animate-fade-in">
-      <div className="flex justify-between items-center">
-        <h2 className="text-[15px] font-semibold">User Feedback</h2>
-      </div>
-      
       <FeedbackSummary feedbackData={feedbackData} />
+      
+      <div className="relative w-72 ml-auto mb-4">
+        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search feedback..."
+          className="pl-8"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
       
       <Table>
         <TableHeader>
@@ -293,16 +311,24 @@ const UserFeedbackTable: React.FC = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedFeedbackData.map((feedback) => (
-            <TableRow key={feedback.id}>
-              <TableCell className="font-medium">{feedback.email}</TableCell>
-              <TableCell className="max-w-md">
-                <div className="line-clamp-2">{feedback.feedback}</div>
+          {sortedFeedbackData.length > 0 ? (
+            sortedFeedbackData.map((feedback) => (
+              <TableRow key={feedback.id}>
+                <TableCell className="font-medium">{feedback.email}</TableCell>
+                <TableCell className="max-w-md">
+                  <div className="line-clamp-2">{feedback.feedback}</div>
+                </TableCell>
+                <TableCell>{getSentimentBadge(feedback.sentiment)}</TableCell>
+                <TableCell className="text-right">{formatTimestamp(feedback.timestamp)}</TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">
+                No results found for "{searchQuery}"
               </TableCell>
-              <TableCell>{getSentimentBadge(feedback.sentiment)}</TableCell>
-              <TableCell className="text-right">{formatTimestamp(feedback.timestamp)}</TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>
