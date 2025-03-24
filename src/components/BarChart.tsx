@@ -144,8 +144,8 @@ const BarChart = ({
   
   const showReferenceArea = firstPoint && lastPoint;
 
-  // Removing the opacity change for selected ranges
-  const getPointOpacity = () => 1; // Always return full opacity
+  // Remove conditional opacity - always using full opacity to make selection clear
+  const getPointOpacity = () => 1;
 
   return (
     <div className="w-full h-full">
@@ -199,6 +199,7 @@ const BarChart = ({
             isAnimationActive={false}
           />
           
+          {/* Reference lines for markers */}
           {referenceLineMarkers.map((marker, index) => (
             <ReferenceLine
               key={`ref-line-${index}`}
@@ -224,6 +225,7 @@ const BarChart = ({
             />
           ))}
           
+          {/* Threshold line */}
           {thresholdLine && (
             <ReferenceLine
               y={thresholdLine.value}
@@ -247,15 +249,20 @@ const BarChart = ({
             />
           )}
           
+          {/* Reference area for selected time range - MODIFIED to make it more visible */}
           {showReferenceArea && (
             <ReferenceArea
               x1={firstPoint.name}
               x2={lastPoint.name}
-              fill="#f1f1f4"
-              fillOpacity={0.5}
+              fill="#6E6F96"
+              fillOpacity={0.15}
+              stroke="#6E6F96"
+              strokeOpacity={0.3}
+              strokeWidth={1}
             />
           )}
           
+          {/* Reference lines for selected points */}
           {hasSelectedPoints && selectedPoints.map((point, index) => {
             const icon = getEventIcon(point.exactTime);
             const formattedDate = format(point.exactTime, "MMM d");
@@ -286,6 +293,7 @@ const BarChart = ({
             );
           })}
           
+          {/* For evaluation metrics with only one visibility option */}
           {metricType === 'evaluations' && !(showTrue && showFalse) && (
             <Bar
               dataKey={showTrue ? 'valueTrue' : showFalse ? 'valueFalse' : 'value'}
@@ -306,6 +314,7 @@ const BarChart = ({
             </Bar>
           )}
           
+          {/* For evaluation metrics with both True and False visibility */}
           {metricType === 'evaluations' && showTrue && showFalse && (
             <>
               <Bar
@@ -349,6 +358,7 @@ const BarChart = ({
             </>
           )}
           
+          {/* Line charts for conversion and error rate metrics */}
           {useLineChart && showTrue && (
             <Line
               type="monotone"
@@ -359,7 +369,7 @@ const BarChart = ({
               dot={false}
               activeDot={{ r: 5 }}
               isAnimationActive={false}
-              strokeOpacity={1} // Removed conditional opacity
+              strokeOpacity={1}
             />
           )}
           
@@ -373,10 +383,11 @@ const BarChart = ({
               dot={false}
               activeDot={{ r: 4 }}
               isAnimationActive={false}
-              strokeOpacity={1} // Removed conditional opacity
+              strokeOpacity={1}
             />
           )}
           
+          {/* Version markers */}
           {visibleVersionChanges.map((change, index) => (
             <VersionMarker 
               key={`marker-${index}`}
