@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -255,7 +254,7 @@ const BarChart = ({
               x1={firstPoint.name}
               x2={lastPoint.name}
               fill="#6E6F96"
-              fillOpacity={0.15}
+              fillOpacity={0.1}
               stroke="#6E6F96"
               strokeOpacity={0.3}
               strokeWidth={1}
