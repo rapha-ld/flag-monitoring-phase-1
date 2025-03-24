@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { formatDistanceToNow } from 'date-fns';
@@ -163,7 +162,6 @@ const formatTimestamp = (date: Date) => {
   const absoluteTime = date.toLocaleString('en-US', {
     month: 'short',
     day: 'numeric',
-    year: 'numeric',
     hour: 'numeric',
     minute: '2-digit',
     hour12: true
@@ -307,7 +305,7 @@ const UserFeedbackTable: React.FC = () => {
             <TableHead>Email</TableHead>
             <TableHead>Feedback</TableHead>
             <TableHead>Sentiment</TableHead>
-            <TableHead className="text-right">Timestamp</TableHead>
+            <TableHead className="text-right">Date</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

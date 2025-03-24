@@ -1,4 +1,3 @@
-
 import { formatDistanceToNow } from 'date-fns';
 import { HistoryEvent, HistoryEventType } from '@/types/historyTypes';
 import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag, AlertTriangle } from 'lucide-react';
@@ -26,7 +25,6 @@ export const formatTimestamp = (date: Date) => {
   const absoluteTime = date.toLocaleString('en-US', {
     month: 'short',
     day: 'numeric',
-    year: 'numeric',
     hour: 'numeric',
     minute: '2-digit',
     hour12: true
