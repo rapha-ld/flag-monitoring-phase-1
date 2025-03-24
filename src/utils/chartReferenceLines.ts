@@ -19,7 +19,6 @@ interface ThresholdLine {
   color: string;
   strokeDasharray: string;
   labelPosition: LabelPosition;
-  className?: string; // Add className property for styling
 }
 
 export const referenceLineMarkers: ReferenceLineMarker[] = [
@@ -51,7 +50,6 @@ export const thresholdLines: ThresholdLine[] = [
       position: "insideTopLeft",
       offset: 10,
       align: "left"
-    },
-    className: "threshold-line" // Add CSS class
+    }
   }
 ];
