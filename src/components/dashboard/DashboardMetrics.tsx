@@ -21,7 +21,6 @@ interface DashboardMetricsProps {
   timeframe: string;
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
-  selectedEventTypes?: string[] | null;
 }
 
 const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
@@ -37,23 +36,15 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   showFalse,
   timeframe,
   selectedTimestamp,
-  selectedTimestamps,
-  selectedEventTypes
+  selectedTimestamps
 }) => {
-  // Default metrics with safe fallbacks to prevent undefined errors
-  const safeMetrics = {
-    evaluations: currentMetrics?.evaluations || { value: 0, change: { value: 0, trend: 'up' as const } },
-    conversion: currentMetrics?.conversion || { value: 0, change: { value: 0, trend: 'up' as const } },
-    errorRate: currentMetrics?.errorRate || { value: 0, change: { value: 0, trend: 'up' as const } }
-  };
-
   return (
-    <div className="grid grid-cols-1 gap-6 animate-fade-in">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {selectedMetrics.includes('evaluations') && (
         <MetricCard 
           title="Unique Users" 
-          value={safeMetrics.evaluations.value}
-          change={safeMetrics.evaluations.change}
+          value={currentMetrics.evaluations.value}
+          change={currentMetrics.evaluations.change}
           info="Total unique users for the selected time period"
           className="animate-slide-up [animation-delay:100ms]"
           chartData={filteredEvaluationData}
@@ -76,8 +67,8 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
       {selectedMetrics.includes('conversion') && (
         <MetricCard 
           title="Avg. Checkout Conversion Rate" 
-          value={`${safeMetrics.conversion.value}%`}
-          change={safeMetrics.conversion.change}
+          value={`${currentMetrics.conversion.value}%`}
+          change={currentMetrics.conversion.change}
           info="Percentage of checkout completions from initiated sessions"
           className="animate-slide-up [animation-delay:200ms]"
           chartData={filteredConversionData}
@@ -100,10 +91,10 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
       {selectedMetrics.includes('errorRate') && (
         <MetricCard 
           title="Avg. Error Rate" 
-          value={`${safeMetrics.errorRate.value}%`}
+          value={`${currentMetrics.errorRate.value}%`}
           change={{
-            value: Math.abs(safeMetrics.errorRate.change.value),
-            trend: safeMetrics.errorRate.change.value < 0 ? 'up' : 'down'
+            value: Math.abs(currentMetrics.errorRate.change.value),
+            trend: currentMetrics.errorRate.change.value < 0 ? 'up' : 'down'
           }}
           info="Percentage of requests resulting in error responses"
           className="animate-slide-up [animation-delay:300ms]"

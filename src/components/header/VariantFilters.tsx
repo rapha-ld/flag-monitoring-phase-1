@@ -6,8 +6,8 @@ import { Label } from '@/components/ui/label';
 interface VariantFiltersProps {
   showTrue: boolean;
   showFalse: boolean;
-  onToggleTrue: (checked: boolean) => void;
-  onToggleFalse: (checked: boolean) => void;
+  onToggleTrue: () => void;
+  onToggleFalse: () => void;
 }
 
 const VariantFilters = ({ showTrue, showFalse, onToggleTrue, onToggleFalse }: VariantFiltersProps) => {
@@ -18,7 +18,7 @@ const VariantFilters = ({ showTrue, showFalse, onToggleTrue, onToggleFalse }: Va
         <Checkbox 
           id="filter-true" 
           checked={showTrue}
-          onCheckedChange={(checked) => onToggleTrue(checked === true)}
+          onCheckedChange={onToggleTrue}
           className="data-[state=checked]:bg-[#2BB7D2] data-[state=checked]:border-[#2BB7D2]"
         />
         <Label htmlFor="filter-true" className="text-sm">True</Label>
@@ -27,7 +27,7 @@ const VariantFilters = ({ showTrue, showFalse, onToggleTrue, onToggleFalse }: Va
         <Checkbox 
           id="filter-false" 
           checked={showFalse}
-          onCheckedChange={(checked) => onToggleFalse(checked === true)}
+          onCheckedChange={onToggleFalse}
           className="data-[state=checked]:bg-[#FFD099] data-[state=checked]:border-[#FFD099] data-[state=checked]:text-black"
         />
         <Label htmlFor="filter-false" className="text-sm">False</Label>

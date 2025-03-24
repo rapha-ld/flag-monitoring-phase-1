@@ -22,8 +22,8 @@ interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   onMetricVisibilityChange?: (metric: string, visible: boolean) => void;
   showTrue?: boolean;
   showFalse?: boolean;
-  onToggleTrue?: (checked: boolean) => void;
-  onToggleFalse?: (checked: boolean) => void;
+  onToggleTrue?: () => void;
+  onToggleFalse?: () => void;
 }
 
 const Header = ({ 

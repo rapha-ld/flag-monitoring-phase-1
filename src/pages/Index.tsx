@@ -28,7 +28,6 @@ const Index = () => {
     errorRateVersionChanges,
     selectedTimestamp,
     selectedTimestamps,
-    selectedEventTypes,
     handleTimeframeChange,
     handleEnvironmentChange,
     handleDeviceChange,
@@ -38,22 +37,6 @@ const Index = () => {
     handleToggleFalse,
     handleTimestampSelect
   } = useDashboardData();
-
-  // Create a properly structured metrics object
-  const formattedMetrics = {
-    evaluations: { 
-      value: currentMetrics?.evaluations || 0, 
-      change: { value: 0, trend: 'up' as const } 
-    },
-    conversion: { 
-      value: currentMetrics?.conversion || 0, 
-      change: { value: 0, trend: 'up' as const } 
-    },
-    errorRate: { 
-      value: currentMetrics?.errorRate || 0, 
-      change: { value: 0, trend: 'down' as const } 
-    }
-  };
 
   return (
     <DashboardLayout>
@@ -81,7 +64,7 @@ const Index = () => {
           
           <DashboardMetrics 
             selectedMetrics={visibleMetrics}
-            currentMetrics={formattedMetrics}
+            currentMetrics={currentMetrics}
             filteredEvaluationData={filteredEvaluationData}
             filteredConversionData={filteredConversionData}
             filteredErrorRateData={filteredErrorRateData}
@@ -93,11 +76,12 @@ const Index = () => {
             timeframe={timeframe}
             selectedTimestamp={selectedTimestamp}
             selectedTimestamps={selectedTimestamps}
-            selectedEventTypes={selectedEventTypes}
           />
           
+          {/* Footer moved between charts and history table */}
           <DashboardFooter />
           
+          {/* Feature Flag History table */}
           <FeatureFlagHistory onEventSelect={handleTimestampSelect} selectedTimestamp={selectedTimestamp} />
         </div>
       </div>
