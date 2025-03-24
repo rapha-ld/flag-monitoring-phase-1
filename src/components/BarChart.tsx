@@ -359,6 +359,7 @@ const BarChart = ({
               version={change.version}
               details={change.details}
               eventType={change.eventType}
+              date={change.date}
               color="#8E9196"
             />
           ))}
@@ -369,4 +370,3 @@ const BarChart = ({
 };
 
 export default BarChart;
-

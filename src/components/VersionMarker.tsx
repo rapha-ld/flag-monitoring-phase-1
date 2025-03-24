@@ -8,6 +8,7 @@ import {
   TooltipProvider, 
   TooltipTrigger 
 } from '@/components/ui/tooltip';
+import { format } from 'date-fns';
 
 interface VersionMarkerProps {
   x?: number | string;
@@ -49,6 +50,9 @@ const VersionMarker = ({
     return <Flag size={14} />;
   };
 
+  // Format the date if provided
+  const formattedDate = date ? format(new Date(date), 'MMM d') : null;
+
   return (
     <TooltipProvider>
       <Tooltip>
@@ -69,6 +73,20 @@ const VersionMarker = ({
               strokeDasharray="3 3"
             />
             
+            {/* Date text at the top */}
+            {formattedDate && (
+              <text
+                x="0"
+                y="-25"
+                textAnchor="middle"
+                fill={color}
+                fontSize="10"
+                fontWeight="500"
+              >
+                {formattedDate}
+              </text>
+            )}
+            
             {/* Icon at the top */}
             <foreignObject width={16} height={16} x={-8} y={-20}>
               <div className="flex justify-center items-center" style={{ color }}>
@@ -79,7 +97,7 @@ const VersionMarker = ({
         </TooltipTrigger>
         <TooltipContent side="top" className="p-3 space-y-1.5 max-w-xs">
           <p className="font-medium text-sm">Version {version}</p>
-          {date && <p className="text-xs text-muted-foreground">{date}</p>}
+          {date && <p className="text-xs text-muted-foreground">{format(new Date(date), 'MMM d, yyyy')}</p>}
           {details && <p className="text-xs text-muted-foreground">{details}</p>}
         </TooltipContent>
       </Tooltip>
