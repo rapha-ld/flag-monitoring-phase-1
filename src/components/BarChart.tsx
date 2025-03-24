@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -217,14 +216,14 @@ const BarChart = ({
             <ReferenceLine
               key={`ref-line-${index}`}
               x={marker.date}
-              stroke={marker.color}
+              stroke="#8E9196"
               strokeWidth={1.5}
               strokeDasharray="3 3"
               label={{
                 position: 'top',
                 content: () => (
                   <foreignObject width={16} height={16} x={-8} y={-20}>
-                    <div className="flex justify-center items-center" style={{ color: marker.color }}>
+                    <div className="flex justify-center items-center" style={{ color: "#8E9196" }}>
                       {marker.eventType === 'feature' && <Flag size={14} />}
                       {marker.eventType === 'bug' && <AlertTriangle size={14} />}
                       {marker.eventType === 'update' && <RefreshCw size={14} />}
