@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { formatDistanceToNow } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { MessageSquareText } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
 
-// Define the interface for feedback data
 interface Feedback {
   id: string;
   email: string;
@@ -14,7 +13,6 @@ interface Feedback {
   timestamp: Date;
 }
 
-// Sample data for the feedback table
 const feedbackData: Feedback[] = [
   {
     id: '1',
@@ -158,7 +156,6 @@ const feedbackData: Feedback[] = [
   }
 ];
 
-// Format the date as a relative time (e.g., "2 days ago") and absolute time
 const formatTimestamp = (date: Date) => {
   const relativeTime = formatDistanceToNow(date, { addSuffix: true });
   const absoluteTime = date.toLocaleString('en-US', {
@@ -178,7 +175,6 @@ const formatTimestamp = (date: Date) => {
   );
 };
 
-// Get the appropriate badge color for each sentiment
 const getSentimentBadge = (sentiment: Feedback['sentiment']) => {
   switch (sentiment) {
     case 'positive':
@@ -190,9 +186,7 @@ const getSentimentBadge = (sentiment: Feedback['sentiment']) => {
   }
 };
 
-// AI Digest component
-const AIDigest = ({ feedbackData }: { feedbackData: Feedback[] }) => {
-  // Calculate sentiment distribution
+const FeedbackSummary = ({ feedbackData }: { feedbackData: Feedback[] }) => {
   const sentimentCounts = feedbackData.reduce((acc, feedback) => {
     acc[feedback.sentiment] = (acc[feedback.sentiment] || 0) + 1;
     return acc;
@@ -203,7 +197,6 @@ const AIDigest = ({ feedbackData }: { feedbackData: Feedback[] }) => {
   const neutralPercentage = Math.round((sentimentCounts.neutral || 0) / totalFeedback * 100);
   const negativePercentage = Math.round((sentimentCounts.negative || 0) / totalFeedback * 100);
 
-  // Identify common themes (this would be more sophisticated in a real AI system)
   const commonPositiveThemes = "Checkout speed, mobile experience, new design, payment options";
   const commonNegativeThemes = "Payment errors, loading times, process complexity";
   const suggestions = "Consider optimizing payment processing, improving mobile performance, and simplifying the checkout flow";
@@ -212,24 +205,39 @@ const AIDigest = ({ feedbackData }: { feedbackData: Feedback[] }) => {
     <div className="bg-slate-50 p-4 rounded-lg mb-4 border border-slate-200">
       <div className="flex items-center gap-2 mb-2">
         <MessageSquareText className="h-5 w-5 text-indigo-500" />
-        <h3 className="text-md font-medium">AI Feedback Digest</h3>
+        <h3 className="text-md font-medium">Feedback Summary</h3>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
         <div>
           <h4 className="text-sm font-medium mb-1">Sentiment Distribution</h4>
-          <div className="text-sm">
-            <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-green-500"></span>
-              <span>Positive: {positivePercentage}% ({sentimentCounts.positive || 0})</span>
+          <div className="text-sm space-y-2">
+            <div className="space-y-1">
+              <div className="flex justify-between">
+                <span>Positive</span>
+                <span>{positivePercentage}% ({sentimentCounts.positive || 0})</span>
+              </div>
+              <Progress value={positivePercentage} className="h-2 bg-gray-200" 
+                style={{ color: 'rgb(34, 197, 94)' }}
+              />
             </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-amber-500"></span>
-              <span>Neutral: {neutralPercentage}% ({sentimentCounts.neutral || 0})</span>
+            <div className="space-y-1">
+              <div className="flex justify-between">
+                <span>Neutral</span>
+                <span>{neutralPercentage}% ({sentimentCounts.neutral || 0})</span>
+              </div>
+              <Progress value={neutralPercentage} className="h-2 bg-gray-200" 
+                style={{ color: 'rgb(245, 158, 11)' }}
+              />
             </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-red-500"></span>
-              <span>Negative: {negativePercentage}% ({sentimentCounts.negative || 0})</span>
+            <div className="space-y-1">
+              <div className="flex justify-between">
+                <span>Negative</span>
+                <span>{negativePercentage}% ({sentimentCounts.negative || 0})</span>
+              </div>
+              <Progress value={negativePercentage} className="h-2 bg-gray-200" 
+                style={{ color: 'rgb(239, 68, 68)' }}
+              />
             </div>
           </div>
         </div>
@@ -262,7 +270,6 @@ const AIDigest = ({ feedbackData }: { feedbackData: Feedback[] }) => {
 };
 
 const UserFeedbackTable: React.FC = () => {
-  // Sort the feedback data by timestamp in descending order
   const sortedFeedbackData = [...feedbackData].sort((a, b) => 
     b.timestamp.getTime() - a.timestamp.getTime()
   );
@@ -273,7 +280,7 @@ const UserFeedbackTable: React.FC = () => {
         <h2 className="text-[15px] font-semibold">User Feedback</h2>
       </div>
       
-      <AIDigest feedbackData={feedbackData} />
+      <FeedbackSummary feedbackData={feedbackData} />
       
       <Table>
         <TableHeader>
