@@ -62,7 +62,7 @@ export const useDashboardData = (): DashboardDataReturn => {
   const [filteredConversionData, setFilteredConversionData] = useState<DataPoint[]>([]);
   const [filteredErrorRateData, setFilteredErrorRateData] = useState<DataPoint[]>([]);
   const [currentMetrics, setCurrentMetrics] = useState<{ [key: string]: number }>({});
-	const [evaluationVersionChanges, setEvaluationVersionChanges] = useState<VersionChange[]>([]);
+  const [evaluationVersionChanges, setEvaluationVersionChanges] = useState<VersionChange[]>([]);
   const [conversionVersionChanges, setConversionVersionChanges] = useState<VersionChange[]>([]);
   const [errorRateVersionChanges, setErrorRateVersionChanges] = useState<VersionChange[]>([]);
   const [selectedTimestamp, setSelectedTimestamp] = useState<Date | null>(null);
@@ -70,7 +70,6 @@ export const useDashboardData = (): DashboardDataReturn => {
   const [selectedEventTypes, setSelectedEventTypes] = useState<string[] | null>(null);
 
   useEffect(() => {
-    // Simulate loading data from an API
     setTimeout(() => {
       const now = new Date();
       const evaluations = Array.from({ length: 90 }, (_, i) => {
@@ -109,28 +108,28 @@ export const useDashboardData = (): DashboardDataReturn => {
         };
       });
 
-			const evaluationVersionChangesData = [
+      const evaluationVersionChangesData = [
         { date: subDays(now, 65).toISOString().split('T')[0], position: 25, version: '1.0', details: 'Initial release' },
         { date: subDays(now, 40).toISOString().split('T')[0], position: 50, version: '1.1', details: 'Performance improvements' },
         { date: subDays(now, 15).toISOString().split('T')[0], position: 75, version: '1.2', details: 'Bug fixes' },
       ];
 
       const conversionVersionChangesData = [
-          { date: subDays(now, 55).toISOString().split('T')[0], position: 35, version: '2.0', details: 'New feature A' },
-          { date: subDays(now, 30).toISOString().split('T')[0], position: 60, version: '2.1', details: 'Feature A improvements' },
-          { date: subDays(now, 5).toISOString().split('T')[0], position: 85, version: '2.2', details: 'Bug fixes for Feature A' },
+        { date: subDays(now, 55).toISOString().split('T')[0], position: 35, version: '2.0', details: 'New feature A' },
+        { date: subDays(now, 30).toISOString().split('T')[0], position: 60, version: '2.1', details: 'Feature A improvements' },
+        { date: subDays(now, 5).toISOString().split('T')[0], position: 85, version: '2.2', details: 'Bug fixes for Feature A' },
       ];
 
       const errorRateVersionChangesData = [
-          { date: subDays(now, 70).toISOString().split('T')[0], position: 20, version: '3.0', details: 'Refactor module B' },
-          { date: subDays(now, 45).toISOString().split('T')[0], position: 45, version: '3.1', details: 'Module B optimizations' },
-          { date: subDays(now, 10).toISOString().split('T')[0], position: 80, version: '3.2', details: 'Security patches for Module B' },
+        { date: subDays(now, 70).toISOString().split('T')[0], position: 20, version: '3.0', details: 'Refactor module B' },
+        { date: subDays(now, 45).toISOString().split('T')[0], position: 45, version: '3.1', details: 'Module B optimizations' },
+        { date: subDays(now, 10).toISOString().split('T')[0], position: 80, version: '3.2', details: 'Security patches for Module B' },
       ];
 
       setEvaluationData(evaluations);
       setConversionData(conversions);
       setErrorRateData(errorRates);
-			setEvaluationVersionChanges(evaluationVersionChangesData);
+      setEvaluationVersionChanges(evaluationVersionChangesData);
       setConversionVersionChanges(conversionVersionChangesData);
       setErrorRateVersionChanges(errorRateVersionChangesData);
       setIsLoaded(true);

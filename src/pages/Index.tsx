@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { cn } from "@/lib/utils";
 import Header from '@/components/Header';
@@ -58,13 +59,26 @@ const Index = () => {
             onMetricVisibilityChange={handleMetricVisibilityChange}
             showTrue={showTrue}
             showFalse={showFalse}
-            onToggleTrue={handleToggleTrue}
-            onToggleFalse={handleToggleFalse}
+            onToggleTrue={() => handleToggleTrue(true)}
+            onToggleFalse={() => handleToggleFalse(true)}
           />
           
           <DashboardMetrics 
             selectedMetrics={visibleMetrics}
-            currentMetrics={currentMetrics}
+            currentMetrics={{
+              evaluations: { 
+                value: currentMetrics.evaluations || 0, 
+                change: { value: 0, trend: 'up' } 
+              },
+              conversion: { 
+                value: currentMetrics.conversion || 0, 
+                change: { value: 0, trend: 'up' } 
+              },
+              errorRate: { 
+                value: currentMetrics.errorRate || 0, 
+                change: { value: 0, trend: 'down' } 
+              }
+            }}
             filteredEvaluationData={filteredEvaluationData}
             filteredConversionData={filteredConversionData}
             filteredErrorRateData={filteredErrorRateData}
