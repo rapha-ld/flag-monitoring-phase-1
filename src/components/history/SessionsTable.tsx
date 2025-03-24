@@ -1,7 +1,9 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { Play } from 'lucide-react';
+import { Play, Search } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { Input } from '@/components/ui/input';
 
 // Define the interface for sessions data
 interface Session {
@@ -66,13 +68,35 @@ const formatTimestamp = (date: Date) => {
 };
 
 const SessionsTable: React.FC = () => {
-  // Sort the sessions data by timestamp in descending order
-  const sortedSessionsData = [...sessionsData].sort((a, b) => 
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Filter sessions based on search query
+  const filteredSessions = sessionsData.filter(session => {
+    const query = searchQuery.toLowerCase();
+    return (
+      session.account.toLowerCase().includes(query) ||
+      session.os.toLowerCase().includes(query)
+    );
+  });
+
+  // Sort the filtered sessions data by timestamp in descending order
+  const sortedSessionsData = [...filteredSessions].sort((a, b) => 
     b.timestamp.getTime() - a.timestamp.getTime()
   );
 
   return (
     <div className="space-y-4 animate-fade-in">
+      <div className="flex justify-between items-center">
+        <div className="relative w-72 ml-auto">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search sessions..."
+            className="pl-8"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
@@ -83,18 +107,26 @@ const SessionsTable: React.FC = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedSessionsData.map((session) => (
-            <TableRow key={session.id}>
-              <TableCell className="font-medium">{session.account}</TableCell>
-              <TableCell>{session.os}</TableCell>
-              <TableCell>{formatTimestamp(session.timestamp)}</TableCell>
-              <TableCell className="text-right">
-                <button className="p-1 rounded-full hover:bg-muted transition-colors" disabled>
-                  <Play className="h-4 w-4 text-muted-foreground" />
-                </button>
+          {sortedSessionsData.length > 0 ? (
+            sortedSessionsData.map((session) => (
+              <TableRow key={session.id}>
+                <TableCell className="font-medium">{session.account}</TableCell>
+                <TableCell>{session.os}</TableCell>
+                <TableCell>{formatTimestamp(session.timestamp)}</TableCell>
+                <TableCell className="text-right">
+                  <button className="p-1 rounded-full hover:bg-muted transition-colors" disabled>
+                    <Play className="h-4 w-4 text-muted-foreground" />
+                  </button>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">
+                No results found for "{searchQuery}"
               </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>
