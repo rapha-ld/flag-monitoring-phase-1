@@ -141,15 +141,17 @@ const sessionsData: Session[] = [
   }
 ];
 
-// Format the date as a relative time (e.g., "2 days ago") and absolute time with updated format
+// Format the date as a relative time (e.g., "2 days ago") and absolute time with both date and time
 const formatTimestamp = (date: Date) => {
   const relativeTime = formatDistanceToNow(date, { addSuffix: true });
   const absoluteTime = format(date, "MMM d ''yy");
+  const exactTime = format(date, "h:mm a");
   
   return (
     <div className="flex flex-col">
       <span className="text-sm font-medium">{absoluteTime}</span>
       <span className="text-xs text-muted-foreground">{relativeTime}</span>
+      <span className="text-xs text-muted-foreground">{exactTime}</span>
     </div>
   );
 };

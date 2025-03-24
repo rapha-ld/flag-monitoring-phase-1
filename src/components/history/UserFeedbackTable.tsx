@@ -160,11 +160,13 @@ const feedbackData: Feedback[] = [
 const formatTimestamp = (date: Date) => {
   const relativeTime = formatDistanceToNow(date, { addSuffix: true });
   const absoluteTime = format(date, "MMM d ''yy");
+  const exactTime = format(date, "h:mm a");
   
   return (
     <div className="flex flex-col">
       <span className="text-sm font-medium">{absoluteTime}</span>
       <span className="text-xs text-muted-foreground">{relativeTime}</span>
+      <span className="text-xs text-muted-foreground">{exactTime}</span>
     </div>
   );
 };
@@ -328,3 +330,4 @@ const UserFeedbackTable: React.FC = () => {
 };
 
 export default UserFeedbackTable;
+
