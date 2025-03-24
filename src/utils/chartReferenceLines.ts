@@ -52,7 +52,7 @@ export const thresholdLines: ThresholdLine[] = [
     strokeDasharray: "5 5",
     labelPosition: {
       position: "insideTopLeft",
-      offset: 13, // Changed from 10 to 13 to move the label 3px higher
+      offset: 16, // Changed from 13 to 16 to move the label another 3px higher
       align: "left"
     }
   }
