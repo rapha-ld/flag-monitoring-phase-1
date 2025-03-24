@@ -27,6 +27,7 @@ const Index = () => {
     conversionVersionChanges,
     errorRateVersionChanges,
     selectedTimestamp,
+    selectedTimestamps,
     handleTimeframeChange,
     handleEnvironmentChange,
     handleDeviceChange,
@@ -74,6 +75,7 @@ const Index = () => {
             showFalse={showFalse}
             timeframe={timeframe}
             selectedTimestamp={selectedTimestamp}
+            selectedTimestamps={selectedTimestamps}
           />
           
           {/* Footer moved between charts and history table */}

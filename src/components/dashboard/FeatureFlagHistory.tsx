@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag, AlertTriangle } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
@@ -16,7 +16,7 @@ interface HistoryEvent {
 }
 
 interface FeatureFlagHistoryProps {
-  onEventSelect: (timestamp: Date | null) => void;
+  onEventSelect: (timestamps: Date[] | null) => void;
   selectedTimestamp: Date | null;
 }
 
@@ -113,21 +113,8 @@ const formatTimestamp = (date: Date) => {
 
 const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, selectedTimestamp }) => {
   const [searchQuery, setSearchQuery] = useState('');
-
-  // Handle row click
-  const handleRowClick = (event: HistoryEvent) => {
-    // If the timestamp is already selected, deselect it
-    if (selectedTimestamp && selectedTimestamp.getTime() === event.timestamp.getTime()) {
-      onEventSelect(null);
-    } else {
-      onEventSelect(event.timestamp);
-    }
-  };
-
-  // Check if a row is selected
-  const isRowSelected = (event: HistoryEvent) => {
-    return selectedTimestamp && selectedTimestamp.getTime() === event.timestamp.getTime();
-  };
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
 
   // Filter the history data based on search query
   const filteredHistoryData = historyData.filter(event => {
@@ -138,6 +125,70 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
       event.type.toLowerCase().includes(searchLower)
     );
   });
+
+  // Sort the filtered data by timestamp in descending order
+  const sortedHistoryData = [...filteredHistoryData].sort((a, b) => 
+    b.timestamp.getTime() - a.timestamp.getTime()
+  );
+
+  // Handle row click with modifier keys
+  const handleRowClick = (event: React.MouseEvent<HTMLTableRowElement>, historyEvent: HistoryEvent) => {
+    const id = historyEvent.id;
+    
+    // Handle shift+click (range selection)
+    if (event.shiftKey && lastSelectedId) {
+      const currentIdIndex = sortedHistoryData.findIndex(item => item.id === id);
+      const lastSelectedIdIndex = sortedHistoryData.findIndex(item => item.id === lastSelectedId);
+      
+      if (currentIdIndex >= 0 && lastSelectedIdIndex >= 0) {
+        const startIndex = Math.min(currentIdIndex, lastSelectedIdIndex);
+        const endIndex = Math.max(currentIdIndex, lastSelectedIdIndex);
+        
+        const newSelectedRows = sortedHistoryData
+          .slice(startIndex, endIndex + 1)
+          .map(item => item.id);
+        
+        setSelectedRows(newSelectedRows);
+      }
+    } 
+    // Handle ctrl/cmd+click (individual selection)
+    else if (event.ctrlKey || event.metaKey) {
+      setSelectedRows(prevSelectedRows => {
+        if (prevSelectedRows.includes(id)) {
+          return prevSelectedRows.filter(rowId => rowId !== id);
+        } else {
+          return [...prevSelectedRows, id];
+        }
+      });
+      setLastSelectedId(id);
+    } 
+    // Handle regular click (single selection)
+    else {
+      // If already selected and it's the only one selected, deselect
+      if (selectedRows.length === 1 && selectedRows[0] === id) {
+        setSelectedRows([]);
+        setLastSelectedId(null);
+      } else {
+        setSelectedRows([id]);
+        setLastSelectedId(id);
+      }
+    }
+  };
+
+  // Update selected timestamps when selected rows change
+  useEffect(() => {
+    if (selectedRows.length === 0) {
+      onEventSelect(null);
+    } else {
+      const selectedEvents = sortedHistoryData.filter(event => selectedRows.includes(event.id));
+      const selectedTimestamps = selectedEvents.map(event => event.timestamp);
+      
+      // Sort timestamps chronologically for displaying the range correctly
+      selectedTimestamps.sort((a, b) => a.getTime() - b.getTime());
+      
+      onEventSelect(selectedTimestamps);
+    }
+  }, [selectedRows, sortedHistoryData, onEventSelect]);
 
   return (
     <div className="space-y-4 animate-fade-in">
@@ -162,12 +213,14 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredHistoryData.length > 0 ? (
-            filteredHistoryData.map((event) => (
+          {sortedHistoryData.length > 0 ? (
+            sortedHistoryData.map((event) => (
               <TableRow 
                 key={event.id}
-                onClick={() => handleRowClick(event)}
-                className={`cursor-pointer transition-colors ${isRowSelected(event) ? 'bg-primary/10' : ''}`}
+                onClick={(e) => handleRowClick(e, event)}
+                className={`cursor-pointer transition-colors ${
+                  selectedRows.includes(event.id) ? 'bg-primary/10' : ''
+                }`}
               >
                 <TableCell>
                   <div className="flex items-center gap-2">
@@ -188,6 +241,9 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
           )}
         </TableBody>
       </Table>
+      <div className="text-xs text-muted-foreground mt-2">
+        <p>Tip: Use Shift+click to select a range, or Ctrl/Cmd+click to select individual rows</p>
+      </div>
     </div>
   );
 };

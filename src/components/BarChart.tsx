@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
 import VersionMarker from './VersionMarker';
 import CustomTooltip from './chart/CustomTooltip';
@@ -38,6 +38,7 @@ interface BarChartProps {
   chartType?: 'stacked' | 'mixed';
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
   selectedTimestamp?: Date | null;
+  selectedTimestamps?: Date[] | null;
 }
 
 const BarChart = ({
@@ -52,7 +53,8 @@ const BarChart = ({
   showFalse = false,
   chartType = 'stacked',
   metricType,
-  selectedTimestamp
+  selectedTimestamp,
+  selectedTimestamps
 }: BarChartProps) => {
   const interval = getXAxisInterval(data.length);
   const calculatedBarSize = getBarSize(data.length);
@@ -77,9 +79,14 @@ const BarChart = ({
 
   const thresholdLine = metricType ? thresholdLines.find(t => t.metricType === metricType) : undefined;
 
-  // Enhanced function to find the closest data point to the selected timestamp
-  const findSelectedDataPoint = () => {
-    if (!selectedTimestamp || data.length === 0) return null;
+  // Enhanced function to find data points matching timestamps
+  const findSelectedDataPoints = () => {
+    if ((!selectedTimestamp && !selectedTimestamps) || data.length === 0) return null;
+    
+    // Use selectedTimestamps if available, otherwise use the single selectedTimestamp
+    const timestamps = selectedTimestamps || (selectedTimestamp ? [selectedTimestamp] : []);
+    
+    if (timestamps.length === 0) return null;
     
     // Parse all dates from data points
     const dataPoints = data.map((point, index) => {
@@ -96,26 +103,38 @@ const BarChart = ({
     
     if (dataPoints.length === 0) return null;
     
-    const selectedTime = selectedTimestamp.getTime();
-    let closestPoint = dataPoints[0];
-    let minDiff = Math.abs(dataPoints[0].timestamp! - selectedTime);
-    
-    for (let i = 1; i < dataPoints.length; i++) {
-      const diff = Math.abs(dataPoints[i].timestamp! - selectedTime);
-      if (diff < minDiff) {
-        minDiff = diff;
-        closestPoint = dataPoints[i];
+    // Find closest data points for each timestamp
+    return timestamps.map(selectedTime => {
+      const selectedTimeMs = selectedTime.getTime();
+      let closestPoint = dataPoints[0];
+      let minDiff = Math.abs(dataPoints[0].timestamp! - selectedTimeMs);
+      
+      for (let i = 1; i < dataPoints.length; i++) {
+        const diff = Math.abs(dataPoints[i].timestamp! - selectedTimeMs);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestPoint = dataPoints[i];
+        }
       }
-    }
-    
-    return {
-      ...closestPoint,
-      exactTime: selectedTimestamp
-    };
+      
+      return {
+        ...closestPoint,
+        exactTime: selectedTime
+      };
+    }).sort((a, b) => a.timestamp! - b.timestamp!);
   };
   
-  const selectedPoint = findSelectedDataPoint();
-  const hasSelectedTimestamp = !!selectedPoint;
+  const selectedPoints = findSelectedDataPoints();
+  const hasSelectedPoints = selectedPoints && selectedPoints.length > 0;
+  
+  // Get the first and last points if we have multiple selected points
+  const firstPoint = hasSelectedPoints ? selectedPoints[0] : null;
+  const lastPoint = hasSelectedPoints && selectedPoints.length > 1 
+    ? selectedPoints[selectedPoints.length - 1] 
+    : null;
+  
+  // Check if we need to show a reference area (for multiple selections)
+  const showReferenceArea = firstPoint && lastPoint;
 
   return (
     <div className="w-full h-full">
@@ -203,19 +222,31 @@ const BarChart = ({
             />
           )}
           
-          {hasSelectedTimestamp && selectedPoint && (
+          {/* Highlight area between first and last selected point */}
+          {showReferenceArea && (
+            <ReferenceArea
+              x1={firstPoint.name}
+              x2={lastPoint.name}
+              fill="#f1f1f4"
+              fillOpacity={0.5}
+            />
+          )}
+          
+          {/* Show reference lines for each selected point */}
+          {hasSelectedPoints && selectedPoints.map((point, index) => (
             <ReferenceLine
-              x={selectedPoint.name}
+              key={`selected-time-${index}`}
+              x={point.name}
               stroke="#7c5cfc"
               strokeWidth={2}
-              label={{
-                value: format(selectedPoint.exactTime, "MMM d, h:mm a"),
+              label={index === 0 || index === selectedPoints.length - 1 ? {
+                value: format(point.exactTime, "MMM d, h:mm a"),
                 position: 'top',
                 fill: '#7c5cfc',
                 fontSize: 12,
-              }}
+              } : undefined}
             />
-          )}
+          ))}
           
           {metricType === 'evaluations' && !(showTrue && showFalse) && (
             <Bar

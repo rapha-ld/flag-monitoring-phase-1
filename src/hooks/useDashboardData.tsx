@@ -26,6 +26,7 @@ export const useDashboardData = () => {
   const [filteredConversionData, setFilteredConversionData] = useState<DataPoint[]>(conversionData);
   const [filteredErrorRateData, setFilteredErrorRateData] = useState<DataPoint[]>(errorRateData);
   const [selectedTimestamp, setSelectedTimestamp] = useState<Date | null>(null);
+  const [selectedTimestamps, setSelectedTimestamps] = useState<Date[] | null>(null);
   const [currentMetrics, setCurrentMetrics] = useState({
     evaluations: { value: 0, change: { value: 0, trend: 'up' as 'up' | 'down' } },
     conversion: { value: 0, change: { value: 0, trend: 'up' as 'up' | 'down' } },
@@ -77,20 +78,23 @@ export const useDashboardData = () => {
 
   const handleTimeframeChange = (value: string) => {
     setTimeframe(value);
-    // Clear timestamp selection when timeframe changes
+    // Clear timestamp selections when timeframe changes
     setSelectedTimestamp(null);
+    setSelectedTimestamps(null);
   };
 
   const handleEnvironmentChange = (value: string) => {
     setEnvironment(value);
-    // Clear timestamp selection when environment changes
+    // Clear timestamp selections when environment changes
     setSelectedTimestamp(null);
+    setSelectedTimestamps(null);
   };
 
   const handleDeviceChange = (value: string) => {
     setSelectedDevice(value);
-    // Clear timestamp selection when device changes
+    // Clear timestamp selections when device changes
     setSelectedTimestamp(null);
+    setSelectedTimestamps(null);
   };
 
   const handleMetricsChange = (metrics: string[]) => {
@@ -119,8 +123,17 @@ export const useDashboardData = () => {
     }
   };
 
-  const handleTimestampSelect = (timestamp: Date | null) => {
-    setSelectedTimestamp(timestamp);
+  const handleTimestampSelect = (timestamps: Date[] | null) => {
+    if (!timestamps) {
+      setSelectedTimestamp(null);
+      setSelectedTimestamps(null);
+    } else if (timestamps.length === 1) {
+      setSelectedTimestamp(timestamps[0]);
+      setSelectedTimestamps(null);
+    } else {
+      setSelectedTimestamp(null);
+      setSelectedTimestamps(timestamps);
+    }
   };
 
   return {
@@ -141,6 +154,7 @@ export const useDashboardData = () => {
     conversionVersionChanges,
     errorRateVersionChanges,
     selectedTimestamp,
+    selectedTimestamps,
     handleTimeframeChange,
     handleEnvironmentChange,
     handleDeviceChange,
