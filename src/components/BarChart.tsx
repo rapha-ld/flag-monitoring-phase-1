@@ -266,14 +266,18 @@ const BarChart = ({
             <ReferenceLine
               key={`selected-time-${index}`}
               x={point.name}
-              stroke="#7c5cfc"
+              stroke="#8E9196"
               strokeWidth={2}
               className="selected-time-marker"
               label={index === 0 || index === selectedPoints.length - 1 ? {
-                value: format(point.exactTime, "MMM d, h:mm a"),
                 position: 'top',
-                fill: '#7c5cfc',
-                fontSize: 12,
+                content: () => (
+                  <foreignObject width={16} height={16} x={-8} y={-20}>
+                    <div className="flex justify-center items-center" style={{ color: "#8E9196" }}>
+                      {getEventIcon('feature')}
+                    </div>
+                  </foreignObject>
+                )
               } : undefined}
             />
           ))}
@@ -365,3 +369,4 @@ const BarChart = ({
 };
 
 export default BarChart;
+
