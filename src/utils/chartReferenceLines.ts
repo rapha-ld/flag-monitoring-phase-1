@@ -26,19 +26,19 @@ export const referenceLineMarkers: ReferenceLineMarker[] = [
   {
     date: "2023-06-10",
     label: "Feature Release",
-    color: "#545A62",
+    color: "#8E9196", // Primary gray for fonts
     eventType: "feature"
   },
   {
     date: "2023-06-15",
     label: "Bug Fix",
-    color: "#545A62",
+    color: "#8E9196", // Primary gray for fonts
     eventType: "bug"
   },
   {
     date: "2023-06-20",
     label: "Major Update",
-    color: "#545A62",
+    color: "#8E9196", // Primary gray for fonts
     eventType: "update"
   }
 ];

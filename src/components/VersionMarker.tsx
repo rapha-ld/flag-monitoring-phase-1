@@ -28,7 +28,7 @@ const VersionMarker = ({
   date, 
   details,
   eventType,
-  color = "black",
+  color = "#8E9196", // Changed to match primary gray
   className 
 }: VersionMarkerProps) => {
   // Determine which icon to render based on eventType or details
@@ -70,7 +70,7 @@ const VersionMarker = ({
             />
             
             {/* Icon at the top */}
-            <foreignObject width={20} height={20} x={-10} y={-25}>
+            <foreignObject width={16} height={16} x={-8} y={-20}>
               <div className="flex justify-center items-center" style={{ color }}>
                 {getEventIcon()}
               </div>

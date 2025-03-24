@@ -154,6 +154,9 @@ const BarChart = ({
           .threshold-line {
             z-index: 10 !important;
           }
+          .version-marker {
+            z-index: 5;
+          }
         `}
       </style>
       <ResponsiveContainer width="100%" height={height}>
@@ -210,21 +213,22 @@ const BarChart = ({
             <ReferenceLine
               key={`ref-line-${index}`}
               x={marker.date}
-              stroke="#545A62"
+              stroke={marker.color}
               strokeWidth={1.5}
               strokeDasharray="3 3"
               label={{
                 position: 'top',
                 content: () => (
-                  <foreignObject width={20} height={20} x={-10} y={-20}>
-                    <div style={{ color: '#545A62', display: 'flex', justifyContent: 'center' }}>
-                      {marker.label === 'Feature Release' && <Flag size={14} />}
-                      {marker.label === 'Bug Fix' && <AlertTriangle size={14} />}
-                      {marker.label === 'Major Update' && <RefreshCw size={14} />}
+                  <foreignObject width={16} height={16} x={-8} y={-20}>
+                    <div className="flex justify-center items-center" style={{ color: marker.color }}>
+                      {marker.eventType === 'feature' && <Flag size={14} />}
+                      {marker.eventType === 'bug' && <AlertTriangle size={14} />}
+                      {marker.eventType === 'update' && <RefreshCw size={14} />}
                     </div>
                   </foreignObject>
                 ),
               }}
+              className="version-marker"
             />
           ))}
           
@@ -347,7 +351,7 @@ const BarChart = ({
               version={change.version}
               details={change.details}
               eventType={change.eventType}
-              color="#545A62"
+              color="#8E9196"
             />
           ))}
         </ComposedChart>
