@@ -73,14 +73,15 @@ const VersionMarker = ({
               strokeOpacity="0.7"
             />
             
-            {/* Version label at the top */}
+            {/* Version label at the top - now with fixed font size */}
             <text
               x="0"
               y="14"
-              fontSize="10"
+              fontSize="11"
               textAnchor="middle"
               fill="black"
               fontWeight="bold"
+              style={{ fontSize: '11px' }}
             >
               v{version}
             </text>
