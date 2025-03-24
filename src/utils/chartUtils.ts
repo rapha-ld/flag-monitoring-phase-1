@@ -19,7 +19,7 @@ export const getBarSize = (dataLength: number) => {
 // Predetermined max y-axis values for each metric type
 // These values are based on the highest possible values when all variants are shown
 const FIXED_Y_AXIS_MAX = {
-  evaluations: 80, // Updated from 75 to 80 to accommodate higher values
+  evaluations: 75, // Maximum for stacked evaluations
   conversion: 4,   // Maximum for conversion rate
   errorRate: 5     // Maximum for error rate
 };
