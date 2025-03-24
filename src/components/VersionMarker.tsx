@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { Flag } from 'lucide-react';
+import { Flag, AlertTriangle, RefreshCw } from 'lucide-react';
 import { 
   Tooltip, 
   TooltipContent, 
@@ -16,6 +16,8 @@ interface VersionMarkerProps {
   position?: number;
   date?: string;
   details?: string;
+  eventType?: 'feature' | 'bug' | 'update';
+  color?: string;
   className?: string;
 }
 
@@ -25,8 +27,28 @@ const VersionMarker = ({
   version, 
   date, 
   details,
+  eventType,
+  color = "black",
   className 
 }: VersionMarkerProps) => {
+  // Determine which icon to render based on eventType or details
+  const getEventIcon = () => {
+    if (eventType) {
+      switch(eventType) {
+        case 'feature': return <Flag size={14} />;
+        case 'bug': return <AlertTriangle size={14} />;
+        case 'update': return <RefreshCw size={14} />;
+      }
+    } else if (details) {
+      if (details.toLowerCase().includes('feature')) return <Flag size={14} />;
+      if (details.toLowerCase().includes('bug')) return <AlertTriangle size={14} />;
+      if (details.toLowerCase().includes('update')) return <RefreshCw size={14} />;
+    }
+    
+    // Default to Flag icon
+    return <Flag size={14} />;
+  };
+
   return (
     <TooltipProvider>
       <Tooltip>
@@ -41,22 +63,18 @@ const VersionMarker = ({
               y1="0" 
               x2="0" 
               y2={height} 
-              stroke="black"
+              stroke={color}
               strokeWidth="1.5"
               strokeOpacity="0.7"
+              strokeDasharray="3 3"
             />
             
-            {/* Version label at the top */}
-            <text
-              x="0"
-              y="14"
-              fontSize="10"
-              textAnchor="middle"
-              fill="black"
-              fontWeight="bold"
-            >
-              v{version}
-            </text>
+            {/* Icon at the top */}
+            <foreignObject width={20} height={20} x={-10} y={-25}>
+              <div className="flex justify-center items-center" style={{ color }}>
+                {getEventIcon()}
+              </div>
+            </foreignObject>
           </g>
         </TooltipTrigger>
         <TooltipContent side="top" className="p-3 space-y-1.5 max-w-xs">

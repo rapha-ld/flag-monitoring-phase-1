@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -7,6 +6,7 @@ import CustomTooltip from './chart/CustomTooltip';
 import { referenceLineMarkers, thresholdLines } from '@/utils/chartReferenceLines';
 import { format } from 'date-fns';
 import BarChartCell from './chart/BarChartCell';
+import { Flag, AlertTriangle, RefreshCw } from 'lucide-react';
 
 export interface DataPoint {
   name: string;
@@ -23,6 +23,7 @@ export interface VersionChange {
   position: number;
   version: string;
   details?: string;
+  eventType?: 'feature' | 'bug' | 'update';
 }
 
 interface BarChartProps {
@@ -79,16 +80,13 @@ const BarChart = ({
 
   const thresholdLine = metricType ? thresholdLines.find(t => t.metricType === metricType) : undefined;
 
-  // Enhanced function to find data points matching timestamps
   const findSelectedDataPoints = () => {
     if ((!selectedTimestamp && !selectedTimestamps) || data.length === 0) return null;
     
-    // Use selectedTimestamps if available, otherwise use the single selectedTimestamp
     const timestamps = selectedTimestamps || (selectedTimestamp ? [selectedTimestamp] : []);
     
     if (timestamps.length === 0) return null;
     
-    // Parse all dates from data points
     const dataPoints = data.map((point, index) => {
       const pointDate = point.date ? new Date(point.date) : 
                        (point.name && !isNaN(new Date(point.name).getTime()) ? 
@@ -103,7 +101,6 @@ const BarChart = ({
     
     if (dataPoints.length === 0) return null;
     
-    // Find closest data points for each timestamp
     return timestamps.map(selectedTime => {
       const selectedTimeMs = selectedTime.getTime();
       let closestPoint = dataPoints[0];
@@ -127,17 +124,38 @@ const BarChart = ({
   const selectedPoints = findSelectedDataPoints();
   const hasSelectedPoints = selectedPoints && selectedPoints.length > 0;
   
-  // Get the first and last points if we have multiple selected points
   const firstPoint = hasSelectedPoints ? selectedPoints[0] : null;
   const lastPoint = hasSelectedPoints && selectedPoints.length > 1 
     ? selectedPoints[selectedPoints.length - 1] 
     : null;
   
-  // Check if we need to show a reference area (for multiple selections)
   const showReferenceArea = firstPoint && lastPoint;
+
+  const getEventIcon = (eventType?: string) => {
+    switch(eventType) {
+      case 'feature':
+        return <Flag size={14} />;
+      case 'bug':
+        return <AlertTriangle size={14} />;
+      case 'update':
+        return <RefreshCw size={14} />;
+      default:
+        return <Flag size={14} />;
+    }
+  };
 
   return (
     <div className="w-full h-full">
+      <style>
+        {`
+          .recharts-reference-line {
+            z-index: 1;
+          }
+          .threshold-line {
+            z-index: 10 !important;
+          }
+        `}
+      </style>
       <ResponsiveContainer width="100%" height={height}>
         <ComposedChart
           data={data}
@@ -192,15 +210,20 @@ const BarChart = ({
             <ReferenceLine
               key={`ref-line-${index}`}
               x={marker.date}
-              stroke={marker.color}
-              strokeWidth={2}
+              stroke="#545A62"
+              strokeWidth={1.5}
               strokeDasharray="3 3"
               label={{
-                value: marker.label,
                 position: 'top',
-                fill: marker.color,
-                fontSize: 16,
-                fontWeight: 'bold',
+                content: () => (
+                  <foreignObject width={20} height={20} x={-10} y={-20}>
+                    <div style={{ color: '#545A62', display: 'flex', justifyContent: 'center' }}>
+                      {marker.label === 'Feature Release' && <Flag size={14} />}
+                      {marker.label === 'Bug Fix' && <AlertTriangle size={14} />}
+                      {marker.label === 'Major Update' && <RefreshCw size={14} />}
+                    </div>
+                  </foreignObject>
+                ),
               }}
             />
           ))}
@@ -219,10 +242,10 @@ const BarChart = ({
               stroke={thresholdLine.color}
               strokeDasharray={thresholdLine.strokeDasharray}
               strokeWidth={1.5}
+              className="threshold-line"
             />
           )}
           
-          {/* Highlight area between first and last selected point */}
           {showReferenceArea && (
             <ReferenceArea
               x1={firstPoint.name}
@@ -232,7 +255,6 @@ const BarChart = ({
             />
           )}
           
-          {/* Show reference lines for each selected point */}
           {hasSelectedPoints && selectedPoints.map((point, index) => (
             <ReferenceLine
               key={`selected-time-${index}`}
@@ -324,6 +346,8 @@ const BarChart = ({
               x={change.position}
               version={change.version}
               details={change.details}
+              eventType={change.eventType}
+              color="#545A62"
             />
           ))}
         </ComposedChart>
