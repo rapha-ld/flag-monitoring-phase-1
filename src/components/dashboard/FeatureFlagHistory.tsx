@@ -1,21 +1,13 @@
-
 import React, { useState, useEffect } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag, AlertTriangle, Info, Search } from 'lucide-react';
+import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag, AlertTriangle, Search } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Input } from '@/components/ui/input';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import HistoryTabs from '@/components/history/HistoryTabs';
 import SessionsTable from '@/components/history/SessionsTable';
 import UserFeedbackTable from '@/components/history/UserFeedbackTable';
 
-// Define the interface for history events
 interface HistoryEvent {
   id: string;
   type: 'enabled' | 'disabled' | 'updated' | 'settings' | 'created' | 'alert';
@@ -29,7 +21,6 @@ interface FeatureFlagHistoryProps {
   selectedTimestamp: Date | null;
 }
 
-// Sample data for the history table - with varied timestamps (not on exact hours)
 const historyData: HistoryEvent[] = [
   {
     id: '1',
@@ -82,7 +73,6 @@ const historyData: HistoryEvent[] = [
   }
 ];
 
-// Helper function to get the appropriate icon for each event type
 const getEventIcon = (type: HistoryEvent['type']) => {
   switch (type) {
     case 'enabled':
@@ -100,7 +90,6 @@ const getEventIcon = (type: HistoryEvent['type']) => {
   }
 };
 
-// Format the date as a relative time (e.g., "2 days ago") and absolute time
 const formatTimestamp = (date: Date) => {
   const relativeTime = formatDistanceToNow(date, { addSuffix: true });
   const absoluteTime = date.toLocaleString('en-US', {
@@ -126,7 +115,6 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
   const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>('history');
 
-  // Filter the history data based on search query
   const filteredHistoryData = historyData.filter(event => {
     const searchLower = searchQuery.toLowerCase();
     return (
@@ -136,16 +124,13 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
     );
   });
 
-  // Sort the filtered data by timestamp in descending order
   const sortedHistoryData = [...filteredHistoryData].sort((a, b) => 
     b.timestamp.getTime() - a.timestamp.getTime()
   );
 
-  // Handle row click with modifier keys
   const handleRowClick = (event: React.MouseEvent<HTMLTableRowElement>, historyEvent: HistoryEvent) => {
     const id = historyEvent.id;
     
-    // Handle shift+click (range selection)
     if (event.shiftKey && lastSelectedId) {
       const currentIdIndex = sortedHistoryData.findIndex(item => item.id === id);
       const lastSelectedIdIndex = sortedHistoryData.findIndex(item => item.id === lastSelectedId);
@@ -161,7 +146,6 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
         setSelectedRows(newSelectedRows);
       }
     } 
-    // Handle ctrl/cmd+click (individual selection)
     else if (event.ctrlKey || event.metaKey) {
       setSelectedRows(prevSelectedRows => {
         if (prevSelectedRows.includes(id)) {
@@ -172,9 +156,7 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
       });
       setLastSelectedId(id);
     } 
-    // Handle regular click (single selection)
     else {
-      // If already selected and it's the only one selected, deselect
       if (selectedRows.length === 1 && selectedRows[0] === id) {
         setSelectedRows([]);
         setLastSelectedId(null);
@@ -185,7 +167,6 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
     }
   };
 
-  // Update selected timestamps when selected rows change
   useEffect(() => {
     if (selectedRows.length === 0) {
       onEventSelect(null);
@@ -193,7 +174,6 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
       const selectedEvents = sortedHistoryData.filter(event => selectedRows.includes(event.id));
       const selectedTimestamps = selectedEvents.map(event => event.timestamp);
       
-      // Sort timestamps chronologically for displaying the range correctly
       selectedTimestamps.sort((a, b) => a.getTime() - b.getTime());
       
       onEventSelect(selectedTimestamps);
@@ -202,7 +182,6 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    // Clear selections when changing tabs
     if (value !== 'history') {
       setSelectedRows([]);
       onEventSelect(null);
@@ -216,20 +195,7 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
         
         <TabsContent value="history" className="mt-0 space-y-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-1.5">
-              <h2 className="text-[15px] font-semibold">History</h2>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info className="h-4 w-4 text-muted-foreground cursor-help" />
-                  </TooltipTrigger>
-                  <TooltipContent side="right">
-                    <p className="text-xs">Use Shift+click to select a range, or Ctrl/Cmd+click to select individual rows</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-            <div className="relative w-72">
+            <div className="relative w-72 ml-auto">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search history..."

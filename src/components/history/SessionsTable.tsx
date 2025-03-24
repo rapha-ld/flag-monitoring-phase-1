@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Play } from 'lucide-react';
@@ -74,9 +73,6 @@ const SessionsTable: React.FC = () => {
 
   return (
     <div className="space-y-4 animate-fade-in">
-      <div className="flex justify-between items-center">
-        <h2 className="text-[15px] font-semibold">Sessions</h2>
-      </div>
       <Table>
         <TableHeader>
           <TableRow>
