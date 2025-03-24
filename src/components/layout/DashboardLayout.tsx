@@ -8,8 +8,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children
 }) => {
   return <div className="flex h-screen w-full overflow-hidden bg-white">
-      {/* Left Navigation - fixed width sidebar */}
-      <div className="fixed left-0 top-0 h-full w-[244px] bg-white border-r border-border z-10">
+      {/* Left Navigation - fixed width sidebar with lower z-index */}
+      <div className="fixed left-0 top-0 h-full w-[244px] bg-white border-r border-border z-[5]">
         <img alt="Sidebar" className="w-full object-contain" src="/lovable-uploads/1b00cb07-3221-4941-b360-90318154102b.png" />
       </div>
       
