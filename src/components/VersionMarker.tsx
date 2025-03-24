@@ -69,7 +69,7 @@ const VersionMarker = ({
               <text
                 x="0"
                 y="28"
-                fontSize="7"
+                fontSize="5"
                 textAnchor="middle"
                 fill="#666"
               >
