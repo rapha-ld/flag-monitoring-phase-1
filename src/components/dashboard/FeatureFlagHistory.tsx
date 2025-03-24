@@ -1,10 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag, AlertTriangle } from 'lucide-react';
+import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag, AlertTriangle, Info } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Define the interface for history events
 interface HistoryEvent {
@@ -193,7 +199,19 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
   return (
     <div className="space-y-4 animate-fade-in">
       <div className="flex justify-between items-center">
-        <h2 className="text-[15px] font-semibold">History</h2>
+        <div className="flex items-center gap-1.5">
+          <h2 className="text-[15px] font-semibold">History</h2>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p className="text-xs">Use Shift+click to select a range, or Ctrl/Cmd+click to select individual rows</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <div className="relative w-72">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -241,9 +259,7 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
           )}
         </TableBody>
       </Table>
-      <div className="text-xs text-muted-foreground mt-2">
-        <p>Tip: Use Shift+click to select a range, or Ctrl/Cmd+click to select individual rows</p>
-      </div>
+      {/* Tip section removed from here */}
     </div>
   );
 };
