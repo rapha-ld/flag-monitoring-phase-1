@@ -39,6 +39,22 @@ const Index = () => {
     handleTimestampSelect
   } = useDashboardData();
 
+  // Create a properly structured metrics object
+  const formattedMetrics = {
+    evaluations: { 
+      value: currentMetrics?.evaluations || 0, 
+      change: { value: 0, trend: 'up' as const } 
+    },
+    conversion: { 
+      value: currentMetrics?.conversion || 0, 
+      change: { value: 0, trend: 'up' as const } 
+    },
+    errorRate: { 
+      value: currentMetrics?.errorRate || 0, 
+      change: { value: 0, trend: 'down' as const } 
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className={cn(
@@ -59,26 +75,13 @@ const Index = () => {
             onMetricVisibilityChange={handleMetricVisibilityChange}
             showTrue={showTrue}
             showFalse={showFalse}
-            onToggleTrue={() => handleToggleTrue(true)}
-            onToggleFalse={() => handleToggleFalse(true)}
+            onToggleTrue={handleToggleTrue}
+            onToggleFalse={handleToggleFalse}
           />
           
           <DashboardMetrics 
             selectedMetrics={visibleMetrics}
-            currentMetrics={{
-              evaluations: { 
-                value: currentMetrics.evaluations || 0, 
-                change: { value: 0, trend: 'up' } 
-              },
-              conversion: { 
-                value: currentMetrics.conversion || 0, 
-                change: { value: 0, trend: 'up' } 
-              },
-              errorRate: { 
-                value: currentMetrics.errorRate || 0, 
-                change: { value: 0, trend: 'down' } 
-              }
-            }}
+            currentMetrics={formattedMetrics}
             filteredEvaluationData={filteredEvaluationData}
             filteredConversionData={filteredConversionData}
             filteredErrorRateData={filteredErrorRateData}

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import MetricCard from '@/components/metric/MetricCard';
 import { DataPoint, VersionChange } from '@/components/BarChart';
@@ -39,13 +40,20 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   selectedTimestamps,
   selectedEventTypes
 }) => {
+  // Default metrics with safe fallbacks to prevent undefined errors
+  const safeMetrics = {
+    evaluations: currentMetrics?.evaluations || { value: 0, change: { value: 0, trend: 'up' as const } },
+    conversion: currentMetrics?.conversion || { value: 0, change: { value: 0, trend: 'up' as const } },
+    errorRate: currentMetrics?.errorRate || { value: 0, change: { value: 0, trend: 'up' as const } }
+  };
+
   return (
     <div className="grid grid-cols-1 gap-6 animate-fade-in">
       {selectedMetrics.includes('evaluations') && (
         <MetricCard 
           title="Unique Users" 
-          value={currentMetrics.evaluations.value}
-          change={currentMetrics.evaluations.change}
+          value={safeMetrics.evaluations.value}
+          change={safeMetrics.evaluations.change}
           info="Total unique users for the selected time period"
           className="animate-slide-up [animation-delay:100ms]"
           chartData={filteredEvaluationData}
@@ -68,8 +76,8 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
       {selectedMetrics.includes('conversion') && (
         <MetricCard 
           title="Avg. Checkout Conversion Rate" 
-          value={`${currentMetrics.conversion.value}%`}
-          change={currentMetrics.conversion.change}
+          value={`${safeMetrics.conversion.value}%`}
+          change={safeMetrics.conversion.change}
           info="Percentage of checkout completions from initiated sessions"
           className="animate-slide-up [animation-delay:200ms]"
           chartData={filteredConversionData}
@@ -92,10 +100,10 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
       {selectedMetrics.includes('errorRate') && (
         <MetricCard 
           title="Avg. Error Rate" 
-          value={`${currentMetrics.errorRate.value}%`}
+          value={`${safeMetrics.errorRate.value}%`}
           change={{
-            value: Math.abs(currentMetrics.errorRate.change.value),
-            trend: currentMetrics.errorRate.change.value < 0 ? 'up' : 'down'
+            value: Math.abs(safeMetrics.errorRate.change.value),
+            trend: safeMetrics.errorRate.change.value < 0 ? 'up' : 'down'
           }}
           info="Percentage of requests resulting in error responses"
           className="animate-slide-up [animation-delay:300ms]"

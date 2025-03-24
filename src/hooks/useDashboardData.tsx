@@ -61,7 +61,11 @@ export const useDashboardData = (): DashboardDataReturn => {
   const [filteredEvaluationData, setFilteredEvaluationData] = useState<DataPoint[]>([]);
   const [filteredConversionData, setFilteredConversionData] = useState<DataPoint[]>([]);
   const [filteredErrorRateData, setFilteredErrorRateData] = useState<DataPoint[]>([]);
-  const [currentMetrics, setCurrentMetrics] = useState<{ [key: string]: number }>({});
+  const [currentMetrics, setCurrentMetrics] = useState<{ [key: string]: number }>({
+    evaluations: 0,
+    conversion: 0,
+    errorRate: 0
+  });
   const [evaluationVersionChanges, setEvaluationVersionChanges] = useState<VersionChange[]>([]);
   const [conversionVersionChanges, setConversionVersionChanges] = useState<VersionChange[]>([]);
   const [errorRateVersionChanges, setErrorRateVersionChanges] = useState<VersionChange[]>([]);
@@ -177,6 +181,12 @@ export const useDashboardData = (): DashboardDataReturn => {
         evaluations: filteredEvaluations[filteredEvaluations.length - 1].value,
         conversion: filteredConversions[filteredConversions.length - 1].value,
         errorRate: filteredErrorRates[filteredErrorRates.length - 1].value,
+      });
+    } else {
+      setCurrentMetrics({
+        evaluations: 0,
+        conversion: 0,
+        errorRate: 0,
       });
     }
   }, [timeframe, evaluationData, conversionData, errorRateData]);
