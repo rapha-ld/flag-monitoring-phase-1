@@ -31,6 +31,7 @@ export interface MetricCardProps {
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
+  onRangeSelect?: (startIndex: number, endIndex: number, dates: Date[]) => void;
 }
 
 const MetricCard = ({ 
@@ -53,7 +54,8 @@ const MetricCard = ({
   chartType = 'stacked',
   metricType,
   selectedTimestamp,
-  selectedTimestamps
+  selectedTimestamps,
+  onRangeSelect
 }: MetricCardProps) => {
   // Determine if we should show average values (only for conversion and error rate when both variants selected)
   const showAverage = showTrue && showFalse && (metricType === 'conversion' || metricType === 'errorRate');
@@ -61,6 +63,13 @@ const MetricCard = ({
   // Get the display value based on the selected variants
   const displayValue = calculateDisplayValue(value, chartData, showTrue, showFalse, metricType);
   
+  const handleRangeSelect = (startIndex: number, endIndex: number, dates: Date[]) => {
+    console.log(`Range selected in ${title} card:`, startIndex, endIndex, dates);
+    if (onRangeSelect && dates.length > 0) {
+      onRangeSelect(startIndex, endIndex, dates);
+    }
+  };
+
   return (
     <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", className)}>
       <MetricCardHeader 
@@ -86,6 +95,7 @@ const MetricCard = ({
             metricType={metricType}
             selectedTimestamp={selectedTimestamp}
             selectedTimestamps={selectedTimestamps}
+            onRangeSelect={handleRangeSelect}
           />
         ) : children}
       </CardContent>

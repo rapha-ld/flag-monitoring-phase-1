@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Play, Search } from 'lucide-react';
-import { formatDistanceToNow, format } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 import { Input } from '@/components/ui/input';
 
 // Define the interface for sessions data
@@ -141,17 +141,22 @@ const sessionsData: Session[] = [
   }
 ];
 
-// Format the date as a relative time (e.g., "2 days ago") and absolute time with both date and time
+// Format the date as a relative time (e.g., "2 days ago") and absolute time
 const formatTimestamp = (date: Date) => {
   const relativeTime = formatDistanceToNow(date, { addSuffix: true });
-  const absoluteTime = format(date, "MMM d ''yy");
-  const exactTime = format(date, "h:mm a");
+  const absoluteTime = date.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
   
   return (
     <div className="flex flex-col">
       <span className="text-sm font-medium">{absoluteTime}</span>
       <span className="text-xs text-muted-foreground">{relativeTime}</span>
-      <span className="text-xs text-muted-foreground">{exactTime}</span>
     </div>
   );
 };
@@ -220,7 +225,7 @@ const SessionsTable: React.FC<SessionsTableProps> = ({
           <TableRow>
             <TableHead>Account</TableHead>
             <TableHead>OS</TableHead>
-            <TableHead>Time</TableHead>
+            <TableHead>Timestamp</TableHead>
             <TableHead className="w-[80px] text-right">Replay</TableHead>
           </TableRow>
         </TableHeader>

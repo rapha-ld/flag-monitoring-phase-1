@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { formatDistanceToNow, format } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { MessageSquareText, Search } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
@@ -159,14 +160,19 @@ const feedbackData: Feedback[] = [
 
 const formatTimestamp = (date: Date) => {
   const relativeTime = formatDistanceToNow(date, { addSuffix: true });
-  const absoluteTime = format(date, "MMM d ''yy");
-  const exactTime = format(date, "h:mm a");
+  const absoluteTime = date.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
   
   return (
     <div className="flex flex-col">
       <span className="text-sm font-medium">{absoluteTime}</span>
       <span className="text-xs text-muted-foreground">{relativeTime}</span>
-      <span className="text-xs text-muted-foreground">{exactTime}</span>
     </div>
   );
 };
@@ -301,7 +307,7 @@ const UserFeedbackTable: React.FC = () => {
             <TableHead>Email</TableHead>
             <TableHead>Feedback</TableHead>
             <TableHead>Sentiment</TableHead>
-            <TableHead className="text-right">Time</TableHead>
+            <TableHead className="text-right">Timestamp</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -330,4 +336,3 @@ const UserFeedbackTable: React.FC = () => {
 };
 
 export default UserFeedbackTable;
-

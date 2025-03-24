@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Flag, ToggleRight, ToggleLeft, RefreshCw, Settings, AlertTriangle } from 'lucide-react';
@@ -29,9 +30,8 @@ const VersionMarker = ({
   className,
   eventName
 }: VersionMarkerProps) => {
-  // Format the date and time if provided
-  const formattedDate = date ? format(parseISO(date), "MMM d ''yy") : '';
-  const formattedTime = date ? format(parseISO(date), "h:mm a") : '';
+  // Format the date if provided
+  const formattedDate = date ? format(parseISO(date), 'MMM d') : '';
 
   // Get the appropriate icon based on the event name
   const getEventIcon = () => {
@@ -98,12 +98,7 @@ const VersionMarker = ({
         </TooltipTrigger>
         <TooltipContent side="top" className="p-3 space-y-1.5 max-w-xs">
           <p className="font-medium text-sm">Version {version}</p>
-          {date && (
-            <div>
-              <p className="text-xs text-muted-foreground">{format(parseISO(date), "MMM d ''yy")}</p>
-              <p className="text-xs text-muted-foreground">{format(parseISO(date), "h:mm a")}</p>
-            </div>
-          )}
+          {date && <p className="text-xs text-muted-foreground">{format(parseISO(date), 'MMM d, yyyy')}</p>}
           {details && <p className="text-xs text-muted-foreground">{details}</p>}
           {eventName && <p className="text-xs font-medium">{eventName}</p>}
         </TooltipContent>

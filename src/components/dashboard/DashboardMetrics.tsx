@@ -21,6 +21,7 @@ interface DashboardMetricsProps {
   timeframe: string;
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
+  onRangeSelect?: (dates: Date[]) => void;
 }
 
 const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
@@ -36,8 +37,16 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   showFalse,
   timeframe,
   selectedTimestamp,
-  selectedTimestamps
+  selectedTimestamps,
+  onRangeSelect
 }) => {
+  const handleRangeSelect = (startIndex: number, endIndex: number, dates: Date[]) => {
+    console.log("Range selected in DashboardMetrics:", dates);
+    if (onRangeSelect && dates.length > 0) {
+      onRangeSelect(dates);
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {selectedMetrics.includes('evaluations') && (
@@ -61,6 +70,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
           timeframe={timeframe}
           selectedTimestamp={selectedTimestamp}
           selectedTimestamps={selectedTimestamps}
+          onRangeSelect={handleRangeSelect}
         />
       )}
       
@@ -85,6 +95,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
           timeframe={timeframe}
           selectedTimestamp={selectedTimestamp}
           selectedTimestamps={selectedTimestamps}
+          onRangeSelect={handleRangeSelect}
         />
       )}
       
@@ -112,6 +123,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
           timeframe={timeframe}
           selectedTimestamp={selectedTimestamp}
           selectedTimestamps={selectedTimestamps}
+          onRangeSelect={handleRangeSelect}
         />
       )}
     </div>
