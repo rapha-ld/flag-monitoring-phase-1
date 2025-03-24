@@ -1,16 +1,19 @@
 
 import React, { useState, useEffect } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag, AlertTriangle, Info } from 'lucide-react';
+import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag, AlertTriangle, Info, Search } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { TabsContent } from '@/components/ui/tabs';
+import HistoryTabs from '@/components/history/HistoryTabs';
+import SessionsTable from '@/components/history/SessionsTable';
+import UserFeedbackTable from '@/components/history/UserFeedbackTable';
 
 // Define the interface for history events
 interface HistoryEvent {
@@ -121,6 +124,7 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>('history');
 
   // Filter the history data based on search query
   const filteredHistoryData = historyData.filter(event => {
@@ -196,70 +200,90 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ onEventSelect, 
     }
   }, [selectedRows, sortedHistoryData, onEventSelect]);
 
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    // Clear selections when changing tabs
+    if (value !== 'history') {
+      setSelectedRows([]);
+      onEventSelect(null);
+    }
+  };
+
   return (
     <div className="space-y-4 animate-fade-in">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-1.5">
-          <h2 className="text-[15px] font-semibold">History</h2>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Info className="h-4 w-4 text-muted-foreground cursor-help" />
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <p className="text-xs">Use Shift+click to select a range, or Ctrl/Cmd+click to select individual rows</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+      <HistoryTabs activeTab={activeTab} onChange={handleTabChange} />
+      
+      <TabsContent value="history" className="mt-0 space-y-4">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-1.5">
+            <h2 className="text-[15px] font-semibold">History</h2>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p className="text-xs">Use Shift+click to select a range, or Ctrl/Cmd+click to select individual rows</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <div className="relative w-72">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search history..."
+              className="pl-8"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
         </div>
-        <div className="relative w-72">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search history..."
-            className="pl-8"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-      </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[300px]">Event</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead className="text-right w-[200px]">Date</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {sortedHistoryData.length > 0 ? (
-            sortedHistoryData.map((event) => (
-              <TableRow 
-                key={event.id}
-                onClick={(e) => handleRowClick(e, event)}
-                className={`cursor-pointer transition-colors ${
-                  selectedRows.includes(event.id) ? 'bg-primary/10' : ''
-                }`}
-              >
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    {getEventIcon(event.type)}
-                    <span className="font-medium">{event.title}</span>
-                  </div>
-                </TableCell>
-                <TableCell>{event.description}</TableCell>
-                <TableCell className="text-right">{formatTimestamp(event.timestamp)}</TableCell>
-              </TableRow>
-            ))
-          ) : (
+        <Table>
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={3} className="text-center py-6 text-muted-foreground">
-                No results found for "{searchQuery}"
-              </TableCell>
+              <TableHead className="w-[300px]">Event</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead className="text-right w-[200px]">Date</TableHead>
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
-      {/* Tip section removed from here */}
+          </TableHeader>
+          <TableBody>
+            {sortedHistoryData.length > 0 ? (
+              sortedHistoryData.map((event) => (
+                <TableRow 
+                  key={event.id}
+                  onClick={(e) => handleRowClick(e, event)}
+                  className={`cursor-pointer transition-colors ${
+                    selectedRows.includes(event.id) ? 'bg-primary/10' : ''
+                  }`}
+                >
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      {getEventIcon(event.type)}
+                      <span className="font-medium">{event.title}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>{event.description}</TableCell>
+                  <TableCell className="text-right">{formatTimestamp(event.timestamp)}</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={3} className="text-center py-6 text-muted-foreground">
+                  No results found for "{searchQuery}"
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TabsContent>
+      
+      <TabsContent value="sessions" className="mt-0">
+        <SessionsTable />
+      </TabsContent>
+      
+      <TabsContent value="feedback" className="mt-0">
+        <UserFeedbackTable />
+      </TabsContent>
     </div>
   );
 };
