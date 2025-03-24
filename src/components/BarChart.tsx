@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -154,10 +155,6 @@ const BarChart = ({
   
   const showReferenceArea = firstPoint && lastPoint;
 
-  const renderCustomLabel = (date: Date, icon: React.ReactNode) => {
-    return `${format(date, "MMM d")}`;
-  };
-
   return (
     <div className="w-full h-full">
       <ResponsiveContainer width="100%" height={height}>
@@ -209,72 +206,6 @@ const BarChart = ({
             trigger="hover"
             isAnimationActive={false}
           />
-          
-          {referenceLineMarkers.map((marker, index) => (
-            <ReferenceLine
-              key={`ref-line-${index}`}
-              x={marker.date}
-              stroke={marker.color}
-              strokeWidth={2}
-              strokeDasharray="3 3"
-              label={{
-                value: marker.label,
-                position: 'top',
-                fill: marker.color,
-                fontSize: 16,
-                fontWeight: 'bold',
-              }}
-            />
-          ))}
-          
-          {thresholdLine && (
-            <ReferenceLine
-              y={thresholdLine.value}
-              label={{
-                value: thresholdLine.label,
-                position: thresholdLine.labelPosition.position as any,
-                offset: thresholdLine.labelPosition.offset,
-                fill: thresholdLine.color,
-                fontSize: 11,
-                dx: 5
-              }}
-              stroke={thresholdLine.color}
-              strokeDasharray={thresholdLine.strokeDasharray}
-              strokeWidth={1.5}
-            />
-          )}
-          
-          {showReferenceArea && (
-            <ReferenceArea
-              x1={firstPoint.name}
-              x2={lastPoint.name}
-              fill="#f1f1f4"
-              fillOpacity={0.5}
-            />
-          )}
-          
-          {hasSelectedPoints && selectedPoints.map((point, index) => {
-            const icon = getEventIcon(point.exactTime);
-            const labelText = format(point.exactTime, "MMM d");
-            
-            return (
-              <ReferenceLine
-                key={`selected-time-${index}`}
-                x={point.name}
-                stroke={textGray}
-                strokeWidth={1.5}
-                label={{
-                  position: 'top',
-                  value: labelText,
-                  fill: textGray,
-                  fontSize: 12,
-                  fontFamily: "Inter, sans-serif",
-                  fontWeight: "medium",
-                  className: "flex items-center"
-                }}
-              />
-            );
-          })}
           
           {metricType === 'evaluations' && !(showTrue && showFalse) && (
             <Bar
@@ -343,6 +274,88 @@ const BarChart = ({
               dot={false}
               activeDot={{ r: 4 }}
               isAnimationActive={false}
+            />
+          )}
+          
+          {referenceLineMarkers.map((marker, index) => (
+            <ReferenceLine
+              key={`ref-line-${index}`}
+              x={marker.date}
+              stroke={marker.color}
+              strokeWidth={2}
+              strokeDasharray="3 3"
+              label={{
+                value: marker.label,
+                position: 'top',
+                fill: marker.color,
+                fontSize: 16,
+                fontWeight: 'bold',
+              }}
+            />
+          ))}
+          
+          {showReferenceArea && (
+            <ReferenceArea
+              x1={firstPoint.name}
+              x2={lastPoint.name}
+              fill="#f1f1f4"
+              fillOpacity={0.5}
+            />
+          )}
+          
+          {hasSelectedPoints && selectedPoints.map((point, index) => {
+            const icon = getEventIcon(point.exactTime);
+            // Create a custom label with icon and date
+            const labelText = (
+              <div className="flex items-center gap-1">
+                <span className="text-[#545A62]">{format(point.exactTime, "MMM d")}</span>
+              </div>
+            );
+            
+            return (
+              <ReferenceLine
+                key={`selected-time-${index}`}
+                x={point.name}
+                stroke={textGray}
+                strokeWidth={1.5}
+                label={{
+                  position: 'top',
+                  value: format(point.exactTime, "MMM d"),
+                  fill: textGray,
+                  fontSize: 12,
+                  fontFamily: "Inter, sans-serif",
+                  fontWeight: "medium",
+                  content: (props) => (
+                    <g>
+                      <foreignObject width="20" height="16" x="-10" y="-16">
+                        <div className="flex items-center text-[#545A62]">
+                          <span className="mr-0.5">{icon}</span>
+                          <span>{format(point.exactTime, "MMM d")}</span>
+                        </div>
+                      </foreignObject>
+                    </g>
+                  )
+                }}
+              />
+            );
+          })}
+          
+          {/* Threshold line rendered last to appear on top */}
+          {thresholdLine && (
+            <ReferenceLine
+              y={thresholdLine.value}
+              label={{
+                value: thresholdLine.label,
+                position: thresholdLine.labelPosition.position as any,
+                offset: thresholdLine.labelPosition.offset,
+                fill: thresholdLine.color,
+                fontSize: 11,
+                dx: 5
+              }}
+              stroke={thresholdLine.color}
+              strokeDasharray={thresholdLine.strokeDasharray}
+              strokeWidth={1.5}
+              zIndex={9999}
             />
           )}
           
