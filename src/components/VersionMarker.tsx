@@ -85,10 +85,10 @@ const VersionMarker = ({
               v{version}
             </text>
             
-            {/* Event name using exact X-axis label styling from BarChart */}
+            {/* Event name using icon */}
             {eventName && (
               <foreignObject x="-12" y="18" width="24" height="24">
-                <div xmlns="http://www.w3.org/1999/xhtml" className="flex justify-center">
+                <div className="flex justify-center">
                   {getEventIcon()}
                 </div>
               </foreignObject>
