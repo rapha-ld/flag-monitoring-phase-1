@@ -64,14 +64,15 @@ const VersionMarker = ({
               v{version}
             </text>
             
-            {/* Event name with explicitly smaller font size */}
+            {/* Event name with explicit inline font size to ensure it's applied */}
             {eventName && (
               <text
                 x="0"
                 y="28"
-                style={{ fontSize: '5px' }}
+                dominantBaseline="middle"
                 textAnchor="middle"
                 fill="#666"
+                className="event-name-text"
               >
                 {eventName}
               </text>

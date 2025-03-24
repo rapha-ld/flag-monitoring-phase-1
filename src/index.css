@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -142,9 +141,12 @@
       @apply scale-105 cursor-pointer;
     }
     
-    /* Adding specific styling for version marker event names */
-    .version-marker text {
-      font-size: 5px !important;
+    .event-name-text {
+      font-size: 11px !important;
+    }
+    
+    .version-marker .event-name-text {
+      font-size: 11px !important;
     }
   }
 }
