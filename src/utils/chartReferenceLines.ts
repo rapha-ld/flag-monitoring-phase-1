@@ -4,6 +4,7 @@ interface ReferenceLineMarker {
   date: string;
   label: string;
   color: string;
+  eventName?: string; // Add event name property
 }
 
 interface LabelPosition {
@@ -25,17 +26,20 @@ export const referenceLineMarkers: ReferenceLineMarker[] = [
   {
     date: "2023-06-10",
     label: "Feature Release",
-    color: "#6366F1"
+    color: "#6366F1",
+    eventName: "Flag enabled"
   },
   {
     date: "2023-06-15",
     label: "Bug Fix",
-    color: "#10B981"
+    color: "#10B981",
+    eventName: "Flag updated"
   },
   {
     date: "2023-06-20",
     label: "Major Update",
-    color: "#F43F5E"
+    color: "#F43F5E",
+    eventName: "Flag disabled"
   }
 ];
 

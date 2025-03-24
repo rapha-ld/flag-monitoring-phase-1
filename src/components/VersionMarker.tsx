@@ -18,6 +18,7 @@ interface VersionMarkerProps {
   date?: string;
   details?: string;
   className?: string;
+  eventName?: string;  // Add this new prop for event name
 }
 
 const VersionMarker = ({ 
@@ -26,7 +27,8 @@ const VersionMarker = ({
   version, 
   date, 
   details,
-  className 
+  className,
+  eventName  // Add this new prop
 }: VersionMarkerProps) => {
   // Format the date if provided
   const formattedDate = date ? format(parseISO(date), 'MMM d') : '';
@@ -62,16 +64,16 @@ const VersionMarker = ({
               v{version}
             </text>
             
-            {/* Date label below version */}
-            {date && (
+            {/* Event name instead of date */}
+            {eventName && (
               <text
                 x="0"
                 y="28"
-                fontSize="9"
+                fontSize="11"
                 textAnchor="middle"
                 fill="#666"
               >
-                {formattedDate}
+                {eventName}
               </text>
             )}
           </g>
@@ -80,6 +82,7 @@ const VersionMarker = ({
           <p className="font-medium text-sm">Version {version}</p>
           {date && <p className="text-xs text-muted-foreground">{format(parseISO(date), 'MMM d, yyyy')}</p>}
           {details && <p className="text-xs text-muted-foreground">{details}</p>}
+          {eventName && <p className="text-xs font-medium">{eventName}</p>}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

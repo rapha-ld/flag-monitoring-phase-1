@@ -253,6 +253,8 @@ const BarChart = ({
             const icon = getEventIcon(point.exactTime);
             const formattedDate = format(point.exactTime, "MMM d");
             
+            const eventName = determineEventName(point.exactTime);
+            
             return (
               <ReferenceLine
                 key={`selected-time-${index}`}
@@ -261,7 +263,7 @@ const BarChart = ({
                 strokeWidth={1.5}
                 label={index === 0 || index === selectedPoints.length - 1 ? {
                   position: 'top',
-                  value: formattedDate
+                  value: eventName || formattedDate
                 } : undefined}
               />
             );
@@ -344,6 +346,7 @@ const BarChart = ({
               version={change.version}
               details={change.details}
               date={change.date}
+              eventName={getEventNameFromVersion(change.version)}
             />
           ))}
         </ComposedChart>
@@ -351,5 +354,41 @@ const BarChart = ({
     </div>
   );
 };
+
+function determineEventName(timestamp: Date): string {
+  const timeMs = timestamp.getTime();
+  
+  if (timeMs > Date.now() - 10 * 24 * 60 * 60 * 1000) {
+    return "Flag enabled";
+  }
+  else if (timeMs > Date.now() - 40 * 24 * 60 * 60 * 1000) {
+    return "Flag updated";
+  }
+  else if (timeMs > Date.now() - 47 * 24 * 60 * 60 * 1000) {
+    return "Flag disabled";
+  }
+  else if (timeMs > Date.now() - 55 * 24 * 60 * 60 * 1000) {
+    return "Alert";
+  }
+  else if (timeMs > Date.now() - 80 * 24 * 60 * 60 * 1000) {
+    return "Rules changed";
+  }
+  else {
+    return "Flag created";
+  }
+}
+
+function getEventNameFromVersion(version: string): string {
+  const versionMap: Record<string, string> = {
+    "1.0": "Flag created",
+    "1.1": "Rules changed",
+    "1.2": "Alert",
+    "1.3": "Flag disabled",
+    "1.4": "Flag updated",
+    "1.5": "Flag enabled"
+  };
+  
+  return versionMap[version] || "Version update";
+}
 
 export default BarChart;
