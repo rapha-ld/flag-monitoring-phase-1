@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { Flag } from 'lucide-react';
+import { Flag, ToggleRight, ToggleLeft, RefreshCw, Settings, AlertTriangle } from 'lucide-react';
 import { 
   Tooltip, 
   TooltipContent, 
@@ -32,6 +32,27 @@ const VersionMarker = ({
 }: VersionMarkerProps) => {
   // Format the date if provided
   const formattedDate = date ? format(parseISO(date), 'MMM d') : '';
+
+  // Get the appropriate icon based on the event name
+  const getEventIcon = () => {
+    if (!eventName) return null;
+    
+    switch (eventName.toLowerCase()) {
+      case 'flag enabled':
+        return <ToggleRight className="h-4 w-4 text-green-500" />;
+      case 'flag disabled':
+        return <ToggleLeft className="h-4 w-4 text-red-500" />;
+      case 'flag updated':
+        return <RefreshCw className="h-4 w-4 text-blue-500" />;
+      case 'rules changed':
+        return <Settings className="h-4 w-4 text-gray-500" />;
+      case 'alert':
+        return <AlertTriangle className="h-4 w-4 text-orange-500" />;
+      case 'flag created':
+      default:
+        return <Flag className="h-4 w-4 text-amber-500" />;
+    }
+  };
 
   return (
     <TooltipProvider>
@@ -66,16 +87,11 @@ const VersionMarker = ({
             
             {/* Event name using exact X-axis label styling from BarChart */}
             {eventName && (
-              <text
-                x="0"
-                y="28"
-                fontSize={10}
-                dominantBaseline="middle"
-                textAnchor="middle"
-                fill="#545A62"
-              >
-                {eventName}
-              </text>
+              <foreignObject x="-12" y="18" width="24" height="24">
+                <div xmlns="http://www.w3.org/1999/xhtml" className="flex justify-center">
+                  {getEventIcon()}
+                </div>
+              </foreignObject>
             )}
           </g>
         </TooltipTrigger>
