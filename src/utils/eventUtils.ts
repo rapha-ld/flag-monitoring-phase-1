@@ -1,3 +1,4 @@
+
 import { DataPoint } from '@/components/BarChart';
 import { format } from 'date-fns';
 import { Flag, Settings, AlertTriangle, ToggleLeft, RefreshCw, ToggleRight } from 'lucide-react';

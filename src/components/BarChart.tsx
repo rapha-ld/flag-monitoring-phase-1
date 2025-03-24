@@ -7,7 +7,7 @@ import CustomTooltip from './chart/CustomTooltip';
 import { referenceLineMarkers, thresholdLines } from '@/utils/chartReferenceLines';
 import { format } from 'date-fns';
 import BarChartCell from './chart/BarChartCell';
-import { getEventIcon, determineEventName, isPointInSelectedRange } from '@/utils/eventUtils';
+import { getEventIcon, determineEventName, isPointInSelectedRange, getEventNameFromVersion } from '@/utils/eventUtils';
 
 export interface DataPoint {
   name: string;
@@ -204,8 +204,8 @@ const BarChart = ({
                 position: 'top',
                 content: ({ viewBox }) => (
                   <text
-                    x={viewBox.x}
-                    y={viewBox.y}
+                    x={viewBox?.x ?? 0}
+                    y={viewBox?.y ?? 0}
                     fontSize={11}
                     textAnchor="middle"
                     fill={marker.color}
@@ -225,8 +225,8 @@ const BarChart = ({
                 position: thresholdLine.labelPosition.position as any,
                 content: ({ viewBox }) => (
                   <text
-                    x={(viewBox.x || 0) + 5}
-                    y={viewBox.y}
+                    x={(viewBox?.x ?? 0) + 5}
+                    y={viewBox?.y ?? 0}
                     fontSize={11}
                     textAnchor="start"
                     fill={thresholdLine.color}
@@ -266,8 +266,8 @@ const BarChart = ({
                   position: 'top',
                   content: ({ viewBox }) => (
                     <text
-                      x={viewBox.x}
-                      y={viewBox.y}
+                      x={viewBox?.x ?? 0}
+                      y={viewBox?.y ?? 0}
                       fontSize={11}
                       textAnchor="middle"
                       fill={textGray}
