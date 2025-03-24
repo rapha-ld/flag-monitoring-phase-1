@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -7,6 +6,7 @@ import CustomTooltip from './chart/CustomTooltip';
 import { referenceLineMarkers, thresholdLines } from '@/utils/chartReferenceLines';
 import { format } from 'date-fns';
 import BarChartCell from './chart/BarChartCell';
+import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag, AlertTriangle } from 'lucide-react';
 
 export interface DataPoint {
   name: string;
@@ -40,6 +40,29 @@ interface BarChartProps {
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
 }
+
+const getEventIcon = (date: Date) => {
+  const timestamp = date.getTime();
+  
+  if (timestamp > Date.now() - 10 * 24 * 60 * 60 * 1000) {
+    return <ToggleRight className="h-4 w-4" />;
+  }
+  else if (timestamp > Date.now() - 40 * 24 * 60 * 60 * 1000) {
+    return <RefreshCw className="h-4 w-4" />;
+  }
+  else if (timestamp > Date.now() - 47 * 24 * 60 * 60 * 1000) {
+    return <ToggleLeft className="h-4 w-4" />;
+  }
+  else if (timestamp > Date.now() - 55 * 24 * 60 * 60 * 1000) {
+    return <AlertTriangle className="h-4 w-4" />;
+  }
+  else if (timestamp > Date.now() - 80 * 24 * 60 * 60 * 1000) {
+    return <Settings className="h-4 w-4" />;
+  }
+  else {
+    return <Flag className="h-4 w-4" />;
+  }
+};
 
 const BarChart = ({
   data,
@@ -76,19 +99,17 @@ const BarChart = ({
   
   const trueColor = '#2BB7D2';
   const falseColor = '#FFD099';
+  const textGray = '#545A62';
 
   const thresholdLine = metricType ? thresholdLines.find(t => t.metricType === metricType) : undefined;
 
-  // Enhanced function to find data points matching timestamps
   const findSelectedDataPoints = () => {
     if ((!selectedTimestamp && !selectedTimestamps) || data.length === 0) return null;
     
-    // Use selectedTimestamps if available, otherwise use the single selectedTimestamp
     const timestamps = selectedTimestamps || (selectedTimestamp ? [selectedTimestamp] : []);
     
     if (timestamps.length === 0) return null;
     
-    // Parse all dates from data points
     const dataPoints = data.map((point, index) => {
       const pointDate = point.date ? new Date(point.date) : 
                        (point.name && !isNaN(new Date(point.name).getTime()) ? 
@@ -103,7 +124,6 @@ const BarChart = ({
     
     if (dataPoints.length === 0) return null;
     
-    // Find closest data points for each timestamp
     return timestamps.map(selectedTime => {
       const selectedTimeMs = selectedTime.getTime();
       let closestPoint = dataPoints[0];
@@ -127,13 +147,11 @@ const BarChart = ({
   const selectedPoints = findSelectedDataPoints();
   const hasSelectedPoints = selectedPoints && selectedPoints.length > 0;
   
-  // Get the first and last points if we have multiple selected points
   const firstPoint = hasSelectedPoints ? selectedPoints[0] : null;
   const lastPoint = hasSelectedPoints && selectedPoints.length > 1 
     ? selectedPoints[selectedPoints.length - 1] 
     : null;
   
-  // Check if we need to show a reference area (for multiple selections)
   const showReferenceArea = firstPoint && lastPoint;
 
   return (
@@ -222,7 +240,6 @@ const BarChart = ({
             />
           )}
           
-          {/* Highlight area between first and last selected point */}
           {showReferenceArea && (
             <ReferenceArea
               x1={firstPoint.name}
@@ -232,21 +249,45 @@ const BarChart = ({
             />
           )}
           
-          {/* Show reference lines for each selected point */}
-          {hasSelectedPoints && selectedPoints.map((point, index) => (
-            <ReferenceLine
-              key={`selected-time-${index}`}
-              x={point.name}
-              stroke="#7c5cfc"
-              strokeWidth={2}
-              label={index === 0 || index === selectedPoints.length - 1 ? {
-                value: format(point.exactTime, "MMM d, h:mm a"),
-                position: 'top',
-                fill: '#7c5cfc',
-                fontSize: 12,
-              } : undefined}
-            />
-          ))}
+          {hasSelectedPoints && selectedPoints.map((point, index) => {
+            const icon = getEventIcon(point.exactTime);
+            
+            const labelContent = () => (
+              <g>
+                <text
+                  x="0"
+                  y="0"
+                  fill={textGray}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  fontSize="12"
+                  fontFamily="Inter, sans-serif"
+                >
+                  <tspan x="14" y="0" className="font-medium">
+                    {format(point.exactTime, "MMM d")}
+                  </tspan>
+                </text>
+                <foreignObject width="12" height="12" x="-3" y="-6">
+                  <div className="text-[#545A62]">
+                    {icon}
+                  </div>
+                </foreignObject>
+              </g>
+            );
+            
+            return (
+              <ReferenceLine
+                key={`selected-time-${index}`}
+                x={point.name}
+                stroke={textGray}
+                strokeWidth={1.5}
+                label={index === 0 || index === selectedPoints.length - 1 ? {
+                  position: 'top',
+                  value: labelContent()
+                } : undefined}
+              />
+            );
+          })}
           
           {metricType === 'evaluations' && !(showTrue && showFalse) && (
             <Bar
