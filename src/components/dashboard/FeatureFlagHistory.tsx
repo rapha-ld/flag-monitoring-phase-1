@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag, AlertTriangle, Search } from 'lucide-react';
@@ -8,6 +9,7 @@ import HistoryTabs from '@/components/history/HistoryTabs';
 import SessionsTable from '@/components/history/SessionsTable';
 import UserFeedbackTable from '@/components/history/UserFeedbackTable';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface HistoryEvent {
   id: string;
@@ -252,7 +254,7 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
               <TableRow>
                 <TableHead className="w-[250px]">Event</TableHead>
                 <TableHead>Description</TableHead>
-                <TableHead className="w-[150px]">Initiated by</TableHead>
+                <TableHead className="w-[100px]">Initiated by</TableHead>
                 <TableHead className="text-right w-[180px]">Date</TableHead>
               </TableRow>
             </TableHeader>
@@ -275,14 +277,20 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
                     <TableCell>{event.description}</TableCell>
                     <TableCell>
                       {event.type !== 'alert' && event.initiatedBy ? (
-                        <div className="flex items-center gap-2">
-                          <Avatar className="h-8 w-8">
-                            <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                              {getInitials(event.initiatedBy.name)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="text-sm">{event.initiatedBy.name}</span>
-                        </div>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Avatar className="h-8 w-8 cursor-help">
+                                <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                                  {getInitials(event.initiatedBy.name)}
+                                </AvatarFallback>
+                              </Avatar>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{event.initiatedBy.name}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       ) : (
                         <span className="text-sm text-muted-foreground">System</span>
                       )}
