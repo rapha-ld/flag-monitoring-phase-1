@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -94,6 +93,7 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
   const handleRowClick = (event: React.MouseEvent<HTMLTableRowElement>, historyEvent: HistoryEvent) => {
     const id = historyEvent.id;
     
+    // Shift+click for range selection
     if (event.shiftKey && lastSelectedId) {
       const currentIdIndex = filteredHistoryData.findIndex(item => item.id === id);
       const lastSelectedIdIndex = filteredHistoryData.findIndex(item => item.id === lastSelectedId);
@@ -109,21 +109,27 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
         setSelectedRows(newSelectedRows);
       }
     } 
+    // Ctrl+click for individual item selection/deselection
     else if (event.ctrlKey || event.metaKey) {
       setSelectedRows(prevSelectedRows => {
         if (prevSelectedRows.includes(id)) {
+          // If already selected, remove it
           return prevSelectedRows.filter(rowId => rowId !== id);
         } else {
+          // If not selected, add it
           return [...prevSelectedRows, id];
         }
       });
       setLastSelectedId(id);
     } 
+    // Normal click selects just this row
     else {
       if (selectedRows.length === 1 && selectedRows[0] === id) {
+        // If clicking the only selected row, deselect it
         setSelectedRows([]);
         setLastSelectedId(null);
       } else {
+        // Otherwise, select just this row
         setSelectedRows([id]);
         setLastSelectedId(id);
       }
