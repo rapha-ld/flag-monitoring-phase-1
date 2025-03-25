@@ -178,6 +178,7 @@ const UserFeedbackTable: React.FC = () => {
         setSearchQuery={setSearchQuery}
         sentimentFilter={sentimentFilter}
         setSentimentFilter={setSentimentFilter}
+        feedbackData={sortedFeedbackData}
       />
       
       <FeedbackTable feedbackData={sortedFeedbackData} />
