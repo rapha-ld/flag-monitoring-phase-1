@@ -1,7 +1,6 @@
-
 import { formatDistanceToNow } from 'date-fns';
 import { HistoryEvent, HistoryEventType } from '@/types/historyTypes';
-import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag, AlertTriangle, X } from 'lucide-react';
+import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag, AlertTriangle } from 'lucide-react';
 import React from 'react';
 
 export const getEventIcon = (type: HistoryEventType) => {
@@ -37,43 +36,6 @@ export const formatTimestamp = (date: Date) => {
       <span className="text-xs text-muted-foreground">{relativeTime}</span>
     </div>
   );
-};
-
-export const formatTimeRangeDisplay = (timestamps: Date[]) => {
-  if (!timestamps || timestamps.length === 0) return null;
-  
-  if (timestamps.length === 1) {
-    return timestamps[0].toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
-  }
-  
-  // Sort timestamps chronologically
-  const sortedTimestamps = [...timestamps].sort((a, b) => a.getTime() - b.getTime());
-  const firstDate = sortedTimestamps[0];
-  const lastDate = sortedTimestamps[sortedTimestamps.length - 1];
-  
-  const firstFormatted = firstDate.toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true
-  });
-  
-  const lastFormatted = lastDate.toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true
-  });
-  
-  return `${firstFormatted} to ${lastFormatted}`;
 };
 
 export const filterHistoryEvents = (
