@@ -254,7 +254,7 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
               <TableRow>
                 <TableHead className="w-[250px]">Event</TableHead>
                 <TableHead>Description</TableHead>
-                <TableHead className="w-[100px]">Initiated by</TableHead>
+                <TableHead className="w-[100px] whitespace-nowrap">Initiated by</TableHead>
                 <TableHead className="text-right w-[180px]">Date</TableHead>
               </TableRow>
             </TableHeader>
