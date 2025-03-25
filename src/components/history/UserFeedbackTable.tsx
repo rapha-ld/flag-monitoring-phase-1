@@ -1,13 +1,10 @@
-
 import React, { useState } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { formatDistanceToNow } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
-import { MessageSquareText, Search, Filter, Smile, Frown } from 'lucide-react';
+import { MessageSquareText, Search, Smile, Frown, Meh } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 
@@ -285,7 +282,6 @@ const UserFeedbackTable: React.FC = () => {
       feedback.feedback.toLowerCase().includes(query) ||
       feedback.sentiment.toLowerCase().includes(query);
     
-    // Apply sentiment filtering
     const matchesSentiment = 
       sentimentFilter === 'all' || 
       feedback.sentiment === sentimentFilter;
@@ -307,8 +303,6 @@ const UserFeedbackTable: React.FC = () => {
       
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-4">
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <Filter className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-medium mr-2">Filter by sentiment:</span>
           <RadioGroup 
             className="flex items-center gap-4" 
             defaultValue="all"
@@ -328,7 +322,10 @@ const UserFeedbackTable: React.FC = () => {
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="neutral" id="neutral" />
-              <Label htmlFor="neutral" className="cursor-pointer">Neutral</Label>
+              <Label htmlFor="neutral" className="flex items-center gap-1 cursor-pointer">
+                <Meh className="h-4 w-4 text-amber-500" />
+                Neutral
+              </Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="negative" id="negative" />
