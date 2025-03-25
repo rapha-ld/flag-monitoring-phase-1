@@ -1,5 +1,4 @@
-
-import React, { useState, useRef, useCallback } from 'react';
+import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
 import VersionMarker from './VersionMarker';
@@ -40,7 +39,6 @@ interface BarChartProps {
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
-  onRangeSelect?: (startIndex: number, endIndex: number, dates: Date[]) => void;
 }
 
 interface ChartViewBox {
@@ -68,14 +66,8 @@ const BarChart = ({
   chartType = 'stacked',
   metricType,
   selectedTimestamp,
-  selectedTimestamps,
-  onRangeSelect
+  selectedTimestamps
 }: BarChartProps) => {
-  const [refAreaLeft, setRefAreaLeft] = useState<string | null>(null);
-  const [refAreaRight, setRefAreaRight] = useState<string | null>(null);
-  const [isSelecting, setIsSelecting] = useState(false);
-  const chartRef = useRef<HTMLDivElement>(null);
-
   const interval = getXAxisInterval(data.length);
   const calculatedBarSize = getBarSize(data.length);
   const barSize = Math.floor(calculatedBarSize * 0.9);
@@ -97,101 +89,8 @@ const BarChart = ({
   const trueColor = '#2BB7D2';
   const falseColor = '#FFD099';
   const textGray = '#545A62';
-  const selectionColor = '#9b87f5';  // Purple color for selection
 
   const thresholdLine = metricType ? thresholdLines.find(t => t.metricType === metricType) : undefined;
-
-  // Get index from name
-  const getIndexFromName = (name: string): number => {
-    return data.findIndex(item => item.name === name);
-  };
-
-  // Mouse down event handler
-  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!chartRef.current) return;
-    
-    // Get chart bounds
-    const chartRect = chartRef.current.getBoundingClientRect();
-    const chartWidth = chartRect.width;
-    const mouseX = e.clientX - chartRect.left;
-    
-    // Calculate relative position (0-1)
-    const relativeX = mouseX / chartWidth;
-    
-    // Get closest data point
-    const index = Math.floor(relativeX * data.length);
-    if (index >= 0 && index < data.length) {
-      setRefAreaLeft(data[index].name);
-      setIsSelecting(true);
-    }
-  }, [data]);
-  
-  // Mouse move event handler
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isSelecting || !chartRef.current || !refAreaLeft) return;
-    
-    const chartRect = chartRef.current.getBoundingClientRect();
-    const chartWidth = chartRect.width;
-    const mouseX = e.clientX - chartRect.left;
-    
-    // Calculate relative position (0-1)
-    const relativeX = mouseX / chartWidth;
-    
-    // Get closest data point
-    const index = Math.min(data.length - 1, Math.max(0, Math.floor(relativeX * data.length)));
-    if (index >= 0 && index < data.length) {
-      setRefAreaRight(data[index].name);
-    }
-  }, [isSelecting, refAreaLeft, data]);
-  
-  // Mouse up event handler
-  const handleMouseUp = useCallback(() => {
-    if (!isSelecting || !refAreaLeft || !refAreaRight) {
-      setIsSelecting(false);
-      setRefAreaLeft(null);
-      setRefAreaRight(null);
-      return;
-    }
-    
-    let startIndex = getIndexFromName(refAreaLeft);
-    let endIndex = getIndexFromName(refAreaRight);
-    
-    // Make sure start is before end
-    if (startIndex > endIndex) {
-      [startIndex, endIndex] = [endIndex, startIndex];
-    }
-    
-    // Don't trigger if it's just a click (same point)
-    if (startIndex !== endIndex && onRangeSelect) {
-      // Get the dates for the selected range
-      const selectedDates = data
-        .slice(startIndex, endIndex + 1)
-        .map(point => {
-          if (point.date) {
-            return new Date(point.date);
-          } else if (point.name && !isNaN(new Date(point.name).getTime())) {
-            return new Date(point.name);
-          }
-          return null;
-        })
-        .filter((date): date is Date => date !== null);
-      
-      onRangeSelect(startIndex, endIndex, selectedDates);
-    }
-    
-    setIsSelecting(false);
-    setRefAreaLeft(null);
-    setRefAreaRight(null);
-  }, [isSelecting, refAreaLeft, refAreaRight, data, onRangeSelect]);
-  
-  // Mouse leave event handler
-  const handleMouseLeave = useCallback(() => {
-    if (isSelecting) {
-      setIsSelecting(false);
-      setRefAreaLeft(null);
-      setRefAreaRight(null);
-    }
-  }, [isSelecting]);
 
   const findSelectedDataPoints = () => {
     if ((!selectedTimestamp && !selectedTimestamps) || data.length === 0) return null;
@@ -242,21 +141,13 @@ const BarChart = ({
     ? selectedPoints[selectedPoints.length - 1] 
     : null;
   
-  const showReferenceArea = (firstPoint && lastPoint) || (refAreaLeft && refAreaRight);
+  const showReferenceArea = firstPoint && lastPoint;
 
   // Remove conditional opacity - always using full opacity to make selection clear
   const getPointOpacity = () => 1;
 
   return (
-    <div 
-      className="w-full h-full relative"
-      ref={chartRef}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseLeave}
-      style={{ cursor: isSelecting ? 'col-resize' : 'crosshair' }}
-    >
+    <div className="w-full h-full">
       <ResponsiveContainer width="100%" height={height}>
         <ComposedChart
           data={data}
@@ -357,21 +248,8 @@ const BarChart = ({
             />
           )}
           
-          {/* Reference area for user selection */}
-          {isSelecting && refAreaLeft && refAreaRight && (
-            <ReferenceArea
-              x1={refAreaLeft}
-              x2={refAreaRight}
-              fill={selectionColor}
-              fillOpacity={0.1}
-              stroke={selectionColor}
-              strokeOpacity={0.5}
-              strokeWidth={1}
-            />
-          )}
-          
           {/* Reference area for selected time range - MODIFIED to make it more visible */}
-          {showReferenceArea && firstPoint && lastPoint && (
+          {showReferenceArea && (
             <ReferenceArea
               x1={firstPoint.name}
               x2={lastPoint.name}

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Play, Search } from 'lucide-react';
@@ -148,6 +147,7 @@ const formatTimestamp = (date: Date) => {
   const absoluteTime = date.toLocaleString('en-US', {
     month: 'short',
     day: 'numeric',
+    year: 'numeric',
     hour: 'numeric',
     minute: '2-digit',
     hour12: true
@@ -225,7 +225,7 @@ const SessionsTable: React.FC<SessionsTableProps> = ({
           <TableRow>
             <TableHead>Account</TableHead>
             <TableHead>OS</TableHead>
-            <TableHead>Date</TableHead>
+            <TableHead>Timestamp</TableHead>
             <TableHead className="w-[80px] text-right">Replay</TableHead>
           </TableRow>
         </TableHeader>
