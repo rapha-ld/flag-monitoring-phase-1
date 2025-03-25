@@ -1,3 +1,4 @@
+
 import { formatDistanceToNow } from 'date-fns';
 import { HistoryEvent, HistoryEventType } from '@/types/historyTypes';
 import { ToggleRight, ToggleLeft, RefreshCw, Settings, Flag, AlertTriangle } from 'lucide-react';
@@ -44,42 +45,18 @@ export const filterHistoryEvents = (
   selectedTimestamp: Date | null,
   selectedTimestamps: Date[] | null
 ): HistoryEvent[] => {
-  let filtered = events.filter(event => {
+  // First filter by searchQuery
+  let filtered = events;
+  
+  if (searchQuery.trim() !== '') {
     const searchLower = searchQuery.toLowerCase();
-    return (
-      event.title.toLowerCase().includes(searchLower) ||
-      event.description.toLowerCase().includes(searchLower) ||
-      event.type.toLowerCase().includes(searchLower)
-    );
-  });
-
-  // Apply timestamp filtering if we have selectedTimestamps
-  if (selectedTimestamps && selectedTimestamps.length >= 2) {
-    const startTime = selectedTimestamps[0].getTime();
-    const endTime = selectedTimestamps[selectedTimestamps.length - 1].getTime();
-    
-    const filteredByTime = filtered.filter(event => {
-      const eventTime = event.timestamp.getTime();
-      return eventTime >= startTime && eventTime <= endTime;
+    filtered = events.filter(event => {
+      return (
+        event.title.toLowerCase().includes(searchLower) ||
+        event.description.toLowerCase().includes(searchLower) ||
+        event.type.toLowerCase().includes(searchLower)
+      );
     });
-
-    if (filteredByTime.length > 0) {
-      filtered = filteredByTime;
-    }
-  } 
-  // If we have a single timestamp selection
-  else if (selectedTimestamp) {
-    const selectedTime = selectedTimestamp.getTime();
-    const dayInMs = 24 * 60 * 60 * 1000;
-    
-    const filteredByTime = filtered.filter(event => {
-      const eventTime = event.timestamp.getTime();
-      return Math.abs(eventTime - selectedTime) <= dayInMs; // Within a day of the selected time
-    });
-    
-    if (filteredByTime.length > 0) {
-      filtered = filteredByTime;
-    }
   }
 
   // Sort by timestamp (newest first)

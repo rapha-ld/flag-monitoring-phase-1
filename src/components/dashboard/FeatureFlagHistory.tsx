@@ -23,9 +23,11 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
   const [activeTab, setActiveTab] = useState<string>('history');
   const [filteredHistoryData, setFilteredHistoryData] = useState<HistoryEvent[]>([]);
 
-  // Filter and sort history data based on search query and selected timestamps
+  // Filter history data based on search query
   useEffect(() => {
-    const filtered = filterHistoryEvents(historyData, searchQuery, selectedTimestamp, selectedTimestamps);
+    // We're now filtering only by search query, not timestamps
+    // This ensures all events remain visible regardless of timestamp selections
+    const filtered = filterHistoryEvents(historyData, searchQuery, null, null);
     setFilteredHistoryData(filtered);
     
     // Auto-select events if timestamps are selected
@@ -33,15 +35,15 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
       const startTime = selectedTimestamps[0].getTime();
       const endTime = selectedTimestamps[selectedTimestamps.length - 1].getTime();
       
-      const filteredByTime = filtered.filter(event => {
+      const eventsInTimeRange = filtered.filter(event => {
         const eventTime = event.timestamp.getTime();
         return eventTime >= startTime && eventTime <= endTime;
       });
 
-      if (filteredByTime.length > 0) {
-        const newSelectedRows = filteredByTime.map(event => event.id);
+      if (eventsInTimeRange.length > 0) {
+        const newSelectedRows = eventsInTimeRange.map(event => event.id);
         setSelectedRows(newSelectedRows);
-      } else if (filteredByTime.length === 0 && selectedTimestamps.length > 0) {
+      } else if (eventsInTimeRange.length === 0 && selectedTimestamps.length > 0) {
         // No events in selected timeframe
         toast({
           title: "No events found",
