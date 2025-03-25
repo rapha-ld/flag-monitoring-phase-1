@@ -7,6 +7,7 @@ import { Tabs, TabsContent } from '@/components/ui/tabs';
 import HistoryTabs from '@/components/history/HistoryTabs';
 import SessionsTable from '@/components/history/SessionsTable';
 import UserFeedbackTable from '@/components/history/UserFeedbackTable';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 interface HistoryEvent {
   id: string;
@@ -14,6 +15,10 @@ interface HistoryEvent {
   title: string;
   description: string;
   timestamp: Date;
+  initiatedBy?: {
+    name: string;
+    email?: string;
+  };
 }
 
 interface FeatureFlagHistoryProps {
@@ -28,49 +33,73 @@ const historyData: HistoryEvent[] = [
     type: 'enabled',
     title: 'Flag enabled',
     description: 'New checkout flow was enabled for production',
-    timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000 + 17 * 60 * 1000 + 37 * 1000) // 1 week ago + 17m37s
+    timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000 + 17 * 60 * 1000 + 37 * 1000),
+    initiatedBy: {
+      name: 'John Smith',
+      email: 'john.smith@example.com'
+    }
   },
   {
     id: '2',
     type: 'updated',
     title: 'Flag updated',
     description: 'Target audience changed from 10% to 25% of users',
-    timestamp: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000 - 42 * 60 * 1000 - 23 * 1000) // 1 month ago - 42m23s
+    timestamp: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000 - 42 * 60 * 1000 - 23 * 1000),
+    initiatedBy: {
+      name: 'Emily Johnson',
+      email: 'emily.j@example.com'
+    }
   },
   {
     id: '3',
     type: 'disabled',
     title: 'Flag disabled',
     description: 'New checkout flow was disabled for production',
-    timestamp: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000 + 28 * 60 * 1000 + 11 * 1000) // 1.5 months ago + 28m11s
+    timestamp: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000 + 28 * 60 * 1000 + 11 * 1000),
+    initiatedBy: {
+      name: 'Michael Chen',
+      email: 'michael.c@example.com'
+    }
   },
   {
     id: '7',
     type: 'alert',
     title: 'Alert',
     description: 'Avg. Error Rate exceeded alert threshold',
-    timestamp: new Date(Date.now() - 50 * 24 * 60 * 60 * 1000 - 13 * 60 * 1000 - 49 * 1000) // ~1.7 months ago - 13m49s
+    timestamp: new Date(Date.now() - 50 * 24 * 60 * 60 * 1000 - 13 * 60 * 1000 - 49 * 1000)
   },
   {
     id: '4',
     type: 'settings',
     title: 'Rules changed',
     description: 'New rule "LD users" was created',
-    timestamp: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000 + 53 * 60 * 1000 + 7 * 1000) // 2 months ago + 53m7s
+    timestamp: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000 + 53 * 60 * 1000 + 7 * 1000),
+    initiatedBy: {
+      name: 'Sarah Parker',
+      email: 'sarah.p@example.com'
+    }
   },
   {
     id: '6',
     type: 'enabled', 
     title: 'Flag enabled',
     description: 'New checkout flow was enabled for testing',
-    timestamp: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000 - 31 * 60 * 1000 - 15 * 1000) // 3 months ago - 31m15s
+    timestamp: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000 - 31 * 60 * 1000 - 15 * 1000),
+    initiatedBy: {
+      name: 'David Wilson',
+      email: 'david.w@example.com'
+    }
   },
   {
     id: '5',
     type: 'created',
     title: 'Flag created',
     description: 'New feature flag "New Checkout" was created',
-    timestamp: new Date(Date.now() - 115 * 24 * 60 * 60 * 1000 + 39 * 60 * 1000 + 42 * 1000) // ~3.8 months ago + 39m42s
+    timestamp: new Date(Date.now() - 115 * 24 * 60 * 60 * 1000 + 39 * 60 * 1000 + 42 * 1000),
+    initiatedBy: {
+      name: 'Alex Rodriguez',
+      email: 'alex.r@example.com'
+    }
   }
 ];
 
@@ -109,6 +138,15 @@ const formatTimestamp = (date: Date) => {
   );
 };
 
+const getInitials = (name: string): string => {
+  return name
+    .split(' ')
+    .map(part => part.charAt(0))
+    .join('')
+    .toUpperCase()
+    .substring(0, 2);
+};
+
 const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ 
   onEventSelect, 
   selectedTimestamp,
@@ -124,7 +162,8 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
     return (
       event.title.toLowerCase().includes(searchLower) ||
       event.description.toLowerCase().includes(searchLower) ||
-      event.type.toLowerCase().includes(searchLower)
+      event.type.toLowerCase().includes(searchLower) ||
+      (event.initiatedBy?.name && event.initiatedBy.name.toLowerCase().includes(searchLower))
     );
   });
 
@@ -211,9 +250,10 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[300px]">Event</TableHead>
+                <TableHead className="w-[250px]">Event</TableHead>
                 <TableHead>Description</TableHead>
-                <TableHead className="text-right w-[200px]">Date</TableHead>
+                <TableHead className="w-[150px]">Initiated by</TableHead>
+                <TableHead className="text-right w-[180px]">Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -233,12 +273,26 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
                       </div>
                     </TableCell>
                     <TableCell>{event.description}</TableCell>
+                    <TableCell>
+                      {event.type !== 'alert' && event.initiatedBy ? (
+                        <div className="flex items-center gap-2">
+                          <Avatar className="h-8 w-8">
+                            <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                              {getInitials(event.initiatedBy.name)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="text-sm">{event.initiatedBy.name}</span>
+                        </div>
+                      ) : (
+                        <span className="text-sm text-muted-foreground">System</span>
+                      )}
+                    </TableCell>
                     <TableCell className="text-right">{formatTimestamp(event.timestamp)}</TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={3} className="text-center py-6 text-muted-foreground">
+                  <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">
                     No results found for "{searchQuery}"
                   </TableCell>
                 </TableRow>
