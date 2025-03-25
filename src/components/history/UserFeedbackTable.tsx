@@ -1,10 +1,15 @@
+
 import React, { useState } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { formatDistanceToNow } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
-import { MessageSquareText, Search } from 'lucide-react';
+import { MessageSquareText, Search, Filter, Smile, Frown } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 
 interface Feedback {
   id: string;
@@ -271,32 +276,79 @@ const FeedbackSummary = ({ feedbackData }: { feedbackData: Feedback[] }) => {
 
 const UserFeedbackTable: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [sentimentFilter, setSentimentFilter] = useState<string>('all');
   
   const filteredFeedbackData = feedbackData.filter(feedback => {
     const query = searchQuery.toLowerCase();
-    return (
+    const matchesSearch = 
       feedback.email.toLowerCase().includes(query) ||
       feedback.feedback.toLowerCase().includes(query) ||
-      feedback.sentiment.toLowerCase().includes(query)
-    );
+      feedback.sentiment.toLowerCase().includes(query);
+    
+    // Apply sentiment filtering
+    const matchesSentiment = 
+      sentimentFilter === 'all' || 
+      feedback.sentiment === sentimentFilter;
+    
+    return matchesSearch && matchesSentiment;
   });
   
   const sortedFeedbackData = [...filteredFeedbackData].sort((a, b) => 
     b.timestamp.getTime() - a.timestamp.getTime()
   );
 
+  const handleSentimentChange = (value: string) => {
+    setSentimentFilter(value);
+  };
+
   return (
     <div className="space-y-4 animate-fade-in">
       <FeedbackSummary feedbackData={feedbackData} />
       
-      <div className="relative w-72 ml-auto mb-4">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search feedback..."
-          className="pl-8"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-4">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <Filter className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm font-medium mr-2">Filter by sentiment:</span>
+          <RadioGroup 
+            className="flex items-center gap-4" 
+            defaultValue="all"
+            value={sentimentFilter}
+            onValueChange={handleSentimentChange}
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="all" id="all" />
+              <Label htmlFor="all" className="cursor-pointer">All</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="positive" id="positive" />
+              <Label htmlFor="positive" className="flex items-center gap-1 cursor-pointer">
+                <Smile className="h-4 w-4 text-green-500" />
+                Positive
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="neutral" id="neutral" />
+              <Label htmlFor="neutral" className="cursor-pointer">Neutral</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="negative" id="negative" />
+              <Label htmlFor="negative" className="flex items-center gap-1 cursor-pointer">
+                <Frown className="h-4 w-4 text-red-500" />
+                Negative
+              </Label>
+            </div>
+          </RadioGroup>
+        </div>
+        
+        <div className="relative w-full sm:w-72">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search feedback..."
+            className="pl-8"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </div>
       
       <Table>
@@ -323,7 +375,10 @@ const UserFeedbackTable: React.FC = () => {
           ) : (
             <TableRow>
               <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">
-                No results found for "{searchQuery}"
+                {searchQuery ? 
+                  `No results found for "${searchQuery}"` :
+                  `No ${sentimentFilter !== 'all' ? sentimentFilter : ''} feedback found`
+                }
               </TableCell>
             </TableRow>
           )}
