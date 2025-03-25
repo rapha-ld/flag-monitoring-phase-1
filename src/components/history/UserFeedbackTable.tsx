@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { MessageSquareText, Search, Smile, Frown, Meh } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 
 interface Feedback {
@@ -293,49 +293,40 @@ const UserFeedbackTable: React.FC = () => {
     b.timestamp.getTime() - a.timestamp.getTime()
   );
 
-  const handleSentimentChange = (value: string) => {
-    setSentimentFilter(value);
-  };
-
   return (
     <div className="space-y-4 animate-fade-in">
       <FeedbackSummary feedbackData={feedbackData} />
       
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-4">
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <RadioGroup 
-            className="flex items-center gap-4" 
-            defaultValue="all"
-            value={sentimentFilter}
-            onValueChange={handleSentimentChange}
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="all" id="all" />
-              <Label htmlFor="all" className="cursor-pointer">All</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="positive" id="positive" />
-              <Label htmlFor="positive" className="flex items-center gap-1 cursor-pointer">
+        <Select
+          value={sentimentFilter}
+          onValueChange={setSentimentFilter}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="All feedback" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All feedback</SelectItem>
+            <SelectItem value="positive" className="flex items-center">
+              <div className="flex items-center gap-2">
                 <Smile className="h-4 w-4 text-green-500" />
-                Positive
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="neutral" id="neutral" />
-              <Label htmlFor="neutral" className="flex items-center gap-1 cursor-pointer">
+                <span>Positive</span>
+              </div>
+            </SelectItem>
+            <SelectItem value="neutral">
+              <div className="flex items-center gap-2">
                 <Meh className="h-4 w-4 text-amber-500" />
-                Neutral
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="negative" id="negative" />
-              <Label htmlFor="negative" className="flex items-center gap-1 cursor-pointer">
+                <span>Neutral</span>
+              </div>
+            </SelectItem>
+            <SelectItem value="negative">
+              <div className="flex items-center gap-2">
                 <Frown className="h-4 w-4 text-red-500" />
-                Negative
-              </Label>
-            </div>
-          </RadioGroup>
-        </div>
+                <span>Negative</span>
+              </div>
+            </SelectItem>
+          </SelectContent>
+        </Select>
         
         <div className="relative w-full sm:w-72">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
