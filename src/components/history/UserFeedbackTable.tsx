@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { formatDistanceToNow } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +14,12 @@ interface Feedback {
   timestamp: Date;
 }
 
+interface UserFeedbackTableProps {
+  selectedTimestamp?: Date | null;
+  selectedTimestamps?: Date[] | null;
+}
+
+// Sample data for the feedback table
 const feedbackData: Feedback[] = [
   {
     id: '1',
@@ -269,25 +275,55 @@ const FeedbackSummary = ({ feedbackData }: { feedbackData: Feedback[] }) => {
   );
 };
 
-const UserFeedbackTable: React.FC = () => {
+const UserFeedbackTable: React.FC<UserFeedbackTableProps> = ({
+  selectedTimestamp,
+  selectedTimestamps
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [filteredFeedbackData, setFilteredFeedbackData] = useState<Feedback[]>([]);
   
-  const filteredFeedbackData = feedbackData.filter(feedback => {
-    const query = searchQuery.toLowerCase();
-    return (
-      feedback.email.toLowerCase().includes(query) ||
-      feedback.feedback.toLowerCase().includes(query) ||
-      feedback.sentiment.toLowerCase().includes(query)
+  useEffect(() => {
+    // Filter feedback based on search query
+    let filtered = feedbackData.filter(feedback => {
+      const query = searchQuery.toLowerCase();
+      return (
+        feedback.email.toLowerCase().includes(query) ||
+        feedback.feedback.toLowerCase().includes(query) ||
+        feedback.sentiment.toLowerCase().includes(query)
+      );
+    });
+    
+    // Apply time range filtering if selected
+    if (selectedTimestamps && selectedTimestamps.length >= 2) {
+      const startTime = selectedTimestamps[0].getTime();
+      const endTime = selectedTimestamps[selectedTimestamps.length - 1].getTime();
+      
+      filtered = filtered.filter(feedback => {
+        const feedbackTime = feedback.timestamp.getTime();
+        return feedbackTime >= startTime && feedbackTime <= endTime;
+      });
+    } 
+    else if (selectedTimestamp) {
+      const selectedTime = selectedTimestamp.getTime();
+      const dayInMs = 24 * 60 * 60 * 1000;
+      
+      filtered = filtered.filter(feedback => {
+        const feedbackTime = feedback.timestamp.getTime();
+        return Math.abs(feedbackTime - selectedTime) <= dayInMs; // Within a day of the selected time
+      });
+    }
+    
+    // Sort by timestamp (newest first)
+    const sortedFiltered = [...filtered].sort((a, b) => 
+      b.timestamp.getTime() - a.timestamp.getTime()
     );
-  });
-  
-  const sortedFeedbackData = [...filteredFeedbackData].sort((a, b) => 
-    b.timestamp.getTime() - a.timestamp.getTime()
-  );
+    
+    setFilteredFeedbackData(sortedFiltered);
+  }, [searchQuery, selectedTimestamp, selectedTimestamps]);
 
   return (
     <div className="space-y-4 animate-fade-in">
-      <FeedbackSummary feedbackData={feedbackData} />
+      <FeedbackSummary feedbackData={filteredFeedbackData.length > 0 ? filteredFeedbackData : feedbackData} />
       
       <div className="relative w-72 ml-auto mb-4">
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -309,8 +345,8 @@ const UserFeedbackTable: React.FC = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedFeedbackData.length > 0 ? (
-            sortedFeedbackData.map((feedback) => (
+          {filteredFeedbackData.length > 0 ? (
+            filteredFeedbackData.map((feedback) => (
               <TableRow key={feedback.id}>
                 <TableCell className="font-medium">{feedback.email}</TableCell>
                 <TableCell className="max-w-md">
@@ -323,7 +359,9 @@ const UserFeedbackTable: React.FC = () => {
           ) : (
             <TableRow>
               <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">
-                No results found for "{searchQuery}"
+                {selectedTimestamp || selectedTimestamps?.length 
+                  ? "No feedback found in the selected time range" 
+                  : `No results found for "${searchQuery}"`}
               </TableCell>
             </TableRow>
           )}

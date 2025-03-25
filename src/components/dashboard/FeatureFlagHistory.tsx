@@ -1,15 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
-import { Search } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import HistoryTabs from '@/components/history/HistoryTabs';
 import SessionsTable from '@/components/history/SessionsTable';
 import UserFeedbackTable from '@/components/history/UserFeedbackTable';
 import HistoryTable from '@/components/history/HistoryTable';
 import { toast } from '@/components/ui/use-toast';
 import { historyData } from '@/data/historyData';
-import { filterHistoryEvents } from '@/utils/historyUtils';
+import { filterHistoryEvents, formatTimeRangeDisplay } from '@/utils/historyUtils';
 import { FeatureFlagHistoryProps, HistoryEvent } from '@/types/historyTypes';
 
 const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ 
@@ -22,11 +23,22 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
   const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>('history');
   const [filteredHistoryData, setFilteredHistoryData] = useState<HistoryEvent[]>([]);
+  const [isTimeRangeFiltered, setIsTimeRangeFiltered] = useState<boolean>(false);
+
+  // Display formatted time range
+  const timeRangeDisplay = selectedTimestamps && selectedTimestamps.length >= 2 
+    ? formatTimeRangeDisplay(selectedTimestamps)
+    : selectedTimestamp
+      ? formatTimeRangeDisplay([selectedTimestamp])
+      : null;
 
   // Filter and sort history data based on search query and selected timestamps
   useEffect(() => {
     const filtered = filterHistoryEvents(historyData, searchQuery, selectedTimestamp, selectedTimestamps);
     setFilteredHistoryData(filtered);
+    
+    // Set time range filtered state
+    setIsTimeRangeFiltered(!!selectedTimestamp || (!!selectedTimestamps && selectedTimestamps.length > 0));
     
     // Auto-select events if timestamps are selected
     if (selectedTimestamps && selectedTimestamps.length >= 2) {
@@ -132,6 +144,17 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
     setActiveTab(value);
   };
 
+  const handleResetTimeRange = () => {
+    onEventSelect(null); // Clear time selection
+    setSelectedRows([]);  // Clear row selection
+    setLastSelectedId(null);
+    toast({
+      title: "View reset",
+      description: "Showing all data",
+      variant: "default"
+    });
+  };
+
   return (
     <div className="space-y-4 animate-fade-in">
       <Tabs value={activeTab} onValueChange={handleTabChange}>
@@ -139,7 +162,25 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
         
         <TabsContent value="history" className="mt-0 space-y-4">
           <div className="flex justify-between items-center">
-            <div className="relative w-72 ml-auto">
+            {isTimeRangeFiltered && timeRangeDisplay ? (
+              <div className="flex items-center">
+                <div className="bg-slate-100 text-slate-800 rounded-l-md px-3 py-2 text-sm">
+                  Filtered: {timeRangeDisplay}
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="rounded-l-none h-9"
+                  onClick={handleResetTimeRange}
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Clear
+                </Button>
+              </div>
+            ) : (
+              <div></div> // Empty div to maintain the flex layout
+            )}
+            <div className="relative w-72">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search history..."
@@ -159,6 +200,22 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
         </TabsContent>
         
         <TabsContent value="sessions" className="mt-0">
+          {isTimeRangeFiltered && timeRangeDisplay && (
+            <div className="flex items-center mb-4">
+              <div className="bg-slate-100 text-slate-800 rounded-l-md px-3 py-2 text-sm">
+                Filtered: {timeRangeDisplay}
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="rounded-l-none h-9"
+                onClick={handleResetTimeRange}
+              >
+                <X className="h-4 w-4 mr-1" />
+                Clear
+              </Button>
+            </div>
+          )}
           <SessionsTable 
             selectedTimestamp={selectedTimestamp}
             selectedTimestamps={selectedTimestamps}
@@ -166,7 +223,26 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
         </TabsContent>
         
         <TabsContent value="feedback" className="mt-0">
-          <UserFeedbackTable />
+          {isTimeRangeFiltered && timeRangeDisplay && (
+            <div className="flex items-center mb-4">
+              <div className="bg-slate-100 text-slate-800 rounded-l-md px-3 py-2 text-sm">
+                Filtered: {timeRangeDisplay}
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="rounded-l-none h-9"
+                onClick={handleResetTimeRange}
+              >
+                <X className="h-4 w-4 mr-1" />
+                Clear
+              </Button>
+            </div>
+          )}
+          <UserFeedbackTable 
+            selectedTimestamp={selectedTimestamp}
+            selectedTimestamps={selectedTimestamps}
+          />
         </TabsContent>
       </Tabs>
     </div>
