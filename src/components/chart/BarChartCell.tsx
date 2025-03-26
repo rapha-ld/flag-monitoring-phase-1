@@ -12,11 +12,15 @@ interface BarChartCellProps {
 }
 
 const BarChartCell = ({ index, barColor, activeIndex = null, opacity = 1 }: BarChartCellProps) => {
+  // Add a subtle stroke to make bars more distinct when they're close together
   return (
     <Cell
       key={`cell-${index}`}
-      fill={activeIndex === index ? `${barColor}` : `${barColor}`}
+      fill={barColor}
       fillOpacity={opacity}
+      stroke={barColor}
+      strokeOpacity={0.9}
+      strokeWidth={0.5}
       className="transition-colors duration-200"
     />
   );

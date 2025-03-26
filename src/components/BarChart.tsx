@@ -70,7 +70,11 @@ const BarChart = ({
 }: BarChartProps) => {
   const interval = getXAxisInterval(data.length);
   const calculatedBarSize = getBarSize(data.length);
-  const barSize = Math.floor(calculatedBarSize * 0.9);
+  
+  const barSize = Math.max(2, calculatedBarSize * 0.8);
+  const barGap = 2;
+  const barCategoryGap = Math.max(4, calculatedBarSize * 0.3);
+  
   const showAverage = showTrue && showFalse && (metricType === 'conversion' || metricType === 'errorRate');
   
   const yAxisDomain = calculateYAxisDomain(
@@ -143,7 +147,6 @@ const BarChart = ({
   
   const showReferenceArea = firstPoint && lastPoint;
 
-  // Remove conditional opacity - always using full opacity to make selection clear
   const getPointOpacity = () => 1;
 
   return (
@@ -152,8 +155,8 @@ const BarChart = ({
         <ComposedChart
           data={data}
           margin={{ top: 20, right: 10, left: 0, bottom: 0 }}
-          barGap={0}
-          barCategoryGap={barSize * 2}
+          barGap={barGap}
+          barCategoryGap={barCategoryGap}
         >
           <CartesianGrid 
             strokeDasharray="3 3" 
@@ -198,7 +201,6 @@ const BarChart = ({
             isAnimationActive={false}
           />
           
-          {/* Reference lines for markers */}
           {referenceLineMarkers.map((marker, index) => (
             <ReferenceLine
               key={`ref-line-${index}`}
@@ -211,7 +213,7 @@ const BarChart = ({
                 content: ({ viewBox }: { viewBox: ChartViewBox }) => (
                   <text
                     x={viewBox?.x ?? 0}
-                    y={(viewBox?.y ?? 0) - 10} // Increased space between line and label
+                    y={(viewBox?.y ?? 0) - 10}
                     fontSize={11}
                     textAnchor="middle"
                     fill={marker.color}
@@ -224,7 +226,6 @@ const BarChart = ({
             />
           ))}
           
-          {/* Threshold line */}
           {thresholdLine && (
             <ReferenceLine
               y={thresholdLine.value}
@@ -248,7 +249,6 @@ const BarChart = ({
             />
           )}
           
-          {/* Reference area for selected time range - MODIFIED to make it more visible */}
           {showReferenceArea && (
             <ReferenceArea
               x1={firstPoint.name}
@@ -261,7 +261,6 @@ const BarChart = ({
             />
           )}
           
-          {/* Reference lines for selected points */}
           {hasSelectedPoints && selectedPoints.map((point, index) => {
             const icon = getEventIcon(point.exactTime);
             const formattedDate = format(point.exactTime, "MMM d");
@@ -279,7 +278,7 @@ const BarChart = ({
                   content: ({ viewBox }: { viewBox: ChartViewBox }) => (
                     <text
                       x={viewBox?.x ?? 0}
-                      y={(viewBox?.y ?? 0) - 12} // Increased space between line and label
+                      y={(viewBox?.y ?? 0) - 12}
                       fontSize={11}
                       textAnchor="middle"
                       fill={textGray}
@@ -292,7 +291,6 @@ const BarChart = ({
             );
           })}
           
-          {/* For evaluation metrics with only one visibility option */}
           {metricType === 'evaluations' && !(showTrue && showFalse) && (
             <Bar
               dataKey={showTrue ? 'valueTrue' : showFalse ? 'valueFalse' : 'value'}
@@ -313,7 +311,6 @@ const BarChart = ({
             </Bar>
           )}
           
-          {/* For evaluation metrics with both True and False visibility */}
           {metricType === 'evaluations' && showTrue && showFalse && (
             <>
               <Bar
@@ -357,7 +354,6 @@ const BarChart = ({
             </>
           )}
           
-          {/* Line charts for conversion and error rate metrics */}
           {useLineChart && showTrue && (
             <Line
               type="monotone"
@@ -386,7 +382,6 @@ const BarChart = ({
             />
           )}
           
-          {/* Version markers */}
           {visibleVersionChanges.map((change, index) => (
             <VersionMarker 
               key={`marker-${index}`}

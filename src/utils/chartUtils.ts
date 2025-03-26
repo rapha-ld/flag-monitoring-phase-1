@@ -1,4 +1,3 @@
-
 // Calculate optimal interval for the X axis based on data length
 export const getXAxisInterval = (dataLength: number) => {
   if (dataLength > 60) return 14;
@@ -12,8 +11,8 @@ export const getXAxisInterval = (dataLength: number) => {
 export const getBarSize = (dataLength: number) => {
   if (dataLength > 60) return 2;
   if (dataLength > 30) return 4;
-  if (dataLength > 14) return 8;
-  return 24;
+  if (dataLength > 14) return 6;
+  return 12;
 };
 
 // Predetermined max y-axis values for each metric type
