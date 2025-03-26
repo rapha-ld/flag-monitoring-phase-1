@@ -1,4 +1,3 @@
-
 import { DataPoint } from '@/components/BarChart';
 import { format } from 'date-fns';
 import { Flag, Settings, AlertTriangle, ToggleLeft, RefreshCw, ToggleRight } from 'lucide-react';
@@ -50,6 +49,7 @@ export function determineEventName(timestamp: Date): string {
   }
 }
 
+// Add the missing export for getEventNameFromVersion
 export function getEventNameFromVersion(version: string): string {
   const versionMap: Record<string, string> = {
     "1.0": "Flag created",
