@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Play, Search } from 'lucide-react';
@@ -270,7 +271,7 @@ const SessionsTable: React.FC<SessionsTableProps> = ({
           <TableRow>
             <TableHead>Account</TableHead>
             <TableHead>OS</TableHead>
-            <TableHead>Conversions</TableHead>
+            <TableHead>Conversion</TableHead>
             <TableHead>Errors</TableHead>
             <TableHead>Date</TableHead>
             <TableHead className="w-[80px] text-right">Replay</TableHead>
