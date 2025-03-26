@@ -37,11 +37,11 @@ const formatTimestamp = (date: Date) => {
 const getSentimentBadge = (sentiment: Feedback['sentiment']) => {
   switch (sentiment) {
     case 'positive':
-      return <Badge className="bg-green-500 hover:bg-green-600">Positive</Badge>;
+      return <Badge className="bg-green-100 text-green-800 hover:bg-green-200 hover:text-green-900">Positive</Badge>;
     case 'neutral':
-      return <Badge className="bg-amber-500 hover:bg-amber-600">Neutral</Badge>;
+      return <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-200 hover:text-amber-900">Neutral</Badge>;
     case 'negative':
-      return <Badge className="bg-red-500 hover:bg-red-600">Negative</Badge>;
+      return <Badge className="bg-red-100 text-red-800 hover:bg-red-200 hover:text-red-900">Negative</Badge>;
   }
 };
 
