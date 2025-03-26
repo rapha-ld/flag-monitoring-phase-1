@@ -1,3 +1,4 @@
+
 // Calculate optimal interval for the X axis based on data length
 export const getXAxisInterval = (dataLength: number) => {
   if (dataLength > 60) return 14;
@@ -9,9 +10,9 @@ export const getXAxisInterval = (dataLength: number) => {
 
 // Calculate optimal bar size based on data length
 export const getBarSize = (dataLength: number) => {
-  if (dataLength > 60) return 2;
-  if (dataLength > 30) return 4;
-  if (dataLength > 14) return 6;
+  if (dataLength > 60) return 4;  // Increased from 2 to 4 for wider bars in 3M view
+  if (dataLength > 30) return 6;  // Increased from 4 to 6
+  if (dataLength > 14) return 8;  // Increased from 6 to 8
   return 12;
 };
 

@@ -71,9 +71,9 @@ const BarChart = ({
   const interval = getXAxisInterval(data.length);
   const calculatedBarSize = getBarSize(data.length);
   
-  const barSize = Math.max(2, calculatedBarSize * 0.8);
+  const barSize = Math.max(4, calculatedBarSize * 0.9);
   const barGap = 2;
-  const barCategoryGap = Math.max(4, calculatedBarSize * 0.3);
+  const barCategoryGap = Math.max(4, calculatedBarSize * 0.2);
   
   const showAverage = showTrue && showFalse && (metricType === 'conversion' || metricType === 'errorRate');
   
