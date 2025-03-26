@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -300,8 +299,8 @@ const BarChart = ({
               barSize={barSize}
               isAnimationActive={false}
               radius={[1, 1, 0, 0]}
-              stroke="#FFFFFF"  // White contour
-              strokeWidth={0.5} // 0.5px width
+              stroke="#FFFFFF"  // 1px white contour
+              strokeWidth={1}
             >
               {data.map((entry, index) => (
                 <BarChartCell 
@@ -324,9 +323,8 @@ const BarChart = ({
                 barSize={barSize}
                 isAnimationActive={false}
                 radius={[1, 1, 0, 0]}
-                className="stroke-[#2BB7D2] stroke-[1px]"
-                stroke="#FFFFFF"  // White contour
-                strokeWidth={0.5} // 0.5px width
+                stroke="#FFFFFF"  // 1px white contour
+                strokeWidth={1}
               >
                 {data.map((entry, index) => (
                   <BarChartCell 
@@ -345,9 +343,8 @@ const BarChart = ({
                 barSize={barSize}
                 isAnimationActive={false}
                 radius={[0, 0, 0, 0]}
-                className="stroke-[#FFD099] stroke-[1px]"
-                stroke="#FFFFFF"  // White contour
-                strokeWidth={0.5} // 0.5px width
+                stroke="#FFFFFF"  // 1px white contour
+                strokeWidth={1}
               >
                 {data.map((entry, index) => (
                   <BarChartCell 
@@ -406,4 +403,3 @@ const BarChart = ({
 };
 
 export default BarChart;
-
