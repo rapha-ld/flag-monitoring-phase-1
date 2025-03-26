@@ -1,17 +1,29 @@
-
 import React from 'react';
-import { CartesianGrid, ComposedChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
+import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
+import VersionMarker from './VersionMarker';
 import CustomTooltip from './chart/CustomTooltip';
-import { getEventIcon, determineEventName } from '@/utils/eventUtils';
-import ChartBars from './chart/ChartBars';
-import ChartLines from './chart/ChartLines';
-import ChartReferenceLines from './chart/ChartReferenceLines';
-import ChartVersionMarkers from './chart/ChartVersionMarkers';
-import ChartSelectionIndicators from './chart/ChartSelectionIndicators';
-import { DataPoint, VersionChange } from './chart/types';
+import { referenceLineMarkers, thresholdLines } from '@/utils/chartReferenceLines';
+import { format } from 'date-fns';
+import BarChartCell from './chart/BarChartCell';
+import { getEventIcon, determineEventName, isPointInSelectedRange, getEventNameFromVersion } from '@/utils/eventUtils';
 
-export type { DataPoint, VersionChange };
+export interface DataPoint {
+  name: string;
+  value: number;
+  valueTrue?: number;
+  valueFalse?: number;
+  valueAvg?: number;
+  date?: string;
+  [key: string]: any;
+}
+
+export interface VersionChange {
+  date: string;
+  position: number;
+  version: string;
+  details?: string;
+}
 
 interface BarChartProps {
   data: DataPoint[];
@@ -27,6 +39,18 @@ interface BarChartProps {
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
+}
+
+interface ChartViewBox {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  cx?: number;
+  cy?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+  [key: string]: any;
 }
 
 const BarChart = ({
@@ -66,6 +90,12 @@ const BarChart = ({
   
   const useLineChart = (metricType === 'conversion' || metricType === 'errorRate');
   
+  const trueColor = '#2BB7D2';
+  const falseColor = '#FFD099';
+  const textGray = '#545A62';
+
+  const thresholdLine = metricType ? thresholdLines.find(t => t.metricType === metricType) : undefined;
+
   const findSelectedDataPoints = () => {
     if ((!selectedTimestamp && !selectedTimestamps) || data.length === 0) return null;
     
@@ -108,6 +138,16 @@ const BarChart = ({
   };
   
   const selectedPoints = findSelectedDataPoints();
+  const hasSelectedPoints = selectedPoints && selectedPoints.length > 0;
+  
+  const firstPoint = hasSelectedPoints ? selectedPoints[0] : null;
+  const lastPoint = hasSelectedPoints && selectedPoints.length > 1 
+    ? selectedPoints[selectedPoints.length - 1] 
+    : null;
+  
+  const showReferenceArea = firstPoint && lastPoint;
+
+  const getPointOpacity = () => 1;
 
   return (
     <div className="w-full h-full">
@@ -161,34 +201,201 @@ const BarChart = ({
             isAnimationActive={false}
           />
           
-          <ChartReferenceLines 
-            metricType={metricType} 
-          />
+          {referenceLineMarkers.map((marker, index) => (
+            <ReferenceLine
+              key={`ref-line-${index}`}
+              x={marker.date}
+              stroke={marker.color}
+              strokeWidth={2}
+              strokeDasharray="3 3"
+              label={{
+                position: 'top',
+                content: ({ viewBox }: { viewBox: ChartViewBox }) => (
+                  <text
+                    x={viewBox?.x ?? 0}
+                    y={(viewBox?.y ?? 0) - 10}
+                    fontSize={11}
+                    textAnchor="middle"
+                    fill={marker.color}
+                    fontWeight="bold"
+                  >
+                    {marker.label}
+                  </text>
+                )
+              }}
+            />
+          ))}
           
-          <ChartSelectionIndicators
-            selectedPoints={selectedPoints}
-          />
+          {thresholdLine && (
+            <ReferenceLine
+              y={thresholdLine.value}
+              label={{
+                position: thresholdLine.labelPosition.position as any,
+                content: ({ viewBox }: { viewBox: ChartViewBox }) => (
+                  <text
+                    x={(viewBox?.x ?? 0) + 5}
+                    y={viewBox?.y ?? 0}
+                    fontSize={11}
+                    textAnchor="start"
+                    fill={thresholdLine.color}
+                  >
+                    {thresholdLine.label}
+                  </text>
+                )
+              }}
+              stroke={thresholdLine.color}
+              strokeDasharray={thresholdLine.strokeDasharray}
+              strokeWidth={1.5}
+            />
+          )}
           
-          {metricType === 'evaluations' && (
-            <ChartBars
-              data={data}
-              showTrue={showTrue}
-              showFalse={showFalse}
+          {showReferenceArea && (
+            <ReferenceArea
+              x1={firstPoint.name}
+              x2={lastPoint.name}
+              fill="#6E6F96"
+              fillOpacity={0.1}
+              stroke="#6E6F96"
+              strokeOpacity={0.3}
+              strokeWidth={1}
+            />
+          )}
+          
+          {hasSelectedPoints && selectedPoints.map((point, index) => {
+            const icon = getEventIcon(point.exactTime);
+            const formattedDate = format(point.exactTime, "MMM d");
+            
+            const eventName = determineEventName(point.exactTime);
+            
+            return (
+              <ReferenceLine
+                key={`selected-time-${index}`}
+                x={point.name}
+                stroke={textGray}
+                strokeWidth={1.5}
+                label={index === 0 || index === selectedPoints.length - 1 ? {
+                  position: 'top',
+                  content: ({ viewBox }: { viewBox: ChartViewBox }) => (
+                    <text
+                      x={viewBox?.x ?? 0}
+                      y={(viewBox?.y ?? 0) - 12}
+                      fontSize={11}
+                      textAnchor="middle"
+                      fill={textGray}
+                    >
+                      {eventName || formattedDate}
+                    </text>
+                  )
+                } : undefined}
+              />
+            );
+          })}
+          
+          {metricType === 'evaluations' && !(showTrue && showFalse) && (
+            <Bar
+              dataKey={showTrue ? 'valueTrue' : showFalse ? 'valueFalse' : 'value'}
+              name={showTrue ? 'True' : showFalse ? 'False' : 'Value'}
+              fill={showTrue ? trueColor : showFalse ? falseColor : barColor}
               barSize={barSize}
-              barColor={barColor}
+              isAnimationActive={false}
+              radius={[1, 1, 0, 0]}
+              stroke="#FFFFFF"  // 1px white contour
+              strokeWidth={1}
+            >
+              {data.map((entry, index) => (
+                <BarChartCell 
+                  key={`cell-${index}`} 
+                  index={index} 
+                  barColor={showTrue ? trueColor : showFalse ? falseColor : barColor} 
+                  opacity={getPointOpacity()}
+                />
+              ))}
+            </Bar>
+          )}
+          
+          {metricType === 'evaluations' && showTrue && showFalse && (
+            <>
+              <Bar
+                dataKey="valueTrue"
+                name="True"
+                stackId="a"
+                fill={trueColor}
+                barSize={barSize}
+                isAnimationActive={false}
+                radius={[1, 1, 0, 0]}
+                stroke="#FFFFFF"  // 1px white contour
+                strokeWidth={1}
+              >
+                {data.map((entry, index) => (
+                  <BarChartCell 
+                    key={`true-cell-${index}`} 
+                    index={index} 
+                    barColor={trueColor}
+                    opacity={getPointOpacity()}
+                  />
+                ))}
+              </Bar>
+              <Bar
+                dataKey="valueFalse"
+                name="False"
+                stackId="a"
+                fill={falseColor}
+                barSize={barSize}
+                isAnimationActive={false}
+                radius={[0, 0, 0, 0]}
+                stroke="#FFFFFF"  // 1px white contour
+                strokeWidth={1}
+              >
+                {data.map((entry, index) => (
+                  <BarChartCell 
+                    key={`false-cell-${index}`} 
+                    index={index} 
+                    barColor={falseColor}
+                    opacity={getPointOpacity()}
+                  />
+                ))}
+              </Bar>
+            </>
+          )}
+          
+          {useLineChart && showTrue && (
+            <Line
+              type="monotone"
+              dataKey="valueTrue"
+              name="True"
+              stroke={trueColor}
+              strokeWidth={3.5}
+              dot={false}
+              activeDot={{ r: 5 }}
+              isAnimationActive={false}
+              strokeOpacity={1}
             />
           )}
           
-          {useLineChart && (
-            <ChartLines
-              showTrue={showTrue}
-              showFalse={showFalse}
+          {useLineChart && showFalse && (
+            <Line
+              type="monotone"
+              dataKey="valueFalse"
+              name="False"
+              stroke={falseColor}
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 4 }}
+              isAnimationActive={false}
+              strokeOpacity={1}
             />
           )}
           
-          <ChartVersionMarkers 
-            versionChanges={visibleVersionChanges}
-          />
+          {visibleVersionChanges.map((change, index) => (
+            <VersionMarker 
+              key={`marker-${index}`}
+              x={change.position}
+              version={change.version}
+              details={change.details}
+              date={change.date}
+              eventName={getEventNameFromVersion(change.version)}
+            />
+          ))}
         </ComposedChart>
       </ResponsiveContainer>
     </div>
