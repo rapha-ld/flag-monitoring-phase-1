@@ -325,7 +325,7 @@ const BarChart = ({
                 isAnimationActive={false}
                 radius={[1, 1, 0, 0]}
                 className="stroke-[#2BB7D2] stroke-[1px]"
-                style={trueBarStyle}
+                offset={1}
               >
                 {data.map((entry, index) => (
                   <BarChartCell 
@@ -345,7 +345,7 @@ const BarChart = ({
                 isAnimationActive={false}
                 radius={[0, 0, 0, 0]}
                 className="stroke-[#FFD099] stroke-[1px]"
-                style={falseBarStyle}
+                offset={1}
               >
                 {data.map((entry, index) => (
                   <BarChartCell 
