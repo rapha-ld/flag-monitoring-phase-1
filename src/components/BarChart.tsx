@@ -149,6 +149,9 @@ const BarChart = ({
 
   const getPointOpacity = () => 1;
 
+  const trueBarStyle = { y: -1 };
+  const falseBarStyle = {};
+
   return (
     <div className="w-full h-full">
       <ResponsiveContainer width="100%" height={height}>
@@ -322,7 +325,7 @@ const BarChart = ({
                 isAnimationActive={false}
                 radius={[1, 1, 0, 0]}
                 className="stroke-[#2BB7D2] stroke-[1px]"
-                stackOffset={1}
+                style={trueBarStyle}
               >
                 {data.map((entry, index) => (
                   <BarChartCell 
@@ -342,7 +345,7 @@ const BarChart = ({
                 isAnimationActive={false}
                 radius={[0, 0, 0, 0]}
                 className="stroke-[#FFD099] stroke-[1px]"
-                stackOffset={1}
+                style={falseBarStyle}
               >
                 {data.map((entry, index) => (
                   <BarChartCell 
