@@ -71,7 +71,7 @@ const BarChart = ({
   const interval = getXAxisInterval(data.length);
   const calculatedBarSize = getBarSize(data.length);
   
-  const barSize = Math.max(2, calculatedBarSize * 0.8);
+  const barSize = Math.max(2, calculatedBarSize * 0.75);
   const barGap = 2;
   const barCategoryGap = Math.max(4, calculatedBarSize * 0.3);
   
@@ -322,6 +322,7 @@ const BarChart = ({
                 isAnimationActive={false}
                 radius={[1, 1, 0, 0]}
                 className="stroke-[#2BB7D2] stroke-[1px]"
+                stackOffset={1}
               >
                 {data.map((entry, index) => (
                   <BarChartCell 
@@ -341,6 +342,7 @@ const BarChart = ({
                 isAnimationActive={false}
                 radius={[0, 0, 0, 0]}
                 className="stroke-[#FFD099] stroke-[1px]"
+                stackOffset={1}
               >
                 {data.map((entry, index) => (
                   <BarChartCell 
