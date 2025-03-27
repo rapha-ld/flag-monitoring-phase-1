@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Flag, ToggleRight, ToggleLeft, RefreshCw, Settings, AlertTriangle } from 'lucide-react';
@@ -6,7 +5,7 @@ import {
   Tooltip, 
   TooltipContent, 
   TooltipProvider, 
-  Toolt ipTrigger 
+  TooltipTrigger 
 } from '@/components/ui/tooltip';
 import { format, parseISO } from 'date-fns';
 
