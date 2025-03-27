@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Flag, ToggleRight, ToggleLeft, RefreshCw, Settings, AlertTriangle } from 'lucide-react';
@@ -72,27 +73,17 @@ const VersionMarker = ({
               strokeOpacity="0.7"
             />
             
-            {/* Version label at the top - now with fixed font size */}
-            <text
-              x="0"
-              y="14"
-              fontSize="11"
-              textAnchor="middle"
-              fill="black"
-              fontWeight="bold"
-              style={{ fontSize: '11px' }}
-            >
-              v{version}
-            </text>
-            
-            {/* Event name using icon */}
-            {eventName && (
-              <foreignObject x="-12" y="18" width="24" height="24">
-                <div className="flex justify-center">
-                  {getEventIcon()}
-                </div>
-              </foreignObject>
-            )}
+            {/* Version label with white background, rounded corners, and light gray border */}
+            <foreignObject x="-24" y="0" width="48" height="38">
+              <div className="flex flex-col items-center bg-white rounded-[3px] border border-[#C8C8C9] p-0.5 shadow-sm z-10 transition-all hover:z-50">
+                <span className="text-[11px] font-bold">v{version}</span>
+                {eventName && (
+                  <div className="flex justify-center mt-0.5">
+                    {getEventIcon()}
+                  </div>
+                )}
+              </div>
+            </foreignObject>
           </g>
         </TooltipTrigger>
         <TooltipContent 

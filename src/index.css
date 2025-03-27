@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -143,6 +144,15 @@
     
     .annotation-label {
       @apply bg-white border border-gray-200 rounded-[3px] shadow-sm z-10 transition-all hover:z-50;
+    }
+    
+    /* Add styles for the version marker label */
+    .version-marker foreignObject div {
+      @apply transition-all duration-200;
+    }
+    
+    .version-marker:hover foreignObject div {
+      @apply z-50 shadow-md;
     }
   }
 }
