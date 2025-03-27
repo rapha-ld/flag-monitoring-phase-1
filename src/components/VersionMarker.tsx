@@ -6,7 +6,7 @@ import {
   Tooltip, 
   TooltipContent, 
   TooltipProvider, 
-  TooltipTrigger 
+  Toolt ipTrigger 
 } from '@/components/ui/tooltip';
 import { format, parseISO } from 'date-fns';
 
@@ -96,7 +96,10 @@ const VersionMarker = ({
             )}
           </g>
         </TooltipTrigger>
-        <TooltipContent side="top" className="p-3 space-y-1.5 max-w-xs">
+        <TooltipContent 
+          side="top" 
+          className="p-3 space-y-1.5 max-w-xs bg-white border border-gray-200 rounded-[3px] shadow-sm z-10 transition-all hover:z-50"
+        >
           <p className="font-medium text-sm">Version {version}</p>
           {date && <p className="text-xs text-muted-foreground">{format(parseISO(date), 'MMM d, yyyy')}</p>}
           {details && <p className="text-xs text-muted-foreground">{details}</p>}

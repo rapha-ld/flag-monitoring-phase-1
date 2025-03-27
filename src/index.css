@@ -140,5 +140,9 @@
     .version-marker:hover {
       @apply scale-105 cursor-pointer;
     }
+    
+    .annotation-label {
+      @apply bg-white border border-gray-200 rounded-[3px] shadow-sm z-10 transition-all hover:z-50;
+    }
   }
 }
