@@ -83,63 +83,65 @@ const FeedbackFilters: React.FC<FeedbackFiltersProps> = ({
   
   return (
     <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-4">
-      <div className="flex items-center gap-2">
-        <Select
-          value={sentimentFilter}
-          onValueChange={setSentimentFilter}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="All feedback" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All feedback</SelectItem>
-            <SelectItem value="positive" className="flex items-center">
-              <div className="flex items-center gap-2">
-                <Smile className="h-4 w-4 text-green-500" />
-                <span>Positive</span>
-              </div>
-            </SelectItem>
-            <SelectItem value="neutral">
-              <div className="flex items-center gap-2">
-                <Meh className="h-4 w-4 text-amber-500" />
-                <span>Neutral</span>
-              </div>
-            </SelectItem>
-            <SelectItem value="negative">
-              <div className="flex items-center gap-2">
-                <Frown className="h-4 w-4 text-red-500" />
-                <span>Negative</span>
-              </div>
-            </SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+        <div className="relative w-full sm:w-72">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search feedback..."
+            className="pl-8"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
         
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="ml-2">
-              <Download className="h-4 w-4 mr-1" />
-              Export
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={exportToCSV}>
-              Export as CSV
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={exportToJSON}>
-              Export as JSON
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      
-      <div className="relative w-full sm:w-72">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search feedback..."
-          className="pl-8"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+        <div className="flex items-center gap-2">
+          <Select
+            value={sentimentFilter}
+            onValueChange={setSentimentFilter}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="All feedback" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All feedback</SelectItem>
+              <SelectItem value="positive" className="flex items-center">
+                <div className="flex items-center gap-2">
+                  <Smile className="h-4 w-4 text-green-500" />
+                  <span>Positive</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="neutral">
+                <div className="flex items-center gap-2">
+                  <Meh className="h-4 w-4 text-amber-500" />
+                  <span>Neutral</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="negative">
+                <div className="flex items-center gap-2">
+                  <Frown className="h-4 w-4 text-red-500" />
+                  <span>Negative</span>
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="ml-2">
+                <Download className="h-4 w-4 mr-1" />
+                Export
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={exportToCSV}>
+                Export as CSV
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={exportToJSON}>
+                Export as JSON
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
     </div>
   );
