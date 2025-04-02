@@ -255,7 +255,7 @@ const SessionsTable: React.FC<SessionsTableProps> = ({
 
   return (
     <div className="space-y-4 animate-fade-in">
-      <div className="flex justify-start items-center">
+      <div className="flex justify-start items-center mb-6">
         <div className="relative w-72">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
