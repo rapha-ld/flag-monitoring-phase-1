@@ -1,8 +1,13 @@
+
 import React, { useState } from 'react';
 import { Feedback } from './types';
 import FeedbackSummary from './FeedbackSummary';
 import FeedbackFilters from './FeedbackFilters';
 import FeedbackTable from './FeedbackTable';
+
+interface UserFeedbackTableProps {
+  onFeedbackSelect?: (timestamp: Date | null) => void;
+}
 
 const feedbackData: Feedback[] = [
   {
@@ -147,7 +152,7 @@ const feedbackData: Feedback[] = [
   }
 ];
 
-const UserFeedbackTable: React.FC = () => {
+const UserFeedbackTable: React.FC<UserFeedbackTableProps> = ({ onFeedbackSelect }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sentimentFilter, setSentimentFilter] = useState<string>('all');
   
@@ -181,7 +186,10 @@ const UserFeedbackTable: React.FC = () => {
         feedbackData={sortedFeedbackData}
       />
       
-      <FeedbackTable feedbackData={sortedFeedbackData} />
+      <FeedbackTable 
+        feedbackData={sortedFeedbackData} 
+        onFeedbackSelect={onFeedbackSelect}
+      />
     </div>
   );
 };
