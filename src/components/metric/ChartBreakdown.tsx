@@ -39,7 +39,7 @@ const MiniChart = ({
   ));
   
   return (
-    <Card className="p-3 h-32 transition-all duration-200 hover:shadow-md">
+    <Card className="p-3 h-32">
       <div className="text-xs font-semibold mb-1 truncate">{title}</div>
       <div className="text-xs text-muted-foreground mb-2">{version}</div>
       <ResponsiveContainer width="100%" height={70}>
@@ -81,9 +81,6 @@ const MiniChart = ({
               fill={trueColor} 
               radius={[1, 1, 0, 0]} 
               isAnimationActive={false}
-              stroke="#FFFFFF"
-              strokeWidth={1}
-              className="transition-colors duration-200"
             />
           )}
           
@@ -95,9 +92,6 @@ const MiniChart = ({
               fill={falseColor} 
               radius={showTrue ? [0, 0, 0, 0] : [1, 1, 0, 0]} 
               isAnimationActive={false}
-              stroke="#FFFFFF"
-              strokeWidth={1}
-              className="transition-colors duration-200"
             />
           )}
         </BarChart>
