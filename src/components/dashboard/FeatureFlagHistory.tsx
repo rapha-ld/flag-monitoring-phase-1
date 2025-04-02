@@ -238,7 +238,7 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
         <HistoryTabs activeTab={activeTab} onChange={handleTabChange} />
         
         <TabsContent value="history" className="mt-0 space-y-4">
-          <div className="flex justify-start items-center">
+          <div className="flex justify-start items-center mt-5">
             <div className="relative w-72">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
