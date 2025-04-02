@@ -1,9 +1,57 @@
+
 import React, { useState } from 'react';
 import { Feedback } from './types';
 import FeedbackSummary from './FeedbackSummary';
 import FeedbackFilters from './FeedbackFilters';
 import FeedbackTable from './FeedbackTable';
 
+interface UserFeedbackTableProps {
+  onFeedbackSelect?: (timestamp: Date | null) => void;
+}
+
+const UserFeedbackTable: React.FC<UserFeedbackTableProps> = ({ onFeedbackSelect }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sentimentFilter, setSentimentFilter] = useState<string>('all');
+  
+  const filteredFeedbackData = feedbackData.filter(feedback => {
+    const query = searchQuery.toLowerCase();
+    const matchesSearch = 
+      feedback.email.toLowerCase().includes(query) ||
+      feedback.feedback.toLowerCase().includes(query) ||
+      feedback.sentiment.toLowerCase().includes(query);
+    
+    const matchesSentiment = 
+      sentimentFilter === 'all' || 
+      feedback.sentiment === sentimentFilter;
+    
+    return matchesSearch && matchesSentiment;
+  });
+  
+  const sortedFeedbackData = [...filteredFeedbackData].sort((a, b) => 
+    b.timestamp.getTime() - a.timestamp.getTime()
+  );
+
+  return (
+    <div className="space-y-4 animate-fade-in">
+      <FeedbackSummary feedbackData={feedbackData} />
+      
+      <FeedbackFilters 
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        sentimentFilter={sentimentFilter}
+        setSentimentFilter={setSentimentFilter}
+        feedbackData={sortedFeedbackData}
+      />
+      
+      <FeedbackTable 
+        feedbackData={sortedFeedbackData} 
+        onFeedbackSelect={onFeedbackSelect}
+      />
+    </div>
+  );
+};
+
+// Mock data for feedback
 const feedbackData: Feedback[] = [
   {
     id: '1',
@@ -146,44 +194,5 @@ const feedbackData: Feedback[] = [
     timestamp: new Date(Date.now() - 19 * 24 * 60 * 60 * 1000) // 19 days ago
   }
 ];
-
-const UserFeedbackTable: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sentimentFilter, setSentimentFilter] = useState<string>('all');
-  
-  const filteredFeedbackData = feedbackData.filter(feedback => {
-    const query = searchQuery.toLowerCase();
-    const matchesSearch = 
-      feedback.email.toLowerCase().includes(query) ||
-      feedback.feedback.toLowerCase().includes(query) ||
-      feedback.sentiment.toLowerCase().includes(query);
-    
-    const matchesSentiment = 
-      sentimentFilter === 'all' || 
-      feedback.sentiment === sentimentFilter;
-    
-    return matchesSearch && matchesSentiment;
-  });
-  
-  const sortedFeedbackData = [...filteredFeedbackData].sort((a, b) => 
-    b.timestamp.getTime() - a.timestamp.getTime()
-  );
-
-  return (
-    <div className="space-y-4 animate-fade-in">
-      <FeedbackSummary feedbackData={feedbackData} />
-      
-      <FeedbackFilters 
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        sentimentFilter={sentimentFilter}
-        setSentimentFilter={setSentimentFilter}
-        feedbackData={sortedFeedbackData}
-      />
-      
-      <FeedbackTable feedbackData={sortedFeedbackData} />
-    </div>
-  );
-};
 
 export default UserFeedbackTable;
