@@ -158,6 +158,7 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>('history');
+  const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
 
   const filteredHistoryData = historyData.filter(event => {
     const searchLower = searchQuery.toLowerCase();
@@ -212,6 +213,14 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
     }
   };
 
+  const handleRowMouseEnter = (id: string) => {
+    setHoveredRowId(id);
+  };
+
+  const handleRowMouseLeave = () => {
+    setHoveredRowId(null);
+  };
+
   useEffect(() => {
     if (selectedRows.length === 0) {
       onEventSelect(null);
@@ -229,6 +238,22 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
     setActiveTab(value);
     if (value !== 'history') {
       setSelectedRows([]);
+    }
+  };
+
+  const handleSessionSelect = (timestamp: Date | null) => {
+    if (timestamp) {
+      onEventSelect([timestamp]);
+    } else {
+      onEventSelect(null);
+    }
+  };
+
+  const handleFeedbackSelect = (timestamp: Date | null) => {
+    if (timestamp) {
+      onEventSelect([timestamp]);
+    } else {
+      onEventSelect(null);
     }
   };
 
@@ -264,8 +289,11 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
                   <TableRow 
                     key={event.id}
                     onClick={(e) => handleRowClick(e, event)}
-                    className={`cursor-pointer transition-colors ${
-                      selectedRows.includes(event.id) ? 'bg-primary/10' : ''
+                    onMouseEnter={() => handleRowMouseEnter(event.id)}
+                    onMouseLeave={handleRowMouseLeave}
+                    className={`cursor-pointer transition-colors relative ${
+                      selectedRows.includes(event.id) ? 'bg-primary/10' : 
+                      hoveredRowId === event.id ? 'bg-muted/50' : ''
                     }`}
                   >
                     <TableCell>
@@ -296,6 +324,9 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
                       )}
                     </TableCell>
                     <TableCell className="text-right">{formatTimestamp(event.timestamp)}</TableCell>
+                    {(hoveredRowId === event.id || selectedRows.includes(event.id)) && (
+                      <div className="absolute right-0 h-full top-0 w-1 bg-primary" />
+                    )}
                   </TableRow>
                 ))
               ) : (
@@ -313,11 +344,14 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
           <SessionsTable 
             selectedTimestamp={selectedTimestamp}
             selectedTimestamps={selectedTimestamps}
+            onSessionSelect={handleSessionSelect}
           />
         </TabsContent>
         
         <TabsContent value="feedback" className="mt-0">
-          <UserFeedbackTable />
+          <UserFeedbackTable 
+            onFeedbackSelect={handleFeedbackSelect}
+          />
         </TabsContent>
       </Tabs>
     </div>

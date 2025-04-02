@@ -18,6 +18,7 @@ interface Session {
 interface SessionsTableProps {
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
+  onSessionSelect?: (timestamp: Date | null) => void;
 }
 
 const sessionsData: Session[] = [
@@ -213,10 +214,13 @@ const getErrorDisplay = (errorCount: number) => {
 
 const SessionsTable: React.FC<SessionsTableProps> = ({ 
   selectedTimestamp, 
-  selectedTimestamps 
+  selectedTimestamps,
+  onSessionSelect
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredSessions, setFilteredSessions] = useState(sessionsData);
+  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
+  const [hoveredSessionId, setHoveredSessionId] = useState<string | null>(null);
 
   useEffect(() => {
     let filtered = sessionsData.filter(session => {
@@ -253,6 +257,31 @@ const SessionsTable: React.FC<SessionsTableProps> = ({
     setFilteredSessions(sortedFilteredSessions);
   }, [searchQuery, selectedTimestamp, selectedTimestamps]);
 
+  const handleRowClick = (session: Session) => {
+    if (selectedSessionId === session.id) {
+      setSelectedSessionId(null);
+      if (onSessionSelect) onSessionSelect(null);
+    } else {
+      setSelectedSessionId(session.id);
+      if (onSessionSelect) onSessionSelect(session.timestamp);
+    }
+  };
+
+  const handleRowMouseEnter = (sessionId: string) => {
+    setHoveredSessionId(sessionId);
+  };
+
+  const handleRowMouseLeave = () => {
+    setHoveredSessionId(null);
+  };
+
+  // Clear selected session when component unmounts
+  useEffect(() => {
+    return () => {
+      if (onSessionSelect) onSessionSelect(null);
+    };
+  }, [onSessionSelect]);
+
   return (
     <div className="space-y-4 animate-fade-in">
       <div className="flex justify-start items-center mt-5">
@@ -280,7 +309,16 @@ const SessionsTable: React.FC<SessionsTableProps> = ({
         <TableBody>
           {filteredSessions.length > 0 ? (
             filteredSessions.map((session) => (
-              <TableRow key={session.id}>
+              <TableRow 
+                key={session.id} 
+                className={`cursor-pointer transition-colors relative ${
+                  selectedSessionId === session.id ? 'bg-primary/10' : 
+                  hoveredSessionId === session.id ? 'bg-muted/50' : ''
+                }`}
+                onClick={() => handleRowClick(session)}
+                onMouseEnter={() => handleRowMouseEnter(session.id)}
+                onMouseLeave={handleRowMouseLeave}
+              >
                 <TableCell className="font-medium">{session.account}</TableCell>
                 <TableCell>{session.os}</TableCell>
                 <TableCell>{getConversionBadge(session.conversions)}</TableCell>
@@ -291,6 +329,9 @@ const SessionsTable: React.FC<SessionsTableProps> = ({
                     <Play className="h-4 w-4 text-muted-foreground" />
                   </button>
                 </TableCell>
+                {(hoveredSessionId === session.id || selectedSessionId === session.id) && (
+                  <div className="absolute right-0 h-full top-0 w-1 bg-primary" />
+                )}
               </TableRow>
             ))
           ) : (
