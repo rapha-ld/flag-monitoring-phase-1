@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { DataPoint } from '../BarChart';
 import { Card } from '@/components/ui/card';
@@ -131,7 +132,7 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
     ];
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {appBreakdowns.map((app, index) => (
           <MiniChart 
             key={`app-${index}`} 
@@ -153,7 +154,7 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
     ];
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {sdkBreakdowns.map((sdk, index) => (
           <MiniChart 
             key={`sdk-${index}`} 
