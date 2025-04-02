@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { DataPoint } from '../BarChart';
 import { Card } from '@/components/ui/card';
@@ -12,6 +13,7 @@ interface ChartBreakdownProps {
   selectedTimestamps?: Date[] | null;
 }
 
+// Mini chart component for each breakdown item
 const MiniChart = ({ 
   title, 
   version, 
@@ -106,9 +108,11 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
   selectedTimestamp,
   selectedTimestamps
 }) => {
+  // Define colors for the variants
   const trueColor = '#2BB7D2';
   const falseColor = '#FFD099';
   
+  // Create sample data based on the original chartData with true/false values
   const createSampleData = (factor: number) => {
     if (!chartData) return [];
     
@@ -121,6 +125,7 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
   };
 
   if (type === 'application') {
+    // Create 6 application breakdown charts
     const appBreakdowns = [
       { title: 'iOS App', version: 'v3.4.1', data: createSampleData(0.35) },
       { title: 'Android App', version: 'v3.3.7', data: createSampleData(0.32) },
@@ -131,7 +136,7 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
     ];
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3">
         {appBreakdowns.map((app, index) => (
           <MiniChart 
             key={`app-${index}`} 
@@ -147,13 +152,14 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
       </div>
     );
   } else {
+    // Create 2 SDK breakdown charts
     const sdkBreakdowns = [
       { title: 'JavaScript SDK', version: 'v2.8.3', data: createSampleData(0.72) },
       { title: 'Server SDK', version: 'v1.5.1', data: createSampleData(0.28) },
     ];
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3">
+      <div className="grid grid-cols-1 gap-3 p-3">
         {sdkBreakdowns.map((sdk, index) => (
           <MiniChart 
             key={`sdk-${index}`} 
