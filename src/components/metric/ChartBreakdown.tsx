@@ -49,19 +49,23 @@ const MiniChart = ({
           margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
           barSize={6}
           barGap={0}
+          layout="vertical"
         >
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
           <XAxis 
-            dataKey="name" 
-            tick={false} 
-            axisLine={false} 
-            tickLine={false} 
-          />
-          <YAxis 
+            type="number"
             domain={[0, maxValue * 1.1]} 
             tick={false} 
             axisLine={false} 
+            tickLine={false}
+          />
+          <YAxis 
+            type="category"
+            dataKey="name"
+            tick={false} 
+            axisLine={false} 
             tickLine={false} 
+            width={0}
           />
           <Tooltip 
             formatter={(value: any) => [`${value}`, 'Users']}
@@ -114,14 +118,18 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
   
   // Create sample data based on the original chartData with true/false values
   const createSampleData = (factor: number) => {
-    if (!chartData) return [];
+    if (!chartData || chartData.length === 0) {
+      // Create default data if no chartData is provided
+      return [{ name: 'Default', valueTrue: 100 * factor, valueFalse: 50 * factor, value: 150 * factor }];
+    }
     
-    return chartData.map(point => ({
-      ...point,
-      valueTrue: Math.round((point.valueTrue || 0) * factor),
-      valueFalse: Math.round((point.valueFalse || 0) * factor),
-      value: Math.round((point.value || 0) * factor),
-    }));
+    // Use the first data point to represent the entire time period
+    return [{
+      name: chartData[0].name,
+      valueTrue: Math.round((chartData.reduce((sum, point) => sum + (point.valueTrue || 0), 0) * factor)),
+      valueFalse: Math.round((chartData.reduce((sum, point) => sum + (point.valueFalse || 0), 0) * factor)),
+      value: Math.round((chartData.reduce((sum, point) => sum + (point.value || 0), 0) * factor)),
+    }];
   };
 
   if (type === 'application') {
