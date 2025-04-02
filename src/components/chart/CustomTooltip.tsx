@@ -1,4 +1,6 @@
+
 import React from 'react';
+import { cn } from "@/lib/utils";
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -36,9 +38,15 @@ const CustomTooltip = ({
         {(showTrue || showFalse) && !showAverage && (
           <div className="space-y-1 mt-1">
             {payload.map((entry, index) => (
-              <div key={`tooltip-${index}`} className="flex justify-between gap-2">
-                <span style={{ color: entry.color }}>{entry.name}:</span>
-                <span className="text-textBase font-medium">
+              <div key={`tooltip-${index}`} className="flex justify-between gap-2 items-center">
+                <div className="flex items-center gap-1.5">
+                  <div 
+                    className="w-2 h-2 rounded-full" 
+                    style={{ backgroundColor: entry.color }}
+                  />
+                  <span className="text-foreground">{entry.name}:</span>
+                </div>
+                <span className="text-foreground font-medium">
                   {tooltipValueFormatter(entry.value)}
                 </span>
               </div>
@@ -50,17 +58,23 @@ const CustomTooltip = ({
         {showAverage && (
           <div className="space-y-1 mt-1">
             {/* Show the True value first */}
-            <div className="flex justify-between gap-2">
-              <span style={{ color: '#2BB7D2' }}>True:</span>
-              <span className="text-textBase font-medium">
+            <div className="flex justify-between gap-2 items-center">
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-[#2BB7D2]" />
+                <span className="text-foreground">True:</span>
+              </div>
+              <span className="text-foreground font-medium">
                 {tooltipValueFormatter(payload[0].payload.valueTrue || 0)}
               </span>
             </div>
             
             {/* Show the False value */}
-            <div className="flex justify-between gap-2">
-              <span style={{ color: '#FFD099' }}>False:</span>
-              <span className="text-textBase font-medium">
+            <div className="flex justify-between gap-2 items-center">
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-[#FFD099]" />
+                <span className="text-foreground">False:</span>
+              </div>
+              <span className="text-foreground font-medium">
                 {tooltipValueFormatter(payload.find(p => p.dataKey === 'valueFalse')?.value || 0)}
               </span>
             </div>
@@ -69,9 +83,18 @@ const CustomTooltip = ({
         
         {/* If we're showing the original value */}
         {!showTrue && !showFalse && (
-          <p className="text-textBase font-medium">
-            {tooltipValueFormatter(payload[0].value)}
-          </p>
+          <div className="flex justify-between gap-2 items-center mt-1">
+            <div className="flex items-center gap-1.5">
+              <div 
+                className="w-2 h-2 rounded-full" 
+                style={{ backgroundColor: payload[0].color }}
+              />
+              <span className="text-foreground">Value:</span>
+            </div>
+            <p className="text-foreground font-medium">
+              {tooltipValueFormatter(payload[0].value)}
+            </p>
+          </div>
         )}
       </div>
     );
