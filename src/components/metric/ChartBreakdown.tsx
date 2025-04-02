@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { DataPoint } from '../BarChart';
 import { Card } from '@/components/ui/card';
@@ -109,7 +108,7 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
 }) => {
   const trueColor = '#2BB7D2';
   const falseColor = '#FFD099';
-  
+
   const createSampleData = (factor: number) => {
     if (!chartData) return [];
     
