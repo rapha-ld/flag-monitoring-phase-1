@@ -18,14 +18,26 @@ const MiniChart = ({
   title, 
   version, 
   data, 
-  barColor 
+  showTrue,
+  showFalse,
+  trueColor,
+  falseColor
 }: { 
   title: string; 
   version: string; 
   data: any[]; 
-  barColor: string;
+  showTrue: boolean;
+  showFalse: boolean;
+  trueColor: string;
+  falseColor: string;
 }) => {
-  const maxValue = Math.max(...data.map(d => d.value));
+  const maxValue = Math.max(...data.map(d => 
+    Math.max(
+      (showTrue && showFalse) ? (d.valueTrue || 0) + (d.valueFalse || 0) : 
+      showTrue ? (d.valueTrue || 0) : 
+      showFalse ? (d.valueFalse || 0) : d.value || 0
+    )
+  ));
   
   return (
     <Card className="p-3 h-32">
@@ -34,11 +46,9 @@ const MiniChart = ({
       <ResponsiveContainer width="100%" height={70}>
         <BarChart 
           data={data} 
-          margin={{ top: 0, right: 5, left: 5, bottom: 0 }}
-          barSize={4}
+          margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+          barSize={6}
           barGap={0}
-          barCategoryGap="10%"
-          maxBarSize={4}
         >
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
           <XAxis 
@@ -62,12 +72,28 @@ const MiniChart = ({
                 : `${date.getMonth() + 1}/${date.getDate()}`;
             }}
           />
-          <Bar 
-            dataKey="value" 
-            fill={barColor} 
-            radius={[1, 1, 0, 0]} 
-            isAnimationActive={false}
-          />
+          
+          {showTrue && (
+            <Bar 
+              dataKey="valueTrue" 
+              name="True"
+              stackId="a"
+              fill={trueColor} 
+              radius={[1, 1, 0, 0]} 
+              isAnimationActive={false}
+            />
+          )}
+          
+          {showFalse && (
+            <Bar 
+              dataKey="valueFalse" 
+              name="False"
+              stackId="a"
+              fill={falseColor} 
+              radius={showTrue ? [0, 0, 0, 0] : [1, 1, 0, 0]} 
+              isAnimationActive={false}
+            />
+          )}
         </BarChart>
       </ResponsiveContainer>
     </Card>
@@ -77,31 +103,24 @@ const MiniChart = ({
 const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
   type,
   chartData,
-  showTrue,
-  showFalse,
+  showTrue = true,
+  showFalse = true,
   selectedTimestamp,
   selectedTimestamps
 }) => {
-  // Define colors based on the selected filters
+  // Define colors for the variants
   const trueColor = '#2BB7D2';
   const falseColor = '#FFD099';
-  const defaultColor = '#6E6F96';
   
-  // Determine bar color based on which variants are shown
-  const getBarColor = () => {
-    if (showTrue && !showFalse) return trueColor;
-    if (!showTrue && showFalse) return falseColor;
-    return defaultColor;
-  };
-  
-  const barColor = getBarColor();
-  
-  // Create sample data based on the original chartData
+  // Create sample data based on the original chartData with true/false values
   const createSampleData = (factor: number) => {
     if (!chartData) return [];
+    
     return chartData.map(point => ({
       ...point,
-      value: Math.round(point.value * factor),
+      valueTrue: Math.round((point.valueTrue || 0) * factor),
+      valueFalse: Math.round((point.valueFalse || 0) * factor),
+      value: Math.round((point.value || 0) * factor),
     }));
   };
 
@@ -124,7 +143,10 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
             title={app.title} 
             version={app.version} 
             data={app.data} 
-            barColor={barColor}
+            showTrue={showTrue}
+            showFalse={showFalse}
+            trueColor={trueColor}
+            falseColor={falseColor}
           />
         ))}
       </div>
@@ -144,7 +166,10 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
             title={sdk.title} 
             version={sdk.version} 
             data={sdk.data} 
-            barColor={barColor}
+            showTrue={showTrue}
+            showFalse={showFalse}
+            trueColor={trueColor}
+            falseColor={falseColor}
           />
         ))}
       </div>
