@@ -7,7 +7,7 @@ export const historyData: HistoryEvent[] = [
     type: 'enabled',
     title: 'Flag enabled',
     description: 'New checkout flow was enabled for production',
-    timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000 + 17 * 60 * 1000 + 37 * 1000),
+    timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000 + 17 * 60 * 1000 + 37 * 1000), // 7 days ago
     initiatedBy: {
       name: 'John Smith',
       email: 'john.smith@example.com'
@@ -18,7 +18,7 @@ export const historyData: HistoryEvent[] = [
     type: 'updated',
     title: 'Flag updated',
     description: 'Target audience changed from 10% to 25% of users',
-    timestamp: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000 - 42 * 60 * 1000 - 23 * 1000),
+    timestamp: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000 - 42 * 60 * 1000 - 23 * 1000), // 14 days ago - updated from 30 days
     initiatedBy: {
       name: 'Emily Johnson',
       email: 'emily.j@example.com'
@@ -29,7 +29,7 @@ export const historyData: HistoryEvent[] = [
     type: 'disabled',
     title: 'Flag disabled',
     description: 'New checkout flow was disabled for production',
-    timestamp: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000 + 28 * 60 * 1000 + 11 * 1000),
+    timestamp: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000 + 28 * 60 * 1000 + 11 * 1000), // 21 days ago - updated from 45 days
     initiatedBy: {
       name: 'Michael Chen',
       email: 'michael.c@example.com'

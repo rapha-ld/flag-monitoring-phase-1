@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { 
   evaluationData, 
@@ -15,7 +14,7 @@ import { DataPoint } from '@/components/BarChart';
 
 export const useDashboardData = () => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [timeframe, setTimeframe] = useState("14d");
+  const [timeframe, setTimeframe] = useState("30d");
   const [environment, setEnvironment] = useState("production");
   const [selectedDevice, setSelectedDevice] = useState("all");
   const [selectedMetrics, setSelectedMetrics] = useState(['evaluations', 'conversion', 'errorRate']);
@@ -33,7 +32,6 @@ export const useDashboardData = () => {
     errorRate: { value: 0, change: { value: 0, trend: 'up' as 'up' | 'down' } }
   });
 
-  // Calculate visible metrics (selected metrics that aren't hidden)
   const visibleMetrics = selectedMetrics.filter(metric => !hiddenMetrics.includes(metric));
 
   useEffect(() => {
@@ -45,7 +43,7 @@ export const useDashboardData = () => {
   }, []);
 
   useEffect(() => {
-    let days = 14; // default
+    let days = 30; // default
     
     if (timeframe.startsWith('custom-')) {
       days = parseInt(timeframe.replace('custom-', '').replace('d', ''));
@@ -55,12 +53,10 @@ export const useDashboardData = () => {
     
     console.log(`Filtering data for ${days} days`);
     
-    // Get the filtered data based on timeframe, environment, and device
     const filteredEval = getFilteredData(evaluationData, days, environment, selectedDevice);
     const filteredConv = getFilteredData(conversionData, days, environment, selectedDevice);
     const filteredError = getFilteredData(errorRateData, days, environment, selectedDevice);
     
-    // Process the true/false values for each data set
     const processedEval = processTrueFalseValues(filteredEval);
     const processedConv = processTrueFalseValues(filteredConv);
     const processedError = processTrueFalseValues(filteredError);
@@ -71,28 +67,24 @@ export const useDashboardData = () => {
     setFilteredConversionData(processedConv);
     setFilteredErrorRateData(processedError);
     
-    // Calculate the current metrics for display
     const metrics = calculateMetrics(filteredEval, filteredConv, filteredError, days);
     setCurrentMetrics(metrics);
   }, [timeframe, environment, selectedDevice]);
 
   const handleTimeframeChange = (value: string) => {
     setTimeframe(value);
-    // Clear timestamp selections when timeframe changes
     setSelectedTimestamp(null);
     setSelectedTimestamps(null);
   };
 
   const handleEnvironmentChange = (value: string) => {
     setEnvironment(value);
-    // Clear timestamp selections when environment changes
     setSelectedTimestamp(null);
     setSelectedTimestamps(null);
   };
 
   const handleDeviceChange = (value: string) => {
     setSelectedDevice(value);
-    // Clear timestamp selections when device changes
     setSelectedTimestamp(null);
     setSelectedTimestamps(null);
   };
@@ -104,8 +96,8 @@ export const useDashboardData = () => {
   const handleMetricVisibilityChange = (metric: string, visible: boolean) => {
     setHiddenMetrics(prev => 
       visible 
-        ? prev.filter(m => m !== metric) // Remove from hidden if now visible
-        : [...prev, metric] // Add to hidden if now hidden
+        ? prev.filter(m => m !== metric)
+        : [...prev, metric]
     );
   };
 
