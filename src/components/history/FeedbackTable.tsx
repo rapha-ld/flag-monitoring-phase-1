@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { formatDistanceToNow } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +14,7 @@ interface Feedback {
 
 interface FeedbackTableProps {
   feedbackData: Feedback[];
+  onFeedbackSelect?: (timestamp: Date | null) => void;
 }
 
 const formatTimestamp = (date: Date) => {
@@ -45,7 +46,34 @@ const getSentimentBadge = (sentiment: Feedback['sentiment']) => {
   }
 };
 
-const FeedbackTable: React.FC<FeedbackTableProps> = ({ feedbackData }) => {
+const FeedbackTable: React.FC<FeedbackTableProps> = ({ feedbackData, onFeedbackSelect }) => {
+  const [selectedFeedbackId, setSelectedFeedbackId] = useState<string | null>(null);
+  const [hoveredFeedbackId, setHoveredFeedbackId] = useState<string | null>(null);
+
+  const handleRowClick = (feedbackId: string, timestamp: Date) => {
+    if (selectedFeedbackId === feedbackId) {
+      setSelectedFeedbackId(null);
+      onFeedbackSelect?.(null);
+    } else {
+      setSelectedFeedbackId(feedbackId);
+      onFeedbackSelect?.(timestamp);
+    }
+  };
+
+  const handleRowMouseEnter = (feedbackId: string, timestamp: Date) => {
+    if (!selectedFeedbackId) {
+      setHoveredFeedbackId(feedbackId);
+      onFeedbackSelect?.(timestamp);
+    }
+  };
+
+  const handleRowMouseLeave = () => {
+    setHoveredFeedbackId(null);
+    if (!selectedFeedbackId) {
+      onFeedbackSelect?.(null);
+    }
+  };
+  
   return (
     <Table>
       <TableHeader>
@@ -59,7 +87,16 @@ const FeedbackTable: React.FC<FeedbackTableProps> = ({ feedbackData }) => {
       <TableBody>
         {feedbackData.length > 0 ? (
           feedbackData.map((feedback) => (
-            <TableRow key={feedback.id}>
+            <TableRow 
+              key={feedback.id}
+              onClick={() => handleRowClick(feedback.id, feedback.timestamp)}
+              onMouseEnter={() => handleRowMouseEnter(feedback.id, feedback.timestamp)}
+              onMouseLeave={handleRowMouseLeave}
+              className={`cursor-pointer transition-colors ${
+                selectedFeedbackId === feedback.id ? 'bg-primary/10' : 
+                hoveredFeedbackId === feedback.id ? 'bg-primary/5' : ''
+              }`}
+            >
               <TableCell className="font-medium">{feedback.email}</TableCell>
               <TableCell className="max-w-md">
                 <div className="line-clamp-2">{feedback.feedback}</div>

@@ -158,6 +158,7 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>('history');
+  const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
 
   const filteredHistoryData = historyData.filter(event => {
     const searchLower = searchQuery.toLowerCase();
@@ -212,23 +213,41 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
     }
   };
 
-  useEffect(() => {
+  const handleRowMouseEnter = (rowId: string) => {
     if (selectedRows.length === 0) {
+      setHoveredRowId(rowId);
+    }
+  };
+
+  const handleRowMouseLeave = () => {
+    setHoveredRowId(null);
+  };
+
+  useEffect(() => {
+    if (selectedRows.length === 0 && !hoveredRowId) {
       onEventSelect(null);
-    } else {
+    } else if (selectedRows.length > 0) {
+      // When rows are selected, show their timestamps
       const selectedEvents = sortedHistoryData.filter(event => selectedRows.includes(event.id));
       const selectedTimestamps = selectedEvents.map(event => event.timestamp);
       
       selectedTimestamps.sort((a, b) => a.getTime() - b.getTime());
       
       onEventSelect(selectedTimestamps);
+    } else if (hoveredRowId) {
+      // When a row is hovered but not selected, show just that timestamp
+      const hoveredEvent = sortedHistoryData.find(event => event.id === hoveredRowId);
+      if (hoveredEvent) {
+        onEventSelect([hoveredEvent.timestamp]);
+      }
     }
-  }, [selectedRows, sortedHistoryData, onEventSelect]);
+  }, [selectedRows, hoveredRowId, sortedHistoryData, onEventSelect]);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
     if (value !== 'history') {
       setSelectedRows([]);
+      setHoveredRowId(null);
     }
   };
 
@@ -264,8 +283,11 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
                   <TableRow 
                     key={event.id}
                     onClick={(e) => handleRowClick(e, event)}
+                    onMouseEnter={() => handleRowMouseEnter(event.id)}
+                    onMouseLeave={handleRowMouseLeave}
                     className={`cursor-pointer transition-colors ${
-                      selectedRows.includes(event.id) ? 'bg-primary/10' : ''
+                      selectedRows.includes(event.id) ? 'bg-primary/10' : 
+                      hoveredRowId === event.id ? 'bg-primary/5' : ''
                     }`}
                   >
                     <TableCell>
