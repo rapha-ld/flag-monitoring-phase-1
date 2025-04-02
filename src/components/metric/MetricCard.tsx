@@ -1,11 +1,15 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import BarChart from '../BarChart';
 import { DataPoint, VersionChange } from '../BarChart';
 import MetricCardHeader from './MetricCardHeader';
 import { calculateDisplayValue } from '@/utils/metricValueCalculator';
+import { Toggle } from '@/components/ui/toggle';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import ChartBreakdown from './ChartBreakdown';
+import { BarChartHorizontal } from 'lucide-react';
 
 export interface MetricCardProps {
   title: string;
@@ -55,23 +59,73 @@ const MetricCard = ({
   selectedTimestamp,
   selectedTimestamps
 }: MetricCardProps) => {
+  const [breakdownEnabled, setBreakdownEnabled] = useState(false);
+  const [breakdownType, setBreakdownType] = useState<'application' | 'sdk'>('application');
+  
   // Determine if we should show average values (only for conversion and error rate when both variants selected)
   const showAverage = showTrue && showFalse && (metricType === 'conversion' || metricType === 'errorRate');
   
   // Get the display value based on the selected variants
   const displayValue = calculateDisplayValue(value, chartData, showTrue, showFalse, metricType);
   
+  // Only show breakdown toggle for evaluations metric
+  const showBreakdownToggle = metricType === 'evaluations';
+  
   return (
     <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", className)}>
-      <MetricCardHeader 
-        title={title}
-        value={displayValue}
-        change={change}
-        info={info}
-        timeframe={timeframe}
-      />
+      <div className="flex justify-between items-center">
+        <MetricCardHeader 
+          title={title}
+          value={displayValue}
+          change={change}
+          info={info}
+          timeframe={timeframe}
+        />
+        
+        {showBreakdownToggle && (
+          <div className="flex items-center pr-4 pt-4">
+            <Toggle 
+              size="sm"
+              pressed={breakdownEnabled}
+              onPressedChange={setBreakdownEnabled}
+              aria-label="Toggle breakdown view"
+              className="h-8 px-2 text-xs"
+            >
+              <BarChartHorizontal className="h-3.5 w-3.5 mr-1" />
+              Breakdown
+            </Toggle>
+          </div>
+        )}
+      </div>
+      
+      {breakdownEnabled && showBreakdownToggle && (
+        <div className="px-4 pb-2">
+          <Select
+            value={breakdownType}
+            onValueChange={(value) => setBreakdownType(value as 'application' | 'sdk')}
+          >
+            <SelectTrigger className="h-8 text-xs">
+              <SelectValue placeholder="Select breakdown" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="application">Application</SelectItem>
+              <SelectItem value="sdk">SDK</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
       <CardContent className="p-0">
-        {chartData && chartData.length > 0 ? (
+        {breakdownEnabled && showBreakdownToggle ? (
+          <ChartBreakdown 
+            type={breakdownType} 
+            chartData={chartData}
+            showTrue={showTrue}
+            showFalse={showFalse}
+            selectedTimestamp={selectedTimestamp}
+            selectedTimestamps={selectedTimestamps}
+          />
+        ) : chartData && chartData.length > 0 ? (
           <BarChart
             data={chartData}
             versionChanges={versionChanges}
