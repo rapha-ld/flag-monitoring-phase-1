@@ -17,12 +17,22 @@ interface ChartBreakdownProps {
 const MiniChart = ({ title, version, data }: { title: string; version: string; data: any[] }) => {
   const maxValue = Math.max(...data.map(d => d.value));
   
+  // Use variation colors from the main charts
+  const trueColor = '#2BB7D2';
+  const falseColor = '#FFD099';
+  const defaultColor = '#6E6F96';
+  
   return (
     <Card className="p-3 h-32">
       <div className="text-xs font-semibold mb-1 truncate">{title}</div>
       <div className="text-xs text-muted-foreground mb-2">{version}</div>
       <ResponsiveContainer width="100%" height={70}>
-        <BarChart data={data} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+        <BarChart 
+          data={data} 
+          margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+          barCategoryGap={1} // Smaller gap between bars
+          barGap={0} // No gap between stacked/grouped bars
+        >
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
           <XAxis 
             dataKey="name" 
@@ -47,7 +57,7 @@ const MiniChart = ({ title, version, data }: { title: string; version: string; d
           />
           <Bar 
             dataKey="value" 
-            fill="#6E6F96" 
+            fill={defaultColor} 
             barSize={4} 
             radius={[1, 1, 0, 0]} 
             isAnimationActive={false}
@@ -66,6 +76,18 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
   selectedTimestamp,
   selectedTimestamps
 }) => {
+  // Use variation colors from the main charts
+  const trueColor = '#2BB7D2';
+  const falseColor = '#FFD099';
+  const defaultColor = '#6E6F96';
+  
+  // Determine color based on showTrue and showFalse
+  const getBarColor = () => {
+    if (showTrue && !showFalse) return trueColor;
+    if (!showTrue && showFalse) return falseColor;
+    return defaultColor;
+  };
+  
   // Create sample data based on the original chartData
   const createSampleData = (factor: number) => {
     if (!chartData) return [];
