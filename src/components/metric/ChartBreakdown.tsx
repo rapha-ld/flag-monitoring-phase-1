@@ -14,13 +14,18 @@ interface ChartBreakdownProps {
 }
 
 // Mini chart component for each breakdown item
-const MiniChart = ({ title, version, data }: { title: string; version: string; data: any[] }) => {
+const MiniChart = ({ 
+  title, 
+  version, 
+  data, 
+  barColor 
+}: { 
+  title: string; 
+  version: string; 
+  data: any[]; 
+  barColor: string;
+}) => {
   const maxValue = Math.max(...data.map(d => d.value));
-  
-  // Use variation colors from the main charts
-  const trueColor = '#2BB7D2';
-  const falseColor = '#FFD099';
-  const defaultColor = '#6E6F96';
   
   return (
     <Card className="p-3 h-32">
@@ -29,9 +34,11 @@ const MiniChart = ({ title, version, data }: { title: string; version: string; d
       <ResponsiveContainer width="100%" height={70}>
         <BarChart 
           data={data} 
-          margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-          barCategoryGap={1} // Smaller gap between bars
-          barGap={0} // No gap between stacked/grouped bars
+          margin={{ top: 0, right: 5, left: 5, bottom: 0 }}
+          barSize={4}
+          barGap={0}
+          barCategoryGap="10%"
+          maxBarSize={4}
         >
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
           <XAxis 
@@ -57,8 +64,7 @@ const MiniChart = ({ title, version, data }: { title: string; version: string; d
           />
           <Bar 
             dataKey="value" 
-            fill={defaultColor} 
-            barSize={4} 
+            fill={barColor} 
             radius={[1, 1, 0, 0]} 
             isAnimationActive={false}
           />
@@ -76,17 +82,19 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
   selectedTimestamp,
   selectedTimestamps
 }) => {
-  // Use variation colors from the main charts
+  // Define colors based on the selected filters
   const trueColor = '#2BB7D2';
   const falseColor = '#FFD099';
   const defaultColor = '#6E6F96';
   
-  // Determine color based on showTrue and showFalse
+  // Determine bar color based on which variants are shown
   const getBarColor = () => {
     if (showTrue && !showFalse) return trueColor;
     if (!showTrue && showFalse) return falseColor;
     return defaultColor;
   };
+  
+  const barColor = getBarColor();
   
   // Create sample data based on the original chartData
   const createSampleData = (factor: number) => {
@@ -116,6 +124,7 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
             title={app.title} 
             version={app.version} 
             data={app.data} 
+            barColor={barColor}
           />
         ))}
       </div>
@@ -135,6 +144,7 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
             title={sdk.title} 
             version={sdk.version} 
             data={sdk.data} 
+            barColor={barColor}
           />
         ))}
       </div>
