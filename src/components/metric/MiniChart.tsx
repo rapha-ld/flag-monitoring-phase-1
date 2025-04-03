@@ -86,6 +86,7 @@ const MiniChart: React.FC<MiniChartProps> = ({
               />
             }
             isAnimationActive={false}
+            position={{ y: -75 }}  // Move the tooltip 75px higher
           />
           
           {showTrue && (
