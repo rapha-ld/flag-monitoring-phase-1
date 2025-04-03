@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import CustomTooltip from '../chart/CustomTooltip';
 
 interface MiniChartProps { 
   title: string; 
@@ -32,6 +33,16 @@ const MiniChart: React.FC<MiniChartProps> = ({
     )
   ));
   
+  // Custom tooltip formatters matching the main chart format
+  const tooltipLabelFormatter = (label: string) => {
+    const date = new Date(label);
+    return isNaN(date.getTime()) 
+      ? label
+      : `${date.getMonth() + 1}/${date.getDate()}`;
+  };
+  
+  const tooltipValueFormatter = (value: number) => `${value}`;
+  
   return (
     <Card className="p-3 h-32 transition-all duration-300 hover:shadow-md chart-container group">
       <div className="text-xs font-semibold mb-1 truncate">{title}</div>
@@ -58,13 +69,17 @@ const MiniChart: React.FC<MiniChartProps> = ({
             width={0}
           />
           <Tooltip 
-            formatter={(value: any) => [`${value}`, 'Users']}
-            labelFormatter={(label) => {
-              const date = new Date(label);
-              return isNaN(date.getTime()) 
-                ? label
-                : `${date.getMonth() + 1}/${date.getDate()}`;
-            }}
+            content={
+              <CustomTooltip 
+                tooltipValueFormatter={tooltipValueFormatter}
+                tooltipLabelFormatter={tooltipLabelFormatter}
+                showTrue={showTrue}
+                showFalse={showFalse}
+                chartType="stacked"
+                metricType="evaluations"
+              />
+            }
+            isAnimationActive={false}
           />
           
           {showTrue && (
