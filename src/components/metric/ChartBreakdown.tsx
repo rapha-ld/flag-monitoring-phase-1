@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { DataPoint } from '../BarChart';
 import MiniChart from './MiniChart';
 import { getApplicationBreakdowns, getSDKBreakdowns } from '@/utils/chartBreakdownUtils';
@@ -24,47 +24,51 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
   const trueColor = '#2BB7D2';
   const falseColor = '#FFD099';
   
-  if (type === 'application') {
-    const appBreakdowns = getApplicationBreakdowns(chartData);
-
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3">
-        {appBreakdowns.map((app, index) => (
-          <MiniChart 
-            key={`app-${index}`} 
-            title={app.title} 
-            version={app.version} 
-            data={app.data} 
-            showTrue={showTrue}
-            showFalse={showFalse}
-            trueColor={trueColor}
-            falseColor={falseColor}
-            factor={app.factor}
-          />
-        ))}
-      </div>
-    );
-  } else {
-    const sdkBreakdowns = getSDKBreakdowns(chartData);
-
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3">
-        {sdkBreakdowns.map((sdk, index) => (
-          <MiniChart 
-            key={`sdk-${index}`} 
-            title={sdk.title} 
-            version={sdk.version} 
-            data={sdk.data} 
-            showTrue={showTrue}
-            showFalse={showFalse}
-            trueColor={trueColor}
-            falseColor={falseColor}
-            factor={sdk.factor}
-          />
-        ))}
-      </div>
-    );
-  }
+  // Use useMemo to avoid recomputing breakdowns on each render
+  const { breakdowns, maxYValue } = useMemo(() => {
+    const getBreakdowns = type === 'application' 
+      ? getApplicationBreakdowns 
+      : getSDKBreakdowns;
+    
+    const breakdownData = getBreakdowns(chartData);
+    
+    // Calculate the highest value across all charts
+    let maxValue = 0;
+    breakdownData.forEach(item => {
+      item.data.forEach(d => {
+        const currentMax = Math.max(
+          (showTrue && showFalse) ? (d.valueTrue || 0) + (d.valueFalse || 0) : 
+          showTrue ? (d.valueTrue || 0) : 
+          showFalse ? (d.valueFalse || 0) : d.value || 0
+        );
+        maxValue = Math.max(maxValue, currentMax);
+      });
+    });
+    
+    // Add 10% padding to the max value
+    maxValue = maxValue * 1.1;
+    
+    return { breakdowns: breakdownData, maxYValue: maxValue };
+  }, [chartData, type, showTrue, showFalse]);
+  
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3">
+      {breakdowns.map((item, index) => (
+        <MiniChart 
+          key={`${type}-${index}`} 
+          title={item.title} 
+          version={item.version} 
+          data={item.data} 
+          showTrue={showTrue}
+          showFalse={showFalse}
+          trueColor={trueColor}
+          falseColor={falseColor}
+          factor={item.factor}
+          maxYValue={maxYValue}  // Pass the common max Y value
+        />
+      ))}
+    </div>
+  );
 };
 
 export default ChartBreakdown;

@@ -13,6 +13,7 @@ interface MiniChartProps {
   trueColor: string;
   falseColor: string;
   factor: number;
+  maxYValue?: number; // Optional prop for shared y-axis scaling
 }
 
 const MiniChart: React.FC<MiniChartProps> = ({ 
@@ -23,15 +24,20 @@ const MiniChart: React.FC<MiniChartProps> = ({
   showFalse,
   trueColor,
   falseColor,
-  factor
+  factor,
+  maxYValue
 }) => {
-  const maxValue = Math.max(...data.map(d => 
+  // Calculate local max value if no shared max is provided
+  const localMaxValue = Math.max(...data.map(d => 
     Math.max(
       (showTrue && showFalse) ? (d.valueTrue || 0) + (d.valueFalse || 0) : 
       showTrue ? (d.valueTrue || 0) : 
       showFalse ? (d.valueFalse || 0) : d.value || 0
     )
   ));
+  
+  // Use the shared maxYValue if provided, otherwise use local max
+  const yAxisMax = maxYValue !== undefined ? maxYValue : localMaxValue * 1.1;
   
   // Custom tooltip formatters matching the main chart format
   const tooltipLabelFormatter = (label: string) => {
@@ -62,7 +68,7 @@ const MiniChart: React.FC<MiniChartProps> = ({
             tickLine={false} 
           />
           <YAxis 
-            domain={[0, maxValue * 1.1]} 
+            domain={[0, yAxisMax]} 
             tick={false} 
             axisLine={false} 
             tickLine={false} 
