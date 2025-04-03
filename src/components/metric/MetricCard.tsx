@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import BarChart from '../BarChart';
@@ -35,7 +35,6 @@ export interface MetricCardProps {
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
-  onBreakdownChange?: (enabled: boolean) => void;
 }
 
 const MetricCard = ({ 
@@ -58,8 +57,7 @@ const MetricCard = ({
   chartType = 'stacked',
   metricType,
   selectedTimestamp,
-  selectedTimestamps,
-  onBreakdownChange
+  selectedTimestamps
 }: MetricCardProps) => {
   const [breakdownEnabled, setBreakdownEnabled] = useState(false);
   const [breakdownType, setBreakdownType] = useState<'application' | 'sdk'>('application');
@@ -72,11 +70,6 @@ const MetricCard = ({
   
   // Only show breakdown toggle for evaluations metric
   const showBreakdownToggle = metricType === 'evaluations';
-  
-  // Notify parent component when breakdown state changes
-  useEffect(() => {
-    onBreakdownChange?.(breakdownEnabled);
-  }, [breakdownEnabled, onBreakdownChange]);
   
   return (
     <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", className)}>

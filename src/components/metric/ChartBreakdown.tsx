@@ -65,8 +65,6 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
           falseColor={falseColor}
           factor={item.factor}
           maxYValue={maxYValue}  // Pass the common max Y value
-          selectedTimestamp={selectedTimestamp}
-          selectedTimestamps={selectedTimestamps}
         />
       ))}
     </div>
