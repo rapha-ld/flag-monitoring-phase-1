@@ -1,7 +1,10 @@
+
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
 import CustomTooltip from '../chart/CustomTooltip';
+import { format } from 'date-fns';
+import { determineEventName } from '@/utils/eventUtils';
 
 interface MiniChartProps { 
   title: string; 
@@ -13,6 +16,8 @@ interface MiniChartProps {
   falseColor: string;
   factor: number;
   maxYValue?: number; // Optional prop for shared y-axis scaling
+  selectedTimestamp?: Date | null;
+  selectedTimestamps?: Date[] | null;
 }
 
 const MiniChart: React.FC<MiniChartProps> = ({ 
@@ -24,7 +29,9 @@ const MiniChart: React.FC<MiniChartProps> = ({
   trueColor,
   falseColor,
   factor,
-  maxYValue
+  maxYValue,
+  selectedTimestamp,
+  selectedTimestamps
 }) => {
   const localMaxValue = Math.max(...data.map(d => 
     Math.max(
@@ -45,6 +52,52 @@ const MiniChart: React.FC<MiniChartProps> = ({
   
   const tooltipValueFormatter = (value: number) => `${value}`;
   
+  // Function to find data points closest to selected timestamps
+  const findSelectedDataPoints = () => {
+    if ((!selectedTimestamp && !selectedTimestamps) || data.length === 0) return null;
+    
+    const timestamps = selectedTimestamps || (selectedTimestamp ? [selectedTimestamp] : []);
+    
+    if (timestamps.length === 0) return null;
+    
+    const dataPoints = data.map((point, index) => {
+      const pointDate = point.date ? new Date(point.date) : 
+                       (point.name && !isNaN(new Date(point.name).getTime()) ? 
+                       new Date(point.name) : null);
+      
+      return {
+        ...point,
+        index,
+        timestamp: pointDate ? pointDate.getTime() : null
+      };
+    }).filter(point => point.timestamp !== null);
+    
+    if (dataPoints.length === 0) return null;
+    
+    return timestamps.map(selectedTime => {
+      const selectedTimeMs = selectedTime.getTime();
+      let closestPoint = dataPoints[0];
+      let minDiff = Math.abs(dataPoints[0].timestamp! - selectedTimeMs);
+      
+      for (let i = 1; i < dataPoints.length; i++) {
+        const diff = Math.abs(dataPoints[i].timestamp! - selectedTimeMs);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestPoint = dataPoints[i];
+        }
+      }
+      
+      return {
+        ...closestPoint,
+        exactTime: selectedTime
+      };
+    }).sort((a, b) => a.timestamp! - b.timestamp!);
+  };
+  
+  const selectedPoints = findSelectedDataPoints();
+  const hasSelectedPoints = selectedPoints && selectedPoints.length > 0;
+  const textGray = '#545A62';
+
   return (
     <Card className="p-3 h-32 transition-all duration-300 hover:shadow-md chart-container">
       <div className="text-xs font-semibold mb-1 truncate">{title}</div>
@@ -84,6 +137,22 @@ const MiniChart: React.FC<MiniChartProps> = ({
             isAnimationActive={false}
             position={{ y: -75 }}  // Move the tooltip 75px higher
           />
+          
+          {/* Add reference lines for selected timestamps */}
+          {hasSelectedPoints && selectedPoints.map((point, index) => {
+            const eventName = determineEventName(point.exactTime);
+            const formattedDate = format(point.exactTime, "MMM d");
+            
+            return (
+              <ReferenceLine
+                key={`selected-time-mini-${index}`}
+                x={point.name}
+                stroke={textGray}
+                strokeWidth={1.5}
+                ifOverflow="extendDomain"
+              />
+            );
+          })}
           
           {showTrue && (
             <Bar 
