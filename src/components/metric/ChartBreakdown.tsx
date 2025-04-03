@@ -20,15 +20,17 @@ const MiniChart = ({
   showTrue,
   showFalse,
   trueColor,
-  falseColor
+  falseColor,
+  factor
 }: { 
   title: string; 
   version: string; 
-  data: any[]; 
+  data: any[];
   showTrue: boolean;
   showFalse: boolean;
   trueColor: string;
   falseColor: string;
+  factor: number;
 }) => {
   const maxValue = Math.max(...data.map(d => 
     Math.max(
@@ -39,7 +41,7 @@ const MiniChart = ({
   ));
   
   return (
-    <Card className="p-3 h-32">
+    <Card className="p-3 h-32 transition-all duration-300 hover:shadow-md">
       <div className="text-xs font-semibold mb-1 truncate">{title}</div>
       <div className="text-xs text-muted-foreground mb-2">{version}</div>
       <ResponsiveContainer width="100%" height={70}>
@@ -81,6 +83,7 @@ const MiniChart = ({
               fill={trueColor} 
               radius={[1, 1, 0, 0]} 
               isAnimationActive={false}
+              className="transition-all duration-300 hover:opacity-80"
             />
           )}
           
@@ -92,6 +95,7 @@ const MiniChart = ({
               fill={falseColor} 
               radius={showTrue ? [0, 0, 0, 0] : [1, 1, 0, 0]} 
               isAnimationActive={false}
+              className="transition-all duration-300 hover:opacity-80"
             />
           )}
         </BarChart>
@@ -123,14 +127,23 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
   };
 
   if (type === 'application') {
-    const appBreakdowns = [
-      { title: 'iOS App', version: 'v3.4.1', data: createSampleData(0.35) },
-      { title: 'Android App', version: 'v3.3.7', data: createSampleData(0.32) },
-      { title: 'React Web', version: 'v2.1.0', data: createSampleData(0.18) },
-      { title: 'Desktop App', version: 'v1.9.2', data: createSampleData(0.08) },
-      { title: 'Vue Web', version: 'v1.2.3', data: createSampleData(0.05) },
-      { title: 'API Direct', version: 'N/A', data: createSampleData(0.02) },
+    // Create app breakdowns with more variance
+    const appBreakdownsUnsorted = [
+      { title: 'iOS App', version: 'v3.4.1', factor: 0.78, data: [] },
+      { title: 'Android App', version: 'v3.3.7', factor: 0.63, data: [] },
+      { title: 'React Web', version: 'v2.1.0', factor: 0.42, data: [] },
+      { title: 'Desktop App', version: 'v1.9.2', factor: 0.27, data: [] },
+      { title: 'Vue Web', version: 'v1.2.3', factor: 0.15, data: [] },
+      { title: 'API Direct', version: 'N/A', factor: 0.07, data: [] },
     ];
+    
+    // Generate data for each app
+    appBreakdownsUnsorted.forEach(app => {
+      app.data = createSampleData(app.factor);
+    });
+    
+    // Sort apps by their factor (which corresponds to magnitude) in descending order
+    const appBreakdowns = [...appBreakdownsUnsorted].sort((a, b) => b.factor - a.factor);
 
     return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3">
@@ -144,18 +157,29 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
             showFalse={showFalse}
             trueColor={trueColor}
             falseColor={falseColor}
+            factor={app.factor}
           />
         ))}
       </div>
     );
   } else {
-    const sdkBreakdowns = [
-      { title: 'JavaScript SDK', version: 'v2.8.3', data: createSampleData(0.72) },
-      { title: 'Server SDK', version: 'v1.5.1', data: createSampleData(0.28) },
+    // Create SDK breakdowns with more variance
+    const sdkBreakdownsUnsorted = [
+      { title: 'JavaScript SDK', version: 'v2.8.3', factor: 0.85, data: [] },
+      { title: 'Server SDK', version: 'v1.5.1', factor: 0.38, data: [] },
+      { title: 'Mobile SDK', version: 'v1.2.0', factor: 0.22, data: [] },
     ];
+    
+    // Generate data for each SDK
+    sdkBreakdownsUnsorted.forEach(sdk => {
+      sdk.data = createSampleData(sdk.factor);
+    });
+    
+    // Sort SDKs by their factor in descending order
+    const sdkBreakdowns = [...sdkBreakdownsUnsorted].sort((a, b) => b.factor - a.factor);
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3">
         {sdkBreakdowns.map((sdk, index) => (
           <MiniChart 
             key={`sdk-${index}`} 
@@ -166,6 +190,7 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
             showFalse={showFalse}
             trueColor={trueColor}
             falseColor={falseColor}
+            factor={sdk.factor}
           />
         ))}
       </div>
