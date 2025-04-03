@@ -1,4 +1,3 @@
-
 // Calculate optimal interval for the X axis based on data length
 export const getXAxisInterval = (dataLength: number) => {
   if (dataLength > 60) return 14;
@@ -81,4 +80,26 @@ export const processVersionChanges = (
       };
     })
     .filter(change => change.position >= 0);
+};
+
+// Calculate timestamp positions based on selected timestamps
+export const getTimestampPositions = (
+  data: Array<{name: string}>, 
+  selectedTimestamp?: Date | null, 
+  selectedTimestamps?: Date[] | null
+) => {
+  if (!selectedTimestamp && (!selectedTimestamps || selectedTimestamps.length === 0)) {
+    return [];
+  }
+
+  // Convert timestamps to date strings to match data points
+  const timestampPositions = (selectedTimestamps || (selectedTimestamp ? [selectedTimestamp] : []))
+    .map(timestamp => {
+      const timestampString = timestamp.toISOString().split('T')[0];
+      const position = data.findIndex(point => point.name === timestampString);
+      return position >= 0 ? { x: position, timestamp } : null;
+    })
+    .filter((pos): pos is {x: number, timestamp: Date} => pos !== null);
+
+  return timestampPositions;
 };
