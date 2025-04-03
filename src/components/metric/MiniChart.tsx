@@ -26,7 +26,6 @@ const MiniChart: React.FC<MiniChartProps> = ({
   factor,
   maxYValue
 }) => {
-  // Calculate local max value if no shared max is provided
   const localMaxValue = Math.max(...data.map(d => 
     Math.max(
       (showTrue && showFalse) ? (d.valueTrue || 0) + (d.valueFalse || 0) : 
@@ -35,10 +34,8 @@ const MiniChart: React.FC<MiniChartProps> = ({
     )
   ));
   
-  // Use the shared maxYValue if provided, otherwise use local max
   const yAxisMax = maxYValue !== undefined ? maxYValue : localMaxValue * 1.1;
   
-  // Custom tooltip formatters matching the main chart format
   const tooltipLabelFormatter = (label: string) => {
     const date = new Date(label);
     return isNaN(date.getTime()) 
@@ -52,7 +49,7 @@ const MiniChart: React.FC<MiniChartProps> = ({
     <Card className="p-3 h-32 transition-all duration-300 hover:shadow-md chart-container">
       <div className="text-xs font-semibold mb-1 truncate">{title}</div>
       <div className="text-xs text-muted-foreground mb-2">{version}</div>
-      <ResponsiveContainer width="100%" height={70} className="mb-[-16px]">
+      <ResponsiveContainer width="100%" height={70} className="mb-[-8px]">
         <BarChart 
           data={data} 
           margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
