@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
@@ -50,10 +49,10 @@ const MiniChart: React.FC<MiniChartProps> = ({
   const tooltipValueFormatter = (value: number) => `${value}`;
   
   return (
-    <Card className="p-3 h-32 transition-all duration-300 hover:shadow-md chart-container border-none">
+    <Card className="p-3 h-32 transition-all duration-300 hover:shadow-md chart-container">
       <div className="text-xs font-semibold mb-1 truncate">{title}</div>
       <div className="text-xs text-muted-foreground mb-2">{version}</div>
-      <ResponsiveContainer width="100%" height={70} className="mb-[-46px]">
+      <ResponsiveContainer width="100%" height={70} className="mb-[-16px]">
         <BarChart 
           data={data} 
           margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
