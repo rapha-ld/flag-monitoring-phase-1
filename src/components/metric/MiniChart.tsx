@@ -1,7 +1,9 @@
+
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
 import CustomTooltip from '../chart/CustomTooltip';
+import { getTimestampPositions } from '@/utils/chartUtils';
 
 interface MiniChartProps { 
   title: string; 
@@ -13,6 +15,8 @@ interface MiniChartProps {
   falseColor: string;
   factor: number;
   maxYValue?: number; // Optional prop for shared y-axis scaling
+  selectedTimestamp?: Date | null;
+  selectedTimestamps?: Date[] | null;
 }
 
 const MiniChart: React.FC<MiniChartProps> = ({ 
@@ -24,7 +28,9 @@ const MiniChart: React.FC<MiniChartProps> = ({
   trueColor,
   falseColor,
   factor,
-  maxYValue
+  maxYValue,
+  selectedTimestamp,
+  selectedTimestamps
 }) => {
   const localMaxValue = Math.max(...data.map(d => 
     Math.max(
@@ -45,8 +51,15 @@ const MiniChart: React.FC<MiniChartProps> = ({
   
   const tooltipValueFormatter = (value: number) => `${value}`;
   
+  // Calculate positions for vertical lines based on selected timestamps
+  const referenceLinePositions = getTimestampPositions(
+    data,
+    selectedTimestamp,
+    selectedTimestamps
+  );
+  
   return (
-    <Card className="p-3 h-32 transition-all duration-300 hover:shadow-md chart-container">
+    <Card className="p-3 h-32 transition-all duration-300 hover:shadow-md chart-container border-none">
       <div className="text-xs font-semibold mb-1 truncate">{title}</div>
       <div className="text-xs text-muted-foreground mb-2">{version}</div>
       <ResponsiveContainer width="100%" height={70} className="mb-[-8px]">
@@ -84,6 +97,17 @@ const MiniChart: React.FC<MiniChartProps> = ({
             isAnimationActive={false}
             position={{ y: -75 }}  // Move the tooltip 75px higher
           />
+          
+          {/* Render vertical reference lines for the selected timestamps */}
+          {referenceLinePositions.map((position, index) => (
+            <ReferenceLine
+              key={`ref-line-${index}`}
+              x={position.x}
+              stroke="#6B7280"
+              strokeWidth={1}
+              strokeDasharray="3 3"
+            />
+          ))}
           
           {showTrue && (
             <Bar 
