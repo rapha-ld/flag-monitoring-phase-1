@@ -80,7 +80,7 @@ const MetricCard = ({
     <Card className={cn(
       "overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", 
       className,
-      metricType === 'evaluations' && breakdownEnabled ? 'h-[500px]' : ''
+      metricType === 'evaluations' && breakdownEnabled ? 'h-[522px]' : ''
     )}>
       <div className="flex justify-between items-center">
         <MetricCardHeader 
@@ -124,10 +124,7 @@ const MetricCard = ({
         </div>
       )}
 
-      <CardContent className={cn(
-        "p-0",
-        breakdownEnabled && showBreakdownToggle ? "h-[400px]" : ""
-      )}>
+      <CardContent className="p-0">
         {breakdownEnabled && showBreakdownToggle ? (
           <ChartBreakdown 
             type={breakdownType} 

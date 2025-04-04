@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
@@ -51,6 +52,7 @@ const MiniChart: React.FC<MiniChartProps> = ({
   
   const tooltipValueFormatter = (value: number) => `${value}`;
   
+  // Function to find data points closest to selected timestamps
   const findSelectedDataPoints = () => {
     if ((!selectedTimestamp && !selectedTimestamps) || data.length === 0) return null;
     
@@ -97,85 +99,84 @@ const MiniChart: React.FC<MiniChartProps> = ({
   const textGray = '#545A62';
 
   return (
-    <Card className="p-3 h-full flex flex-col transition-all duration-300 hover:shadow-md chart-container" style={{ minHeight: '120px', maxHeight: '140px' }}>
+    <Card className="p-3 h-32 transition-all duration-300 hover:shadow-md chart-container">
       <div className="text-xs font-semibold mb-1 truncate">{title}</div>
       <div className="text-xs text-muted-foreground mb-2">{version}</div>
-      <div className="flex-grow" style={{ minHeight: '70px', maxHeight: '90px' }}>
-        <ResponsiveContainer width="100%" height="100%" minHeight={70}>
-          <BarChart 
-            data={data} 
-            margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-            barSize={6}
-            barGap={0}
-          >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-            <XAxis 
-              dataKey="name" 
-              tick={false} 
-              axisLine={false} 
-              tickLine={false} 
-            />
-            <YAxis 
-              domain={[0, yAxisMax]} 
-              tick={false} 
-              axisLine={false} 
-              tickLine={false} 
-              width={0}
-            />
-            <Tooltip 
-              content={
-                <CustomTooltip 
-                  tooltipValueFormatter={tooltipValueFormatter}
-                  tooltipLabelFormatter={tooltipLabelFormatter}
-                  showTrue={showTrue}
-                  showFalse={showFalse}
-                  chartType="stacked"
-                  metricType="evaluations"
-                />
-              }
+      <ResponsiveContainer width="100%" height={70} className="mb-[-8px]">
+        <BarChart 
+          data={data} 
+          margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+          barSize={6}
+          barGap={0}
+        >
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+          <XAxis 
+            dataKey="name" 
+            tick={false} 
+            axisLine={false} 
+            tickLine={false} 
+          />
+          <YAxis 
+            domain={[0, yAxisMax]} 
+            tick={false} 
+            axisLine={false} 
+            tickLine={false} 
+            width={0}
+          />
+          <Tooltip 
+            content={
+              <CustomTooltip 
+                tooltipValueFormatter={tooltipValueFormatter}
+                tooltipLabelFormatter={tooltipLabelFormatter}
+                showTrue={showTrue}
+                showFalse={showFalse}
+                chartType="stacked"
+                metricType="evaluations"
+              />
+            }
+            isAnimationActive={false}
+            position={{ y: -75 }}  // Move the tooltip 75px higher
+          />
+          
+          {/* Add reference lines for selected timestamps */}
+          {hasSelectedPoints && selectedPoints.map((point, index) => {
+            const eventName = determineEventName(point.exactTime);
+            const formattedDate = format(point.exactTime, "MMM d");
+            
+            return (
+              <ReferenceLine
+                key={`selected-time-mini-${index}`}
+                x={point.name}
+                stroke={textGray}
+                strokeWidth={1.5}
+                ifOverflow="extendDomain"
+              />
+            );
+          })}
+          
+          {showTrue && (
+            <Bar 
+              dataKey="valueTrue" 
+              name="True"
+              stackId="a"
+              fill={trueColor} 
+              radius={[1, 1, 0, 0]} 
               isAnimationActive={false}
-              position={{ y: -75 }}
             />
-            
-            {hasSelectedPoints && selectedPoints.map((point, index) => {
-              const eventName = determineEventName(point.exactTime);
-              const formattedDate = format(point.exactTime, "MMM d");
-              
-              return (
-                <ReferenceLine
-                  key={`selected-time-mini-${index}`}
-                  x={point.name}
-                  stroke={textGray}
-                  strokeWidth={1.5}
-                  ifOverflow="extendDomain"
-                />
-              );
-            })}
-            
-            {showTrue && (
-              <Bar 
-                dataKey="valueTrue" 
-                name="True"
-                stackId="a"
-                fill={trueColor} 
-                radius={[1, 1, 0, 0]} 
-                isAnimationActive={false}
-              />
-            )}
-            
-            {showFalse && (
-              <Bar 
-                dataKey="valueFalse" 
-                name="False"
-                stackId="a"
-                fill={falseColor} 
-                radius={showTrue ? [0, 0, 0, 0] : [1, 1, 0, 0]} 
-                isAnimationActive={false}
-              />
-            )}
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+          )}
+          
+          {showFalse && (
+            <Bar 
+              dataKey="valueFalse" 
+              name="False"
+              stackId="a"
+              fill={falseColor} 
+              radius={showTrue ? [0, 0, 0, 0] : [1, 1, 0, 0]} 
+              isAnimationActive={false}
+            />
+          )}
+        </BarChart>
+      </ResponsiveContainer>
     </Card>
   );
 };
