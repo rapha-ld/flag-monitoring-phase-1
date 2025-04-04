@@ -97,7 +97,7 @@ const MiniChart: React.FC<MiniChartProps> = ({
   const textGray = '#545A62';
 
   return (
-    <Card className="p-3 h-[120px] transition-all duration-300 hover:shadow-md chart-container">
+    <Card className="p-3 h-[116px] transition-all duration-300 hover:shadow-md chart-container">
       <div className="text-xs font-semibold mb-1 truncate">{title}</div>
       <div className="text-xs text-muted-foreground mb-2">{version}</div>
       <ResponsiveContainer width="100%" height={70} className="mb-[-8px]">
