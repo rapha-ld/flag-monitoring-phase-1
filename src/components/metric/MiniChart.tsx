@@ -102,8 +102,8 @@ const MiniChart: React.FC<MiniChartProps> = ({
     <Card className="p-3 h-full flex flex-col transition-all duration-300 hover:shadow-md chart-container">
       <div className="text-xs font-semibold mb-1 truncate">{title}</div>
       <div className="text-xs text-muted-foreground mb-2">{version}</div>
-      <div className="flex-grow" style={{ minHeight: '50px', maxHeight: '100px' }}>
-        <ResponsiveContainer width="100%" height="100%" minHeight={50} maxHeight={100}>
+      <div className="flex-grow" style={{ minHeight: '70px' }}>
+        <ResponsiveContainer width="100%" height="100%" minHeight={70}>
           <BarChart 
             data={data} 
             margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
