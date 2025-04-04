@@ -52,7 +52,7 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
   }, [chartData, type, showTrue, showFalse]);
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3 h-full">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3 h-full overflow-y-auto" style={{ maxHeight: '460px' }}>
       {breakdowns.map((item, index) => (
         <MiniChart 
           key={`${type}-${index}`} 

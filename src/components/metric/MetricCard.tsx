@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -124,7 +125,10 @@ const MetricCard = ({
         </div>
       )}
 
-      <CardContent className="p-0">
+      <CardContent className={cn(
+        "p-0",
+        breakdownEnabled && showBreakdownToggle ? "h-[420px]" : ""
+      )}>
         {breakdownEnabled && showBreakdownToggle ? (
           <ChartBreakdown 
             type={breakdownType} 
