@@ -127,7 +127,7 @@ const MetricCard = ({
 
       <CardContent className={cn(
         "p-0",
-        breakdownEnabled && showBreakdownToggle ? "h-[420px]" : ""
+        breakdownEnabled && showBreakdownToggle ? "h-[380px]" : ""
       )}>
         {breakdownEnabled && showBreakdownToggle ? (
           <ChartBreakdown 
