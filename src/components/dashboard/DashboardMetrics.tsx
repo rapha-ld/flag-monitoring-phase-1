@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import MetricCard from '@/components/metric/MetricCard';
 import { DataPoint, VersionChange } from '@/components/BarChart';
 import { cn } from '@/lib/utils';
@@ -38,10 +38,8 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   selectedTimestamp,
   selectedTimestamps
 }) => {
-  // Track if breakdown is enabled for evaluations metric
   const [isBreakdownEnabled, setIsBreakdownEnabled] = useState(false);
   
-  // Handle updates from the MetricCard when breakdown is toggled
   const handleBreakdownToggle = (enabled: boolean) => {
     setIsBreakdownEnabled(enabled);
   };
@@ -49,9 +47,8 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   return (
     <div className={cn(
       "grid gap-4",
-      // Dynamic grid layout based on breakdown status
       isBreakdownEnabled
-        ? "grid-cols-3" // Keep 3 columns for the container
+        ? "grid-cols-3"
         : "grid-cols-1 md:grid-cols-3"
     )}>
       {selectedMetrics.includes('evaluations') && (
@@ -59,10 +56,9 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
           title="Evaluations" 
           value={currentMetrics.evaluations.value}
           change={currentMetrics.evaluations.change}
-          info="Total unique users for the selected time period"
+          info="Total evaluations for the selected time period"
           className={cn(
             "animate-slide-up [animation-delay:100ms]",
-            // When breakdown is enabled, make this card span 2/3 columns
             isBreakdownEnabled && "col-span-2"
           )}
           chartData={filteredEvaluationData}
@@ -83,7 +79,6 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
         />
       )}
       
-      {/* Conditional wrapper for the second column when breakdown is enabled */}
       {isBreakdownEnabled ? (
         <div className="flex flex-col gap-4">
           {selectedMetrics.includes('conversion') && (
@@ -138,7 +133,6 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
           )}
         </div>
       ) : (
-        // When breakdown is disabled, render cards normally
         <>
           {selectedMetrics.includes('conversion') && (
             <MetricCard 
