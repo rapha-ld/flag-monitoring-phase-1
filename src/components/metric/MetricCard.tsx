@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -64,16 +63,12 @@ const MetricCard = ({
   const [breakdownEnabled, setBreakdownEnabled] = useState(false);
   const [breakdownType, setBreakdownType] = useState<'application' | 'sdk'>('application');
   
-  // Determine if we should show average values (only for conversion and error rate when both variants selected)
   const showAverage = showTrue && showFalse && (metricType === 'conversion' || metricType === 'errorRate');
   
-  // Get the display value based on the selected variants
   const displayValue = calculateDisplayValue(value, chartData, showTrue, showFalse, metricType);
   
-  // Only show breakdown toggle for evaluations metric
   const showBreakdownToggle = metricType === 'evaluations';
   
-  // Handle breakdown toggle with callback
   const handleBreakdownToggle = (enabled: boolean) => {
     setBreakdownEnabled(enabled);
     if (onBreakdownToggle) {
@@ -82,7 +77,11 @@ const MetricCard = ({
   };
   
   return (
-    <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", className)}>
+    <Card className={cn(
+      "overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", 
+      className,
+      metricType === 'evaluations' && breakdownEnabled ? 'h-[522px]' : ''
+    )}>
       <div className="flex justify-between items-center">
         <MetricCardHeader 
           title={title}
