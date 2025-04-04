@@ -35,6 +35,7 @@ export interface MetricCardProps {
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
+  onBreakdownToggle?: (enabled: boolean) => void;
 }
 
 const MetricCard = ({ 
@@ -57,7 +58,8 @@ const MetricCard = ({
   chartType = 'stacked',
   metricType,
   selectedTimestamp,
-  selectedTimestamps
+  selectedTimestamps,
+  onBreakdownToggle
 }: MetricCardProps) => {
   const [breakdownEnabled, setBreakdownEnabled] = useState(false);
   const [breakdownType, setBreakdownType] = useState<'application' | 'sdk'>('application');
@@ -70,6 +72,14 @@ const MetricCard = ({
   
   // Only show breakdown toggle for evaluations metric
   const showBreakdownToggle = metricType === 'evaluations';
+  
+  // Handle breakdown toggle with callback
+  const handleBreakdownToggle = (enabled: boolean) => {
+    setBreakdownEnabled(enabled);
+    if (onBreakdownToggle) {
+      onBreakdownToggle(enabled);
+    }
+  };
   
   return (
     <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", className)}>
@@ -87,7 +97,7 @@ const MetricCard = ({
             <Toggle 
               size="sm"
               pressed={breakdownEnabled}
-              onPressedChange={setBreakdownEnabled}
+              onPressedChange={handleBreakdownToggle}
               aria-label="Toggle breakdown view"
               className="h-8 px-2 text-xs"
             >

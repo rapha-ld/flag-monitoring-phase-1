@@ -52,7 +52,7 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
   }, [chartData, type, showTrue, showFalse]);
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3 h-full">
       {breakdowns.map((item, index) => (
         <MiniChart 
           key={`${type}-${index}`} 
@@ -64,7 +64,9 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
           trueColor={trueColor}
           falseColor={falseColor}
           factor={item.factor}
-          maxYValue={maxYValue}  // Pass the common max Y value
+          maxYValue={maxYValue}
+          selectedTimestamp={selectedTimestamp}
+          selectedTimestamps={selectedTimestamps}
         />
       ))}
     </div>

@@ -1,7 +1,8 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import MetricCard from '@/components/metric/MetricCard';
 import { DataPoint, VersionChange } from '@/components/BarChart';
+import { cn } from '@/lib/utils';
 
 interface DashboardMetricsProps {
   selectedMetrics: string[];
@@ -38,15 +39,33 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   selectedTimestamp,
   selectedTimestamps
 }) => {
+  // Track if breakdown is enabled for evaluations metric
+  const [isBreakdownEnabled, setIsBreakdownEnabled] = useState(false);
+  
+  // Handle updates from the MetricCard when breakdown is toggled
+  const handleBreakdownToggle = (enabled: boolean) => {
+    setIsBreakdownEnabled(enabled);
+  };
+  
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className={cn(
+      "grid gap-4",
+      // Dynamic grid layout based on breakdown status
+      isBreakdownEnabled
+        ? "grid-cols-3" // Keep 3 columns for the container
+        : "grid-cols-1 md:grid-cols-3"
+    )}>
       {selectedMetrics.includes('evaluations') && (
         <MetricCard 
           title="Unique Users" 
           value={currentMetrics.evaluations.value}
           change={currentMetrics.evaluations.change}
           info="Total unique users for the selected time period"
-          className="animate-slide-up [animation-delay:100ms]"
+          className={cn(
+            "animate-slide-up [animation-delay:100ms]",
+            // When breakdown is enabled, make this card span 2/3 columns
+            isBreakdownEnabled && "col-span-2"
+          )}
           chartData={filteredEvaluationData}
           versionChanges={evaluationVersionChanges.filter(change => 
             change.position < filteredEvaluationData.length
@@ -61,58 +80,118 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
           timeframe={timeframe}
           selectedTimestamp={selectedTimestamp}
           selectedTimestamps={selectedTimestamps}
+          onBreakdownToggle={handleBreakdownToggle}
         />
       )}
       
-      {selectedMetrics.includes('conversion') && (
-        <MetricCard 
-          title="Avg. Checkout Conversion Rate" 
-          value={`${currentMetrics.conversion.value}%`}
-          change={currentMetrics.conversion.change}
-          info="Percentage of checkout completions from initiated sessions"
-          className="animate-slide-up [animation-delay:200ms]"
-          chartData={filteredConversionData}
-          versionChanges={conversionVersionChanges.filter(change => 
-            change.position < filteredConversionData.length
+      {/* Conditional wrapper for the second column when breakdown is enabled */}
+      {isBreakdownEnabled ? (
+        <div className="flex flex-col gap-4">
+          {selectedMetrics.includes('conversion') && (
+            <MetricCard 
+              title="Avg. Checkout Conversion Rate" 
+              value={`${currentMetrics.conversion.value}%`}
+              change={currentMetrics.conversion.change}
+              info="Percentage of checkout completions from initiated sessions"
+              className="animate-slide-up [animation-delay:200ms]"
+              chartData={filteredConversionData}
+              versionChanges={conversionVersionChanges.filter(change => 
+                change.position < filteredConversionData.length
+              )}
+              valueFormatter={(value) => `${value}%`}
+              tooltipValueFormatter={(value) => `${value}%`}
+              barColor="#6E6F96"
+              showTrue={showTrue}
+              showFalse={showFalse}
+              chartType="mixed"
+              metricType="conversion"
+              timeframe={timeframe}
+              selectedTimestamp={selectedTimestamp}
+              selectedTimestamps={selectedTimestamps}
+            />
           )}
-          valueFormatter={(value) => `${value}%`}
-          tooltipValueFormatter={(value) => `${value}%`}
-          barColor="#6E6F96"
-          showTrue={showTrue}
-          showFalse={showFalse}
-          chartType="mixed"
-          metricType="conversion"
-          timeframe={timeframe}
-          selectedTimestamp={selectedTimestamp}
-          selectedTimestamps={selectedTimestamps}
-        />
-      )}
-      
-      {selectedMetrics.includes('errorRate') && (
-        <MetricCard 
-          title="Avg. Error Rate" 
-          value={`${currentMetrics.errorRate.value}%`}
-          change={{
-            value: Math.abs(currentMetrics.errorRate.change.value),
-            trend: currentMetrics.errorRate.change.value < 0 ? 'up' : 'down'
-          }}
-          info="Percentage of requests resulting in error responses"
-          className="animate-slide-up [animation-delay:300ms]"
-          chartData={filteredErrorRateData}
-          versionChanges={errorRateVersionChanges.filter(change => 
-            change.position < filteredErrorRateData.length
+          
+          {selectedMetrics.includes('errorRate') && (
+            <MetricCard 
+              title="Avg. Error Rate" 
+              value={`${currentMetrics.errorRate.value}%`}
+              change={{
+                value: Math.abs(currentMetrics.errorRate.change.value),
+                trend: currentMetrics.errorRate.change.value < 0 ? 'up' : 'down'
+              }}
+              info="Percentage of requests resulting in error responses"
+              className="animate-slide-up [animation-delay:300ms]"
+              chartData={filteredErrorRateData}
+              versionChanges={errorRateVersionChanges.filter(change => 
+                change.position < filteredErrorRateData.length
+              )}
+              valueFormatter={(value) => `${value}%`}
+              tooltipValueFormatter={(value) => `${value}%`}
+              barColor="#6E6F96"
+              showTrue={showTrue}
+              showFalse={showFalse}
+              chartType="mixed"
+              metricType="errorRate"
+              timeframe={timeframe}
+              selectedTimestamp={selectedTimestamp}
+              selectedTimestamps={selectedTimestamps}
+            />
           )}
-          valueFormatter={(value) => `${value}%`}
-          tooltipValueFormatter={(value) => `${value}%`}
-          barColor="#6E6F96"
-          showTrue={showTrue}
-          showFalse={showFalse}
-          chartType="mixed"
-          metricType="errorRate"
-          timeframe={timeframe}
-          selectedTimestamp={selectedTimestamp}
-          selectedTimestamps={selectedTimestamps}
-        />
+        </div>
+      ) : (
+        // When breakdown is disabled, render cards normally
+        <>
+          {selectedMetrics.includes('conversion') && (
+            <MetricCard 
+              title="Avg. Checkout Conversion Rate" 
+              value={`${currentMetrics.conversion.value}%`}
+              change={currentMetrics.conversion.change}
+              info="Percentage of checkout completions from initiated sessions"
+              className="animate-slide-up [animation-delay:200ms]"
+              chartData={filteredConversionData}
+              versionChanges={conversionVersionChanges.filter(change => 
+                change.position < filteredConversionData.length
+              )}
+              valueFormatter={(value) => `${value}%`}
+              tooltipValueFormatter={(value) => `${value}%`}
+              barColor="#6E6F96"
+              showTrue={showTrue}
+              showFalse={showFalse}
+              chartType="mixed"
+              metricType="conversion"
+              timeframe={timeframe}
+              selectedTimestamp={selectedTimestamp}
+              selectedTimestamps={selectedTimestamps}
+            />
+          )}
+          
+          {selectedMetrics.includes('errorRate') && (
+            <MetricCard 
+              title="Avg. Error Rate" 
+              value={`${currentMetrics.errorRate.value}%`}
+              change={{
+                value: Math.abs(currentMetrics.errorRate.change.value),
+                trend: currentMetrics.errorRate.change.value < 0 ? 'up' : 'down'
+              }}
+              info="Percentage of requests resulting in error responses"
+              className="animate-slide-up [animation-delay:300ms]"
+              chartData={filteredErrorRateData}
+              versionChanges={errorRateVersionChanges.filter(change => 
+                change.position < filteredErrorRateData.length
+              )}
+              valueFormatter={(value) => `${value}%`}
+              tooltipValueFormatter={(value) => `${value}%`}
+              barColor="#6E6F96"
+              showTrue={showTrue}
+              showFalse={showFalse}
+              chartType="mixed"
+              metricType="errorRate"
+              timeframe={timeframe}
+              selectedTimestamp={selectedTimestamp}
+              selectedTimestamps={selectedTimestamps}
+            />
+          )}
+        </>
       )}
     </div>
   );

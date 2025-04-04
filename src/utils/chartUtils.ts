@@ -82,3 +82,29 @@ export const processVersionChanges = (
     })
     .filter(change => change.position >= 0);
 };
+
+// Calculate positions for timestamp vertical lines
+export const getTimestampPositions = (
+  data: Array<{name: string}>,
+  timestamps: Date[] | undefined | null
+): number[] => {
+  if (!timestamps || !timestamps.length || !data || !data.length) {
+    return [];
+  }
+  
+  // Convert timestamps to string format for comparison with data names
+  const timestampStrings = timestamps.map(ts => {
+    if (!ts) return '';
+    // Format timestamp to match data name format (depends on how your data is formatted)
+    return ts.toISOString().split('T')[0];
+  }).filter(ts => ts !== '');
+  
+  // Find positions in the data array
+  return timestampStrings.map(tsString => {
+    const position = data.findIndex(item => {
+      // This comparison depends on your data format - adjust as needed
+      return item.name.includes(tsString);
+    });
+    return position >= 0 ? position : -1;
+  }).filter(pos => pos !== -1);
+};
