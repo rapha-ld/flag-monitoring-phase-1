@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import MetricCard from '@/components/metric/MetricCard';
 import { DataPoint, VersionChange } from '@/components/BarChart';
@@ -57,7 +56,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
     )}>
       {selectedMetrics.includes('evaluations') && (
         <MetricCard 
-          title="Unique Users" 
+          title="Evaluations" 
           value={currentMetrics.evaluations.value}
           change={currentMetrics.evaluations.change}
           info="Total unique users for the selected time period"
@@ -89,7 +88,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
         <div className="flex flex-col gap-4">
           {selectedMetrics.includes('conversion') && (
             <MetricCard 
-              title="Avg. Checkout Conversion Rate" 
+              title="Avg. Conversion Rate" 
               value={`${currentMetrics.conversion.value}%`}
               change={currentMetrics.conversion.change}
               info="Percentage of checkout completions from initiated sessions"
@@ -143,7 +142,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
         <>
           {selectedMetrics.includes('conversion') && (
             <MetricCard 
-              title="Avg. Checkout Conversion Rate" 
+              title="Avg. Conversion Rate" 
               value={`${currentMetrics.conversion.value}%`}
               change={currentMetrics.conversion.change}
               info="Percentage of checkout completions from initiated sessions"
