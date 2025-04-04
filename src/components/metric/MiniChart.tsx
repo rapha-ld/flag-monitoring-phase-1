@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
@@ -52,7 +51,6 @@ const MiniChart: React.FC<MiniChartProps> = ({
   
   const tooltipValueFormatter = (value: number) => `${value}`;
   
-  // Function to find data points closest to selected timestamps
   const findSelectedDataPoints = () => {
     if ((!selectedTimestamp && !selectedTimestamps) || data.length === 0) return null;
     
@@ -99,10 +97,10 @@ const MiniChart: React.FC<MiniChartProps> = ({
   const textGray = '#545A62';
 
   return (
-    <Card className="p-3 h-full flex flex-col transition-all duration-300 hover:shadow-md chart-container">
+    <Card className="p-3 h-full flex flex-col transition-all duration-300 hover:shadow-md chart-container" style={{ minHeight: '120px', maxHeight: '140px' }}>
       <div className="text-xs font-semibold mb-1 truncate">{title}</div>
       <div className="text-xs text-muted-foreground mb-2">{version}</div>
-      <div className="flex-grow" style={{ minHeight: '70px' }}>
+      <div className="flex-grow" style={{ minHeight: '70px', maxHeight: '90px' }}>
         <ResponsiveContainer width="100%" height="100%" minHeight={70}>
           <BarChart 
             data={data} 
@@ -139,7 +137,6 @@ const MiniChart: React.FC<MiniChartProps> = ({
               position={{ y: -75 }}
             />
             
-            {/* Add reference lines for selected timestamps */}
             {hasSelectedPoints && selectedPoints.map((point, index) => {
               const eventName = determineEventName(point.exactTime);
               const formattedDate = format(point.exactTime, "MMM d");

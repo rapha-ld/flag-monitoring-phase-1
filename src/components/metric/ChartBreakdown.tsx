@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { DataPoint } from '../BarChart';
 import MiniChart from './MiniChart';
@@ -24,7 +23,6 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
   const trueColor = '#2BB7D2';
   const falseColor = '#FFD099';
   
-  // Use useMemo to avoid recomputing breakdowns on each render
   const { breakdowns, maxYValue } = useMemo(() => {
     const getBreakdowns = type === 'application' 
       ? getApplicationBreakdowns 
@@ -32,7 +30,6 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
     
     const breakdownData = getBreakdowns(chartData);
     
-    // Calculate the highest value across all charts
     let maxValue = 0;
     breakdownData.forEach(item => {
       item.data.forEach(d => {
@@ -45,14 +42,13 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
       });
     });
     
-    // Add 10% padding to the max value
     maxValue = maxValue * 1.1;
     
     return { breakdowns: breakdownData, maxYValue: maxValue };
   }, [chartData, type, showTrue, showFalse]);
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3 h-full overflow-y-auto" style={{ maxHeight: '460px' }}>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3 h-full overflow-y-auto" style={{ maxHeight: '420px' }}>
       {breakdowns.map((item, index) => (
         <MiniChart 
           key={`${type}-${index}`} 

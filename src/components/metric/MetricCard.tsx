@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -81,7 +80,7 @@ const MetricCard = ({
     <Card className={cn(
       "overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", 
       className,
-      metricType === 'evaluations' && breakdownEnabled ? 'h-[522px]' : ''
+      metricType === 'evaluations' && breakdownEnabled ? 'h-[500px]' : ''
     )}>
       <div className="flex justify-between items-center">
         <MetricCardHeader 
@@ -127,7 +126,7 @@ const MetricCard = ({
 
       <CardContent className={cn(
         "p-0",
-        breakdownEnabled && showBreakdownToggle ? "h-[420px]" : ""
+        breakdownEnabled && showBreakdownToggle ? "h-[400px]" : ""
       )}>
         {breakdownEnabled && showBreakdownToggle ? (
           <ChartBreakdown 
