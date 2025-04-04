@@ -32,10 +32,13 @@ export const getFilteredData = (
   
   // Make sure names match exactly with our required dates and ensure minimum values with variation
   const sortedResult = result.map((item, index) => {
-    // Use either the existing value or generate a small random value between 1-5
-    const value = item.value !== undefined && item.value > 1 
+    // Use either the existing value or generate a small random value between 15-25
+    // For evaluation charts, ensure minimum value is 15
+    const minValue = 15;
+    const maxRandomVariation = 10;
+    const value = item.value !== undefined && item.value >= minValue 
       ? item.value 
-      : 1 + Math.floor(Math.random() * 4); // Random value between 1-5
+      : minValue + Math.floor(Math.random() * maxRandomVariation); // Random value between 15-25
     
     return {
       ...item,
@@ -129,13 +132,13 @@ export const calculateMetrics = (
 // Process the data to ensure true/false values and calculate averages properly
 export const processTrueFalseValues = (data: any[]) => {
   return data.map(item => {
-    // Get the value, ensuring it's not too small
-    const value = item.value !== undefined ? item.value : (1 + Math.floor(Math.random() * 4));
+    // Get the value, ensuring it's not below minimum (15 for evaluations)
+    const value = item.value !== undefined ? Math.max(item.value, 15) : (15 + Math.floor(Math.random() * 10));
     
     // Calculate true/false values with slight randomness
     const trueRatio = 0.5 + (Math.random() * 0.2); // Between 50-70% true
-    const trueValue = Math.max(Math.round(value * trueRatio), 1);
-    const falseValue = Math.max(Math.round(value * (1 - trueRatio)), 1);
+    const trueValue = Math.max(Math.round(value * trueRatio), 8); // Ensure true values are at least 8
+    const falseValue = Math.max(Math.round(value * (1 - trueRatio)), 7); // Ensure false values are at least 7
     
     return {
       ...item,
