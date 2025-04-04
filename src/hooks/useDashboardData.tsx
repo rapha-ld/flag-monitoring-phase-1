@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { 
   evaluationData, 
@@ -53,13 +54,13 @@ export const useDashboardData = () => {
     
     console.log(`Filtering data for ${days} days`);
     
-    const filteredEval = getFilteredData(evaluationData, days, environment, selectedDevice);
-    const filteredConv = getFilteredData(conversionData, days, environment, selectedDevice);
-    const filteredError = getFilteredData(errorRateData, days, environment, selectedDevice);
+    const filteredEval = getFilteredData(evaluationData, days, environment, selectedDevice, 'evaluations');
+    const filteredConv = getFilteredData(conversionData, days, environment, selectedDevice, 'conversion');
+    const filteredError = getFilteredData(errorRateData, days, environment, selectedDevice, 'errorRate');
     
-    const processedEval = processTrueFalseValues(filteredEval);
-    const processedConv = processTrueFalseValues(filteredConv);
-    const processedError = processTrueFalseValues(filteredError);
+    const processedEval = processTrueFalseValues(filteredEval, 'evaluations');
+    const processedConv = processTrueFalseValues(filteredConv, 'conversion');
+    const processedError = processTrueFalseValues(filteredError, 'errorRate');
     
     console.log(`Processed eval data length: ${processedEval.length}`);
     

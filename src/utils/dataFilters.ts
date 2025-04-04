@@ -6,7 +6,8 @@ export const getFilteredData = (
   data: any[], 
   days: number, 
   environment: string = 'production',
-  device: string = 'all'
+  device: string = 'all',
+  metricType?: string
 ) => {
   // First filter by environment if specified
   const envFilteredData = environment === 'all' 
@@ -32,13 +33,22 @@ export const getFilteredData = (
   
   // Make sure names match exactly with our required dates and ensure minimum values with variation
   const sortedResult = result.map((item, index) => {
-    // Use either the existing value or generate a small random value between 15-25
-    // For evaluation charts, ensure minimum value is 15
-    const minValue = 15;
-    const maxRandomVariation = 10;
-    const value = item.value !== undefined && item.value >= minValue 
-      ? item.value 
-      : minValue + Math.floor(Math.random() * maxRandomVariation); // Random value between 15-25
+    // Apply different minimums based on metric type
+    let value = item.value;
+    
+    // Only apply the 15+ minimum to evaluation data
+    if (metricType === 'evaluations') {
+      const minValue = 15;
+      const maxRandomVariation = 10;
+      value = item.value !== undefined && item.value >= minValue 
+        ? item.value 
+        : minValue + Math.floor(Math.random() * maxRandomVariation); // Random value between 15-25
+    } else {
+      // For other metrics, use either the existing value or a small random value
+      value = item.value !== undefined && item.value > 1 
+        ? item.value 
+        : 1 + Math.floor(Math.random() * 4); // Random value between 1-5
+    }
     
     return {
       ...item,
@@ -130,15 +140,28 @@ export const calculateMetrics = (
 };
 
 // Process the data to ensure true/false values and calculate averages properly
-export const processTrueFalseValues = (data: any[]) => {
+export const processTrueFalseValues = (data: any[], metricType?: string) => {
   return data.map(item => {
-    // Get the value, ensuring it's not below minimum (15 for evaluations)
-    const value = item.value !== undefined ? Math.max(item.value, 15) : (15 + Math.floor(Math.random() * 10));
+    let value, trueValue, falseValue;
     
-    // Calculate true/false values with slight randomness
-    const trueRatio = 0.5 + (Math.random() * 0.2); // Between 50-70% true
-    const trueValue = Math.max(Math.round(value * trueRatio), 8); // Ensure true values are at least 8
-    const falseValue = Math.max(Math.round(value * (1 - trueRatio)), 7); // Ensure false values are at least 7
+    // Apply different processing based on metric type
+    if (metricType === 'evaluations') {
+      // For evaluations, ensure minimum value of 15
+      value = item.value !== undefined ? Math.max(item.value, 15) : (15 + Math.floor(Math.random() * 10));
+      
+      // Calculate true/false values with slight randomness
+      const trueRatio = 0.5 + (Math.random() * 0.2); // Between 50-70% true
+      trueValue = Math.max(Math.round(value * trueRatio), 8); // Ensure true values are at least 8
+      falseValue = Math.max(Math.round(value * (1 - trueRatio)), 7); // Ensure false values are at least 7
+    } else {
+      // For other metrics, use normal processing
+      value = item.value !== undefined ? item.value : (1 + Math.floor(Math.random() * 4));
+      
+      // Calculate true/false values with slight randomness
+      const trueRatio = 0.5 + (Math.random() * 0.2); // Between 50-70% true
+      trueValue = Math.max(Math.round(value * trueRatio), 1);
+      falseValue = Math.max(Math.round(value * (1 - trueRatio)), 1);
+    }
     
     return {
       ...item,
