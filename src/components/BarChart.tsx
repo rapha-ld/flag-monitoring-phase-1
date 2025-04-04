@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
 import VersionMarker from './VersionMarker';
@@ -39,18 +39,8 @@ interface BarChartProps {
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
-}
-
-interface ChartViewBox {
-  x?: number;
-  y?: number;
-  width?: number;
-  height?: number;
-  cx?: number;
-  cy?: number;
-  innerRadius?: number;
-  outerRadius?: number;
-  [key: string]: any;
+  hoveredTimestamp?: string | null;
+  onHoverTimestamp?: (timestamp: string | null) => void;
 }
 
 const BarChart = ({
@@ -66,7 +56,9 @@ const BarChart = ({
   chartType = 'stacked',
   metricType,
   selectedTimestamp,
-  selectedTimestamps
+  selectedTimestamps,
+  hoveredTimestamp,
+  onHoverTimestamp
 }: BarChartProps) => {
   const interval = getXAxisInterval(data.length);
   const calculatedBarSize = getBarSize(data.length);
@@ -149,6 +141,18 @@ const BarChart = ({
 
   const getPointOpacity = () => 1;
 
+  const handleMouseMove = (e: any) => {
+    if (e && e.activeLabel && onHoverTimestamp) {
+      onHoverTimestamp(e.activeLabel);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (onHoverTimestamp) {
+      onHoverTimestamp(null);
+    }
+  };
+
   return (
     <div className="w-full h-full">
       <ResponsiveContainer width="100%" height={height}>
@@ -157,6 +161,8 @@ const BarChart = ({
           margin={{ top: 20, right: 10, left: 0, bottom: 0 }}
           barGap={barGap}
           barCategoryGap={barCategoryGap}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
         >
           <CartesianGrid 
             strokeDasharray="3 3" 
@@ -200,6 +206,16 @@ const BarChart = ({
             trigger="hover"
             isAnimationActive={false}
           />
+          
+          {hoveredTimestamp && (
+            <ReferenceLine
+              x={hoveredTimestamp}
+              stroke="#6E6F96"
+              strokeWidth={1}
+              strokeDasharray="3 3"
+              isFront={true}
+            />
+          )}
           
           {referenceLineMarkers.map((marker, index) => (
             <ReferenceLine

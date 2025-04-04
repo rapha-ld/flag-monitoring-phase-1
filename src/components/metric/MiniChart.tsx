@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
@@ -17,6 +18,7 @@ interface MiniChartProps {
   maxYValue?: number; // Optional prop for shared y-axis scaling
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
+  hoveredTimestamp?: string | null;
 }
 
 const MiniChart: React.FC<MiniChartProps> = ({ 
@@ -30,7 +32,8 @@ const MiniChart: React.FC<MiniChartProps> = ({
   factor,
   maxYValue,
   selectedTimestamp,
-  selectedTimestamps
+  selectedTimestamps,
+  hoveredTimestamp
 }) => {
   const localMaxValue = Math.max(...data.map(d => 
     Math.max(
@@ -135,6 +138,17 @@ const MiniChart: React.FC<MiniChartProps> = ({
             isAnimationActive={false}
             position={{ y: -75 }}  // Move the tooltip 75px higher
           />
+          
+          {/* Hovered timestamp reference line */}
+          {hoveredTimestamp && (
+            <ReferenceLine
+              x={hoveredTimestamp}
+              stroke="#6E6F96"
+              strokeWidth={1}
+              strokeDasharray="3 3"
+              isFront={true}
+            />
+          )}
           
           {hasSelectedPoints && selectedPoints.map((point, index) => {
             const eventName = determineEventName(point.exactTime);

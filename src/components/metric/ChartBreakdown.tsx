@@ -11,6 +11,7 @@ interface ChartBreakdownProps {
   showFalse?: boolean;
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
+  hoveredTimestamp?: string | null;
 }
 
 const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
@@ -19,7 +20,8 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
   showTrue = true,
   showFalse = true,
   selectedTimestamp,
-  selectedTimestamps
+  selectedTimestamps,
+  hoveredTimestamp
 }) => {
   const trueColor = '#2BB7D2';
   const falseColor = '#FFD099';
@@ -67,6 +69,7 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
           maxYValue={maxYValue}
           selectedTimestamp={selectedTimestamp}
           selectedTimestamps={selectedTimestamps}
+          hoveredTimestamp={hoveredTimestamp}
         />
       ))}
     </div>

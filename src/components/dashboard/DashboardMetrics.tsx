@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import MetricCard from '@/components/metric/MetricCard';
 import { DataPoint, VersionChange } from '@/components/BarChart';
@@ -39,9 +40,14 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   selectedTimestamps
 }) => {
   const [isBreakdownEnabled, setIsBreakdownEnabled] = useState(false);
+  const [hoveredTimestamp, setHoveredTimestamp] = useState<string | null>(null);
   
   const handleBreakdownToggle = (enabled: boolean) => {
     setIsBreakdownEnabled(enabled);
+  };
+  
+  const handleHoverTimestamp = (timestamp: string | null) => {
+    setHoveredTimestamp(timestamp);
   };
   
   return (
@@ -76,6 +82,8 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
           selectedTimestamp={selectedTimestamp}
           selectedTimestamps={selectedTimestamps}
           onBreakdownToggle={handleBreakdownToggle}
+          hoveredTimestamp={hoveredTimestamp}
+          onHoverTimestamp={handleHoverTimestamp}
         />
       )}
       
@@ -102,6 +110,8 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
               timeframe={timeframe}
               selectedTimestamp={selectedTimestamp}
               selectedTimestamps={selectedTimestamps}
+              hoveredTimestamp={hoveredTimestamp}
+              onHoverTimestamp={handleHoverTimestamp}
             />
           )}
           
@@ -129,6 +139,8 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
               timeframe={timeframe}
               selectedTimestamp={selectedTimestamp}
               selectedTimestamps={selectedTimestamps}
+              hoveredTimestamp={hoveredTimestamp}
+              onHoverTimestamp={handleHoverTimestamp}
             />
           )}
         </div>
@@ -155,6 +167,8 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
               timeframe={timeframe}
               selectedTimestamp={selectedTimestamp}
               selectedTimestamps={selectedTimestamps}
+              hoveredTimestamp={hoveredTimestamp}
+              onHoverTimestamp={handleHoverTimestamp}
             />
           )}
           
@@ -182,6 +196,8 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
               timeframe={timeframe}
               selectedTimestamp={selectedTimestamp}
               selectedTimestamps={selectedTimestamps}
+              hoveredTimestamp={hoveredTimestamp}
+              onHoverTimestamp={handleHoverTimestamp}
             />
           )}
         </>

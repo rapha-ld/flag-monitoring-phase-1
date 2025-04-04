@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -35,6 +36,8 @@ export interface MetricCardProps {
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
   onBreakdownToggle?: (enabled: boolean) => void;
+  hoveredTimestamp?: string | null;
+  onHoverTimestamp?: (timestamp: string | null) => void;
 }
 
 const MetricCard = ({ 
@@ -58,7 +61,9 @@ const MetricCard = ({
   metricType,
   selectedTimestamp,
   selectedTimestamps,
-  onBreakdownToggle
+  onBreakdownToggle,
+  hoveredTimestamp,
+  onHoverTimestamp
 }: MetricCardProps) => {
   const [breakdownEnabled, setBreakdownEnabled] = useState(false);
   const [breakdownType, setBreakdownType] = useState<'application' | 'sdk'>('application');
@@ -133,6 +138,7 @@ const MetricCard = ({
             showFalse={showFalse}
             selectedTimestamp={selectedTimestamp}
             selectedTimestamps={selectedTimestamps}
+            hoveredTimestamp={hoveredTimestamp}
           />
         ) : chartData && chartData.length > 0 ? (
           <BarChart
@@ -149,6 +155,8 @@ const MetricCard = ({
             metricType={metricType}
             selectedTimestamp={selectedTimestamp}
             selectedTimestamps={selectedTimestamps}
+            hoveredTimestamp={hoveredTimestamp}
+            onHoverTimestamp={onHoverTimestamp}
           />
         ) : children}
       </CardContent>
