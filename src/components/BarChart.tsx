@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -7,6 +8,14 @@ import { referenceLineMarkers, thresholdLines } from '@/utils/chartReferenceLine
 import { format } from 'date-fns';
 import BarChartCell from './chart/BarChartCell';
 import { getEventIcon, determineEventName, isPointInSelectedRange, getEventNameFromVersion } from '@/utils/eventUtils';
+
+// Define the ChartViewBox interface used in reference line labels
+interface ChartViewBox {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+}
 
 export interface DataPoint {
   name: string;
