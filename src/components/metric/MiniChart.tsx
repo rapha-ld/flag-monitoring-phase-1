@@ -19,6 +19,7 @@ interface MiniChartProps {
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
   hoveredTimestamp?: string | null;
+  onHoverTimestamp?: (timestamp: string | null) => void;
 }
 
 const MiniChart: React.FC<MiniChartProps> = ({ 
@@ -33,7 +34,8 @@ const MiniChart: React.FC<MiniChartProps> = ({
   maxYValue,
   selectedTimestamp,
   selectedTimestamps,
-  hoveredTimestamp
+  hoveredTimestamp,
+  onHoverTimestamp
 }) => {
   const localMaxValue = Math.max(...data.map(d => 
     Math.max(
@@ -99,6 +101,18 @@ const MiniChart: React.FC<MiniChartProps> = ({
   const hasSelectedPoints = selectedPoints && selectedPoints.length > 0;
   const textGray = '#545A62';
 
+  const handleMouseMove = (e: any) => {
+    if (e && e.activeLabel && onHoverTimestamp) {
+      onHoverTimestamp(e.activeLabel);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (onHoverTimestamp) {
+      onHoverTimestamp(null);
+    }
+  };
+
   return (
     <Card className="p-3 h-[116px] transition-all duration-300 hover:shadow-md chart-container">
       <div className="text-xs font-semibold mb-1 truncate">{title}</div>
@@ -109,6 +123,8 @@ const MiniChart: React.FC<MiniChartProps> = ({
           margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
           barSize={6}
           barGap={0}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
         >
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
           <XAxis 

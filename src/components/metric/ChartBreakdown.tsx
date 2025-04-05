@@ -12,6 +12,7 @@ interface ChartBreakdownProps {
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
   hoveredTimestamp?: string | null;
+  onHoverTimestamp?: (timestamp: string | null) => void;
 }
 
 const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
@@ -21,7 +22,8 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
   showFalse = true,
   selectedTimestamp,
   selectedTimestamps,
-  hoveredTimestamp
+  hoveredTimestamp,
+  onHoverTimestamp
 }) => {
   const trueColor = '#2BB7D2';
   const falseColor = '#FFD099';
@@ -70,6 +72,7 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
           selectedTimestamp={selectedTimestamp}
           selectedTimestamps={selectedTimestamps}
           hoveredTimestamp={hoveredTimestamp}
+          onHoverTimestamp={onHoverTimestamp}
         />
       ))}
     </div>

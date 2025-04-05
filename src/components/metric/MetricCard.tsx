@@ -81,6 +81,12 @@ const MetricCard = ({
     }
   };
   
+  const handleHoverTimestamp = (timestamp: string | null) => {
+    if (onHoverTimestamp) {
+      onHoverTimestamp(timestamp);
+    }
+  };
+  
   return (
     <Card className={cn(
       "overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", 
@@ -139,6 +145,7 @@ const MetricCard = ({
             selectedTimestamp={selectedTimestamp}
             selectedTimestamps={selectedTimestamps}
             hoveredTimestamp={hoveredTimestamp}
+            onHoverTimestamp={handleHoverTimestamp}
           />
         ) : chartData && chartData.length > 0 ? (
           <BarChart
@@ -156,7 +163,7 @@ const MetricCard = ({
             selectedTimestamp={selectedTimestamp}
             selectedTimestamps={selectedTimestamps}
             hoveredTimestamp={hoveredTimestamp}
-            onHoverTimestamp={onHoverTimestamp}
+            onHoverTimestamp={handleHoverTimestamp}
           />
         ) : children}
       </CardContent>
