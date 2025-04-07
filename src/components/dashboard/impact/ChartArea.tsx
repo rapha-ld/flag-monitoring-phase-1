@@ -74,15 +74,15 @@ const ChartArea: React.FC<ChartAreaProps> = ({
         />
         
         <YAxis
-          domain={[0, 'dataMax']}
+          domain={[0, 80]}
           tick={{ fontSize: 10, fill: '#9CA3AF' }}
           tickLine={false}
           axisLine={false}
-          tickFormatter={(value) => `${value}%`}
+          tickFormatter={(value) => `${value}`}
         />
         
         <Tooltip
-          formatter={(value) => [`${value}%`, 'Impact']}
+          formatter={(value) => [`${value}`, 'Impact']}
           labelFormatter={(label) => label}
           cursor={{ stroke: '#E5E7EB', strokeWidth: 1 }}
         />
@@ -100,7 +100,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({
         <Area
           type="monotone"
           dataKey="value"
-          stroke={IMPACT_COLOR}
+          stroke="#A9AFB4"
           strokeWidth={1.5}
           fillOpacity={1}
           fill="url(#areaFill)"
