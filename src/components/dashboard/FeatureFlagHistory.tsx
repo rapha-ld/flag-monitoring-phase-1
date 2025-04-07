@@ -11,12 +11,14 @@ interface FeatureFlagHistoryProps {
   onEventSelect: (timestamps: Date[] | null) => void;
   selectedTimestamp: Date | null;
   selectedTimestamps: Date[] | null;
+  onHoverTimestamp?: (timestamp: string | null) => void;
 }
 
 const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({ 
   onEventSelect, 
   selectedTimestamp,
-  selectedTimestamps
+  selectedTimestamps,
+  onHoverTimestamp
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
@@ -57,6 +59,7 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
             hoveredRowId={hoveredRowId}
             setHoveredRowId={setHoveredRowId}
             searchQuery={searchQuery}
+            onHoverTimestamp={onHoverTimestamp}
           />
         </TabsContent>
         

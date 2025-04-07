@@ -13,7 +13,8 @@ const HistoryEventTable: React.FC<HistoryEventTableProps> = ({
   lastSelectedId,
   hoveredRowId,
   setHoveredRowId,
-  searchQuery
+  searchQuery,
+  onHoverTimestamp
 }) => {
   const filteredHistoryData = historyData.filter(event => {
     const searchLower = searchQuery.toLowerCase();
@@ -76,6 +77,11 @@ const HistoryEventTable: React.FC<HistoryEventTableProps> = ({
       const hoveredEvent = sortedHistoryData.find(event => event.id === rowId);
       if (hoveredEvent) {
         onEventSelect([hoveredEvent.timestamp]);
+        
+        // Send the formatted timestamp string for chart hover
+        if (onHoverTimestamp) {
+          onHoverTimestamp(hoveredEvent.timestamp.toISOString());
+        }
       }
     }
   };
@@ -86,12 +92,18 @@ const HistoryEventTable: React.FC<HistoryEventTableProps> = ({
     // Clear the hover selection if no rows are selected
     if (selectedRows.length === 0) {
       onEventSelect(null);
+      if (onHoverTimestamp) {
+        onHoverTimestamp(null);
+      }
     }
   };
 
   React.useEffect(() => {
     if (selectedRows.length === 0 && !hoveredRowId) {
       onEventSelect(null);
+      if (onHoverTimestamp) {
+        onHoverTimestamp(null);
+      }
     } else if (selectedRows.length > 0) {
       // When rows are selected, show their timestamps
       const selectedEvents = sortedHistoryData.filter(event => selectedRows.includes(event.id));
@@ -105,9 +117,12 @@ const HistoryEventTable: React.FC<HistoryEventTableProps> = ({
       const hoveredEvent = sortedHistoryData.find(event => event.id === hoveredRowId);
       if (hoveredEvent) {
         onEventSelect([hoveredEvent.timestamp]);
+        if (onHoverTimestamp) {
+          onHoverTimestamp(hoveredEvent.timestamp.toISOString());
+        }
       }
     }
-  }, [selectedRows, hoveredRowId, sortedHistoryData, onEventSelect]);
+  }, [selectedRows, hoveredRowId, sortedHistoryData, onEventSelect, onHoverTimestamp]);
 
   return (
     <Table>

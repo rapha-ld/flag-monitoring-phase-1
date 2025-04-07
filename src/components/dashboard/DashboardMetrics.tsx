@@ -23,6 +23,7 @@ interface DashboardMetricsProps {
   timeframe: string;
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
+  onHoverTimestamp?: (timestamp: string | null) => void;
 }
 
 const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
@@ -38,7 +39,8 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   showFalse,
   timeframe,
   selectedTimestamp,
-  selectedTimestamps
+  selectedTimestamps,
+  onHoverTimestamp
 }) => {
   const [isBreakdownEnabled, setIsBreakdownEnabled] = useState(false);
   const [hoveredTimestamp, setHoveredTimestamp] = useState<string | null>(null);
@@ -49,6 +51,9 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   
   const handleHoverTimestamp = (timestamp: string | null) => {
     setHoveredTimestamp(timestamp);
+    if (onHoverTimestamp) {
+      onHoverTimestamp(timestamp);
+    }
   };
   
   return (
@@ -56,7 +61,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
       "grid gap-4",
       isBreakdownEnabled
         ? "grid-cols-3"
-        : "grid-cols-2" // Changed from "grid-cols-1 md:grid-cols-3" to "grid-cols-2"
+        : "grid-cols-2"
     )}>
       {selectedMetrics.includes('evaluations') && (
         <MetricCard 

@@ -28,4 +28,5 @@ export interface HistoryEventTableProps {
   hoveredRowId: string | null;
   setHoveredRowId: React.Dispatch<React.SetStateAction<string | null>>;
   searchQuery: string;
+  onHoverTimestamp?: (timestamp: string | null) => void;
 }
