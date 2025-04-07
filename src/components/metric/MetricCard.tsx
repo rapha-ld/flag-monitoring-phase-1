@@ -111,7 +111,7 @@ const MetricCard = ({
         
         <div className="flex items-center gap-2 pr-4 pt-4">
           {showVariantFilters && (
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 mr-2">
               <div className="flex items-center space-x-2">
                 <Checkbox 
                   id="filter-true" 
