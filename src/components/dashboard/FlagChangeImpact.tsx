@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -19,6 +20,9 @@ interface FlagChangeImpactProps {
   hoveredTimestamp?: string | null;
 }
 
+// Updated color to #7861C6 as requested
+const IMPACT_COLOR = "#7861C6";
+
 const IMPACT_COLORS = {
   large: "#EF4444", // red-500
   medium: "#F59E0B", // amber-500
@@ -36,6 +40,7 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
   const [selectedImpacts, setSelectedImpacts] = useState<string[]>(['large', 'medium', 'small']);
   const [popoverOpen, setPopoverOpen] = useState(false);
 
+  // Calculate combined data based on selected impacts
   const impactData = chartData.map(point => {
     const dateStr = point.name;
     const index = chartData.indexOf(point);
@@ -44,11 +49,22 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
     const largeFactor = dayOfMonth % 5 * 0.5;
     const mediumFactor = (dayOfMonth + 2) % 4 * 0.7;
     const smallFactor = (dayOfMonth + 4) % 3 * 0.9;
-    return {
+
+    // Generate the basic data points
+    const baseData = {
       name: dateStr,
       large: Math.max(0, (point.valueTrue || 0) * 0.2 + largeFactor),
       medium: Math.max(0, (point.valueTrue || 0) * 0.3 + mediumFactor),
-      small: Math.max(0, (point.valueTrue || 0) * 0.5 + smallFactor)
+      small: Math.max(0, (point.valueTrue || 0) * 0.5 + smallFactor),
+    };
+
+    // Calculate the aggregated value based on selected impacts
+    const aggregateValue = selectedImpacts.reduce((sum, impact) => 
+      sum + (selectedImpacts.includes(impact) ? baseData[impact as keyof typeof baseData] as number : 0), 0);
+
+    return {
+      ...baseData,
+      aggregateValue
     };
   });
 
@@ -160,39 +176,15 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
               } 
             />
             
-            {selectedImpacts.includes('small') && 
-              <Area 
-                type="monotone" 
-                dataKey="small" 
-                stackId="1" 
-                stroke={IMPACT_COLORS.small} 
-                fill={IMPACT_COLORS.small} 
-                fillOpacity={0.6} 
-                name="Small Impact" 
-              />
-            }
-            {selectedImpacts.includes('medium') && 
-              <Area 
-                type="monotone" 
-                dataKey="medium" 
-                stackId="1" 
-                stroke={IMPACT_COLORS.medium} 
-                fill={IMPACT_COLORS.medium} 
-                fillOpacity={0.6} 
-                name="Medium Impact" 
-              />
-            }
-            {selectedImpacts.includes('large') && 
-              <Area 
-                type="monotone" 
-                dataKey="large" 
-                stackId="1" 
-                stroke={IMPACT_COLORS.large} 
-                fill={IMPACT_COLORS.large} 
-                fillOpacity={0.6} 
-                name="Large Impact" 
-              />
-            }
+            {/* Single aggregate area chart instead of stacked areas */}
+            <Area 
+              type="monotone" 
+              dataKey="aggregateValue" 
+              stroke={IMPACT_COLOR} 
+              fill={IMPACT_COLOR} 
+              fillOpacity={0.6} 
+              name="Impact" 
+            />
             
             {timestampPositions.map((position, index) => (
               <ReferenceLine 
