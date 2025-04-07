@@ -1,7 +1,8 @@
+
 import React from 'react';
 const DashboardFooter = () => {
   return <footer className="py-6 text-center text-sm text-textSecondary animate-fade-in [animation-delay:700ms]">
-      <p className="text-xs">Data refreshed every 2min. Last updated: about 1min ago</p>
-    </footer>;
+    {/* Footer intentionally left empty */}
+  </footer>;
 };
 export default DashboardFooter;
