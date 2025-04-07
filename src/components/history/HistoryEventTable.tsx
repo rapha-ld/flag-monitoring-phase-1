@@ -71,11 +71,22 @@ const HistoryEventTable: React.FC<HistoryEventTableProps> = ({
   const handleRowMouseEnter = (rowId: string) => {
     if (selectedRows.length === 0) {
       setHoveredRowId(rowId);
+      
+      // Find the timestamp of the hovered row
+      const hoveredEvent = sortedHistoryData.find(event => event.id === rowId);
+      if (hoveredEvent) {
+        onEventSelect([hoveredEvent.timestamp]);
+      }
     }
   };
 
   const handleRowMouseLeave = () => {
     setHoveredRowId(null);
+    
+    // Clear the hover selection if no rows are selected
+    if (selectedRows.length === 0) {
+      onEventSelect(null);
+    }
   };
 
   React.useEffect(() => {

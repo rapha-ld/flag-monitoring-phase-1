@@ -96,6 +96,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
             selectedTimestamp={selectedTimestamp}
             selectedTimestamps={selectedTimestamps}
             timeframe={timeframe}
+            hoveredTimestamp={hoveredTimestamp}
           />
         </div>
       ) : (
@@ -105,6 +106,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
           selectedTimestamp={selectedTimestamp}
           selectedTimestamps={selectedTimestamps}
           timeframe={timeframe}
+          hoveredTimestamp={hoveredTimestamp}
         />
       )}
     </div>

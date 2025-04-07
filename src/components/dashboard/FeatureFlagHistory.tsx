@@ -32,6 +32,10 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
     }
   };
 
+  const handleEventSelect = (timestamps: Date[] | null) => {
+    onEventSelect(timestamps);
+  };
+
   return (
     <div className="space-y-4 animate-fade-in">
       <Tabs value={activeTab} onValueChange={handleTabChange}>
@@ -45,7 +49,7 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
           />
           
           <HistoryEventTable
-            onEventSelect={onEventSelect}
+            onEventSelect={handleEventSelect}
             selectedRows={selectedRows}
             setSelectedRows={setSelectedRows}
             lastSelectedId={lastSelectedId}
