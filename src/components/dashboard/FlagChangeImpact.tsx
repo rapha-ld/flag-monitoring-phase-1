@@ -1,9 +1,7 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Line, Legend } from 'recharts';
-import { ChevronDown } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -151,7 +149,7 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
               top: 10,
               right: 30,
               left: 0,
-              bottom: 10  // Reduced bottom margin from 20 to 10
+              bottom: 5
             }}
           >
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
