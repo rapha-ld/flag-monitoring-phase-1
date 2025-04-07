@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Line, Legend } from 'recharts';
-import { BarChartHorizontal, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -20,15 +19,13 @@ interface FlagChangeImpactProps {
   hoveredTimestamp?: string | null;
 }
 
-// Updated color to #7861C6 as requested
 const IMPACT_COLOR = "#7861C6";
-// Line color for "This flag" series
-const THIS_FLAG_COLOR = "#3B82F6"; // blue-500
+const THIS_FLAG_COLOR = "#000000";
 
 const IMPACT_COLORS = {
-  large: "#EF4444", // red-500
-  medium: "#F59E0B", // amber-500
-  small: "#10B981" // emerald-500
+  large: "#EF4444",
+  medium: "#F59E0B",
+  small: "#10B981"
 };
 
 const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
@@ -42,7 +39,6 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
   const [selectedImpacts, setSelectedImpacts] = useState<string[]>(['large', 'medium', 'small']);
   const [popoverOpen, setPopoverOpen] = useState(false);
 
-  // Calculate combined data based on selected impacts
   const impactData = chartData.map(point => {
     const dateStr = point.name;
     const index = chartData.indexOf(point);
@@ -52,7 +48,6 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
     const mediumFactor = (dayOfMonth + 2) % 4 * 0.7;
     const smallFactor = (dayOfMonth + 4) % 3 * 0.9;
 
-    // Generate the basic data points
     const baseData = {
       name: dateStr,
       large: Math.max(0, (point.valueTrue || 0) * 0.2 + largeFactor),
@@ -60,11 +55,9 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
       small: Math.max(0, (point.valueTrue || 0) * 0.5 + smallFactor),
     };
 
-    // Calculate the aggregated value based on selected impacts
     const aggregateValue = selectedImpacts.reduce((sum, impact) => 
       sum + (selectedImpacts.includes(impact) ? baseData[impact as keyof typeof baseData] as number : 0), 0);
 
-    // Calculate "This Flag" value - slightly different pattern from the aggregate
     const thisFlagValue = aggregateValue * (0.6 + Math.sin(index * 0.3) * 0.2);
 
     return {
@@ -85,10 +78,9 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
 
   const xAxisInterval = getXAxisInterval(chartData.length);
 
-  // Custom legend renderer
   const CustomLegend = () => {
     return (
-      <div className="flex items-center space-x-4 text-xs pl-6 pb-2">
+      <div className="flex items-center space-x-2 text-xs pl-6 pt-1">
         <div className="flex items-center">
           <div className="h-3 w-3 rounded-sm mr-1.5" style={{ backgroundColor: IMPACT_COLOR, opacity: 0.3 }}></div>
           <span>All flags</span>
@@ -110,10 +102,8 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
         
         <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
           <PopoverTrigger asChild>
-            <button className="flex items-center text-sm bg-secondary/50 hover:bg-secondary px-2 py-1 rounded border">
-              <BarChartHorizontal className="h-3.5 w-3.5 mr-1.5" />
+            <button className="flex items-center text-sm bg-secondary/50 hover:bg-secondary px-2 py-1 rounded border text-sm">
               Impact
-              <ChevronDown className="h-3.5 w-3.5 ml-1.5" />
             </button>
           </PopoverTrigger>
           <PopoverContent className="w-[180px] p-2" align="end">
@@ -160,7 +150,7 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
               top: 10,
               right: 30,
               left: 0,
-              bottom: 30 // Increased to make room for the legend
+              bottom: 20
             }}
           >
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
@@ -198,17 +188,15 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
               } 
             />
             
-            {/* Area chart with 30% opacity */}
             <Area 
               type="monotone" 
               dataKey="aggregateValue" 
               stroke={IMPACT_COLOR} 
               fill={IMPACT_COLOR} 
-              fillOpacity={0.3} 
+              fillOpacity={0.2} 
               name="All flags" 
             />
             
-            {/* Line chart representing "This flag" */}
             <Line
               type="monotone"
               dataKey="thisFlagValue"
@@ -240,7 +228,6 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
           </AreaChart>
         </ResponsiveContainer>
         
-        {/* Custom legend */}
         <CustomLegend />
       </CardContent>
     </Card>
