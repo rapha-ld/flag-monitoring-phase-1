@@ -78,11 +78,11 @@ const ChartArea: React.FC<ChartAreaProps> = ({
           tick={{ fontSize: 10, fill: '#9CA3AF' }}
           tickLine={false}
           axisLine={false}
-          tickFormatter={(value) => `${value}`}
+          tickFormatter={(value) => `${Math.round(value)}`}
         />
         
         <Tooltip
-          formatter={(value) => [`${value}`, 'Impact']}
+          formatter={(value) => [`${Math.round(Number(value))}`, 'Impact']}
           labelFormatter={(label) => label}
           cursor={{ stroke: '#E5E7EB', strokeWidth: 1 }}
         />

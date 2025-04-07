@@ -24,6 +24,8 @@ interface DashboardMetricsProps {
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
+  onToggleTrue?: () => void;
+  onToggleFalse?: () => void;
 }
 
 const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
@@ -40,7 +42,9 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   timeframe,
   selectedTimestamp,
   selectedTimestamps,
-  onHoverTimestamp
+  onHoverTimestamp,
+  onToggleTrue,
+  onToggleFalse
 }) => {
   const [isBreakdownEnabled, setIsBreakdownEnabled] = useState(false);
   const [hoveredTimestamp, setHoveredTimestamp] = useState<string | null>(null);
@@ -94,6 +98,8 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
             onBreakdownToggle={handleBreakdownToggle}
             hoveredTimestamp={hoveredTimestamp}
             onHoverTimestamp={handleHoverTimestamp}
+            onToggleTrue={onToggleTrue}
+            onToggleFalse={onToggleFalse}
           />
         )}
         

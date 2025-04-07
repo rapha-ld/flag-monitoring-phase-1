@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import NavTabs from './NavTabs';
@@ -5,7 +6,6 @@ import Breadcrumb from './header/Breadcrumb';
 import EnvironmentSelector from './header/EnvironmentSelector';
 import DeviceSelector from './header/DeviceSelector';
 import TimeframeSelector from './header/TimeframeSelector';
-import VariantFilters from './header/VariantFilters';
 import MetricsSelector from './header/MetricsSelector';
 
 interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -70,13 +70,6 @@ const Header = ({
         <TimeframeSelector 
           timeframe={timeframe} 
           onTimeframeChange={onTimeframeChange} 
-        />
-
-        <VariantFilters 
-          showTrue={showTrue}
-          showFalse={showFalse}
-          onToggleTrue={onToggleTrue}
-          onToggleFalse={onToggleFalse}
         />
         
         <MetricsSelector 
