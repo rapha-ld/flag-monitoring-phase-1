@@ -1,7 +1,8 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Line, Legend } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Line } from 'recharts';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -79,7 +80,7 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
 
   const CustomLegend = () => {
     return (
-      <div className="flex items-center space-x-2 text-xs pl-6 pt-1">
+      <div className="flex items-center space-x-2 text-xs pl-[28px] pt-1"> {/* Moved 22px to the right */}
         <div className="flex items-center">
           <div className="h-3 w-3 rounded-sm mr-1.5" style={{ backgroundColor: IMPACT_COLOR, opacity: 0.3 }}></div>
           <span>All flags</span>
@@ -201,7 +202,7 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
               dataKey="thisFlagValue"
               stroke={THIS_FLAG_COLOR}
               strokeWidth={2}
-              dot={false}
+              dot={true} // Added dots to show data points
               name="This flag"
             />
             
@@ -234,3 +235,4 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
 };
 
 export default FlagChangeImpact;
+
