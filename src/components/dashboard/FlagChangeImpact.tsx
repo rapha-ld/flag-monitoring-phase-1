@@ -43,7 +43,6 @@ const FlagChangeImpact = ({
         selectedTimestamp={selectedTimestamp}
         selectedTimestamps={selectedTimestamps}
         timeframe={timeframe}
-        hoveredTimestamp={null}
       />
       
       <CustomLegend />

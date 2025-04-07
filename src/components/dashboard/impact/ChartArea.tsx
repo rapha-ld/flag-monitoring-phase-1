@@ -12,7 +12,6 @@ interface ChartAreaProps {
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
   timeframe: string;
-  hoveredTimestamp: string | null;
 }
 
 const ChartArea: React.FC<ChartAreaProps> = ({
@@ -20,7 +19,6 @@ const ChartArea: React.FC<ChartAreaProps> = ({
   selectedTimestamp,
   selectedTimestamps,
   timeframe,
-  hoveredTimestamp,
 }) => {
   const xAxisInterval = getXAxisInterval(chartData.length);
   const barSize = getBarSize(chartData.length);
