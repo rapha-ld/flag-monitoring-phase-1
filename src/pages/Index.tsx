@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from "@/lib/utils";
 import Header from '@/components/Header';
@@ -60,6 +59,7 @@ const Index = () => {
             showFalse={showFalse}
             onToggleTrue={handleToggleTrue}
             onToggleFalse={handleToggleFalse}
+            metricsButtonVisible={false}
           />
           
           <DashboardMetrics 
@@ -78,10 +78,8 @@ const Index = () => {
             selectedTimestamps={selectedTimestamps}
           />
           
-          {/* Footer moved between charts and history table */}
           <DashboardFooter />
           
-          {/* Feature Flag History table */}
           <FeatureFlagHistory 
             onEventSelect={handleTimestampSelect} 
             selectedTimestamp={selectedTimestamp}

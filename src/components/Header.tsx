@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import NavTabs from './NavTabs';
@@ -24,6 +23,7 @@ interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   showFalse?: boolean;
   onToggleTrue?: () => void;
   onToggleFalse?: () => void;
+  metricsButtonVisible?: boolean;
 }
 
 const Header = ({ 
@@ -41,6 +41,7 @@ const Header = ({
   showFalse = false,
   onToggleTrue = () => {},
   onToggleFalse = () => {},
+  metricsButtonVisible = true,
   className, 
   ...props 
 }: HeaderProps) => {
@@ -83,6 +84,7 @@ const Header = ({
           onMetricsChange={onMetricsChange}
           hiddenMetrics={hiddenMetrics}
           onMetricVisibilityChange={onMetricVisibilityChange}
+          isVisible={metricsButtonVisible}
         />
       </div>
     </header>

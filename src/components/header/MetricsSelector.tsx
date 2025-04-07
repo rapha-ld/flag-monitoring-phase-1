@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { BarChart3, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,13 +11,16 @@ interface MetricsSelectorProps {
   onMetricsChange: (metrics: string[]) => void;
   hiddenMetrics: string[];
   onMetricVisibilityChange: (metric: string, visible: boolean) => void;
+  isVisible?: boolean; // New prop to control visibility
 }
 
 const MetricsSelector = ({
   selectedMetrics,
   onMetricsChange,
   hiddenMetrics,
-  onMetricVisibilityChange
+  onMetricVisibilityChange,
+  isVisible = true, // Default to visible, but can be hidden
+  ...props
 }: MetricsSelectorProps) => {
   const [metricsOpen, setMetricsOpen] = useState(false);
   const [metricModalOpen, setMetricModalOpen] = useState(false);
@@ -40,6 +42,9 @@ const MetricsSelector = ({
     if (metric === 'errorRate') return 'Avg. Error Rate';
     return metric.charAt(0).toUpperCase() + metric.slice(1).replace(/([A-Z])/g, ' $1');
   };
+
+  // If not visible, return null to hide the entire component
+  if (!isVisible) return null;
 
   return <div className="ml-auto">
       <Popover open={metricsOpen} onOpenChange={setMetricsOpen}>
