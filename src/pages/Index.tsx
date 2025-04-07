@@ -31,6 +31,8 @@ const Index = () => {
     handleTimeframeChange,
     handleEnvironmentChange,
     handleDeviceChange,
+    handleMetricsChange,
+    handleMetricVisibilityChange,
     handleToggleTrue,
     handleToggleFalse,
     handleTimestampSelect
@@ -50,6 +52,10 @@ const Index = () => {
             onEnvironmentChange={handleEnvironmentChange}
             selectedDevice={selectedDevice}
             onDeviceChange={handleDeviceChange}
+            selectedMetrics={selectedMetrics}
+            onMetricsChange={handleMetricsChange}
+            hiddenMetrics={hiddenMetrics}
+            onMetricVisibilityChange={handleMetricVisibilityChange}
             showTrue={showTrue}
             showFalse={showFalse}
             onToggleTrue={handleToggleTrue}
@@ -88,4 +94,3 @@ const Index = () => {
 };
 
 export default Index;
-

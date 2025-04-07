@@ -1,88 +1,133 @@
 
-import { useState, useCallback, useMemo } from 'react';
-import { evaluationData } from '@/data/evaluationData';
-import { conversionData } from '@/data/conversionData';
-import { errorRateData } from '@/data/errorRateData';
+import { useEffect, useState } from 'react';
+import { 
+  evaluationData, 
+  evaluationVersionChanges,
+  conversionData,
+  conversionVersionChanges,
+  errorRateData,
+  errorRateVersionChanges,
+  getFilteredData,
+  calculateMetrics
+} from '@/data/chartData';
+import { processTrueFalseValues } from '@/utils/dataFilters';
 import { DataPoint } from '@/components/BarChart';
-import { filterData } from '@/utils/dataFilters';
 
 export const useDashboardData = () => {
-  const [isLoaded, setIsLoaded] = useState(true);
-  const [timeframe, setTimeframe] = useState('7d');
-  const [environment, setEnvironment] = useState('production');
-  const [selectedDevice, setSelectedDevice] = useState('all');
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [timeframe, setTimeframe] = useState("30d");
+  const [environment, setEnvironment] = useState("production");
+  const [selectedDevice, setSelectedDevice] = useState("all");
+  const [selectedMetrics, setSelectedMetrics] = useState(['evaluations', 'conversion']);
+  const [hiddenMetrics, setHiddenMetrics] = useState<string[]>([]);
   const [showTrue, setShowTrue] = useState(true);
-  const [showFalse, setShowFalse] = useState(false);
+  const [showFalse, setShowFalse] = useState(true);
+  const [filteredEvaluationData, setFilteredEvaluationData] = useState<DataPoint[]>(evaluationData);
+  const [filteredConversionData, setFilteredConversionData] = useState<DataPoint[]>(conversionData);
+  const [filteredErrorRateData, setFilteredErrorRateData] = useState<DataPoint[]>(errorRateData);
   const [selectedTimestamp, setSelectedTimestamp] = useState<Date | null>(null);
   const [selectedTimestamps, setSelectedTimestamps] = useState<Date[] | null>(null);
-
-  // Hardcoded default metrics
-  const selectedMetrics = ['evaluations', 'conversion', 'errorRate'];
-  const hiddenMetrics: string[] = [];
-
-  const handleTimeframeChange = useCallback((value: string) => {
-    setTimeframe(value);
-  }, []);
-
-  const handleEnvironmentChange = useCallback((value: string) => {
-    setEnvironment(value);
-  }, []);
-
-  const handleDeviceChange = useCallback((value: string) => {
-    setSelectedDevice(value);
-  }, []);
-
-  const handleToggleTrue = useCallback(() => {
-    setShowTrue(!showTrue);
-  }, [showTrue]);
-
-  const handleToggleFalse = useCallback(() => {
-    setShowFalse(!showFalse);
-  }, [showFalse]);
-
-  const handleTimestampSelect = useCallback((timestamp: Date | null, isMultiSelect = false) => {
-    if (isMultiSelect) {
-      setSelectedTimestamps(prev => {
-        if (!prev) return [timestamp!];
-        if (prev.some(t => t.getTime() === timestamp?.getTime())) {
-          return prev.filter(t => t.getTime() !== timestamp?.getTime());
-        }
-        return [...prev, timestamp!];
-      });
-    } else {
-      setSelectedTimestamp(timestamp);
-      setSelectedTimestamps(timestamp ? [timestamp] : null);
-    }
-  }, []);
-
-  const filteredEvaluationData = useMemo(() => 
-    filterData(evaluationData, { timeframe, environment, device: selectedDevice, showTrue, showFalse }), 
-    [timeframe, environment, selectedDevice, showTrue, showFalse]
-  );
-
-  const filteredConversionData = useMemo(() => 
-    filterData(conversionData, { timeframe, environment, device: selectedDevice, showTrue, showFalse }), 
-    [timeframe, environment, selectedDevice, showTrue, showFalse]
-  );
-
-  const filteredErrorRateData = useMemo(() => 
-    filterData(errorRateData, { timeframe, environment, device: selectedDevice, showTrue, showFalse }), 
-    [timeframe, environment, selectedDevice, showTrue, showFalse]
-  );
-
-  const currentMetrics = useMemo(() => {
-    const metrics: { [key: string]: DataPoint[] } = {};
-    if (selectedMetrics.includes('evaluations')) metrics['evaluations'] = filteredEvaluationData;
-    if (selectedMetrics.includes('conversion')) metrics['conversion'] = filteredConversionData;
-    if (selectedMetrics.includes('errorRate')) metrics['errorRate'] = filteredErrorRateData;
-    return metrics;
-  }, [selectedMetrics, filteredEvaluationData, filteredConversionData, filteredErrorRateData]);
+  const [currentMetrics, setCurrentMetrics] = useState({
+    evaluations: { value: 0, change: { value: 0, trend: 'up' as 'up' | 'down' } },
+    conversion: { value: 0, change: { value: 0, trend: 'up' as 'up' | 'down' } },
+    errorRate: { value: 0, change: { value: 0, trend: 'up' as 'up' | 'down' } }
+  });
 
   const visibleMetrics = selectedMetrics.filter(metric => !hiddenMetrics.includes(metric));
-  
-  const evaluationVersionChanges = filteredEvaluationData.filter(point => point.versionChange);
-  const conversionVersionChanges = filteredConversionData.filter(point => point.versionChange);
-  const errorRateVersionChanges = filteredErrorRateData.filter(point => point.versionChange);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    let days = 30; // default
+    
+    if (timeframe.startsWith('custom-')) {
+      days = parseInt(timeframe.replace('custom-', '').replace('d', ''));
+    } else {
+      days = parseInt(timeframe.replace('d', ''));
+    }
+    
+    console.log(`Filtering data for ${days} days`);
+    
+    const filteredEval = getFilteredData(evaluationData, days, environment, selectedDevice, 'evaluations');
+    const filteredConv = getFilteredData(conversionData, days, environment, selectedDevice, 'conversion');
+    const filteredError = getFilteredData(errorRateData, days, environment, selectedDevice, 'errorRate');
+    
+    const processedEval = processTrueFalseValues(filteredEval, 'evaluations');
+    const processedConv = processTrueFalseValues(filteredConv, 'conversion');
+    const processedError = processTrueFalseValues(filteredError, 'errorRate');
+    
+    console.log(`Processed eval data length: ${processedEval.length}`);
+    
+    setFilteredEvaluationData(processedEval);
+    setFilteredConversionData(processedConv);
+    setFilteredErrorRateData(processedError);
+    
+    const metrics = calculateMetrics(filteredEval, filteredConv, filteredError, days);
+    setCurrentMetrics(metrics);
+  }, [timeframe, environment, selectedDevice]);
+
+  const handleTimeframeChange = (value: string) => {
+    setTimeframe(value);
+    setSelectedTimestamp(null);
+    setSelectedTimestamps(null);
+  };
+
+  const handleEnvironmentChange = (value: string) => {
+    setEnvironment(value);
+    setSelectedTimestamp(null);
+    setSelectedTimestamps(null);
+  };
+
+  const handleDeviceChange = (value: string) => {
+    setSelectedDevice(value);
+    setSelectedTimestamp(null);
+    setSelectedTimestamps(null);
+  };
+
+  const handleMetricsChange = (metrics: string[]) => {
+    setSelectedMetrics(metrics);
+  };
+
+  const handleMetricVisibilityChange = (metric: string, visible: boolean) => {
+    setHiddenMetrics(prev => 
+      visible 
+        ? prev.filter(m => m !== metric)
+        : [...prev, metric]
+    );
+  };
+
+  const handleToggleTrue = () => {
+    setShowTrue(!showTrue);
+    if (!showTrue === false && !showFalse) {
+      setShowFalse(true);
+    }
+  };
+
+  const handleToggleFalse = () => {
+    setShowFalse(!showFalse);
+    if (!showFalse === false && !showTrue) {
+      setShowTrue(true);
+    }
+  };
+
+  const handleTimestampSelect = (timestamps: Date[] | null) => {
+    if (!timestamps) {
+      setSelectedTimestamp(null);
+      setSelectedTimestamps(null);
+    } else if (timestamps.length === 1) {
+      setSelectedTimestamp(timestamps[0]);
+      setSelectedTimestamps(null);
+    } else {
+      setSelectedTimestamp(null);
+      setSelectedTimestamps(timestamps);
+    }
+  };
 
   return {
     isLoaded,
@@ -106,9 +151,10 @@ export const useDashboardData = () => {
     handleTimeframeChange,
     handleEnvironmentChange,
     handleDeviceChange,
+    handleMetricsChange,
+    handleMetricVisibilityChange,
     handleToggleTrue,
     handleToggleFalse,
-    handleTimestampSelect,
+    handleTimestampSelect
   };
 };
-

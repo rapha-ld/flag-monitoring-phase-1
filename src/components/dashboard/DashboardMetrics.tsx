@@ -1,24 +1,29 @@
 
-import React from 'react';
+import React, { useState } from 'react';
+import MetricCard from '@/components/metric/MetricCard';
+import { DataPoint, VersionChange } from '@/components/BarChart';
 import { cn } from '@/lib/utils';
-import BarChart from '@/components/BarChart';
 import FlagChangeImpact from './FlagChangeImpact';
-import { DataPoint } from '@/components/BarChart';
 
 interface DashboardMetricsProps {
   selectedMetrics: string[];
-  currentMetrics: { [key: string]: DataPoint[] };
+  currentMetrics: {
+    evaluations: { value: number, change: { value: number, trend: 'up' | 'down' } },
+    conversion: { value: number, change: { value: number, trend: 'up' | 'down' } },
+    errorRate: { value: number, change: { value: number, trend: 'up' | 'down' } }
+  };
   filteredEvaluationData: DataPoint[];
   filteredConversionData: DataPoint[];
   filteredErrorRateData: DataPoint[];
-  evaluationVersionChanges: DataPoint[];
-  conversionVersionChanges: DataPoint[];
-  errorRateVersionChanges: DataPoint[];
+  evaluationVersionChanges: VersionChange[];
+  conversionVersionChanges: VersionChange[];
+  errorRateVersionChanges: VersionChange[];
   showTrue: boolean;
   showFalse: boolean;
   timeframe: string;
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
+  onHoverTimestamp?: (timestamp: string | null) => void;
 }
 
 const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
@@ -34,71 +39,83 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   showFalse,
   timeframe,
   selectedTimestamp,
-  selectedTimestamps
+  selectedTimestamps,
+  onHoverTimestamp
 }) => {
-  const renderMetricCharts = () => {
-    const charts = [];
-
-    if (selectedMetrics.includes('evaluations')) {
-      charts.push(
-        <BarChart
-          key="evaluations"
-          title="Unique Users"
-          data={currentMetrics['evaluations']}
-          versionChanges={evaluationVersionChanges}
-          showTrue={showTrue}
-          showFalse={showFalse}
-          timeframe={timeframe}
-        />
-      );
-    }
-
-    if (selectedMetrics.includes('conversion')) {
-      charts.push(
-        <BarChart
-          key="conversion"
-          title="Flag Change Impact"
-          data={currentMetrics['conversion']}
-          versionChanges={conversionVersionChanges}
-          showTrue={showTrue}
-          showFalse={showFalse}
-          timeframe={timeframe}
-        />
-      );
-    }
-
-    if (selectedMetrics.includes('errorRate')) {
-      charts.push(
-        <BarChart
-          key="errorRate"
-          title="Avg. Error Rate"
-          data={currentMetrics['errorRate']}
-          versionChanges={errorRateVersionChanges}
-          showTrue={showTrue}
-          showFalse={showFalse}
-          timeframe={timeframe}
-        />
-      );
-    }
-
-    return charts;
+  const [isBreakdownEnabled, setIsBreakdownEnabled] = useState(false);
+  const [hoveredTimestamp, setHoveredTimestamp] = useState<string | null>(null);
+  
+  const handleBreakdownToggle = (enabled: boolean) => {
+    setIsBreakdownEnabled(enabled);
   };
-
+  
+  const handleHoverTimestamp = (timestamp: string | null) => {
+    setHoveredTimestamp(timestamp);
+    if (onHoverTimestamp) {
+      onHoverTimestamp(timestamp);
+    }
+  };
+  
   return (
-    <div className={cn("grid gap-6 md:grid-cols-2 lg:grid-cols-3", 
-      selectedMetrics.length === 1 ? "md:grid-cols-1 lg:grid-cols-1" : 
-      selectedMetrics.length === 2 ? "md:grid-cols-2 lg:grid-cols-2" : 
-      "md:grid-cols-2 lg:grid-cols-3")}>
-      {renderMetricCharts()}
+    <div className={cn(
+      "grid gap-4",
+      isBreakdownEnabled
+        ? "grid-cols-3"
+        : "grid-cols-2"
+    )}>
+      {selectedMetrics.includes('evaluations') && (
+        <MetricCard 
+          title="Evaluations" 
+          value={currentMetrics.evaluations.value}
+          change={currentMetrics.evaluations.change}
+          info="Total evaluations for the selected time period"
+          className={cn(
+            "animate-slide-up [animation-delay:100ms]",
+            isBreakdownEnabled && "col-span-2"
+          )}
+          chartData={filteredEvaluationData}
+          versionChanges={evaluationVersionChanges.filter(change => 
+            change.position < filteredEvaluationData.length
+          )}
+          valueFormatter={(value) => `${value}`}
+          tooltipValueFormatter={(value) => `${value}`}
+          barColor="#6E6F96"
+          showTrue={showTrue}
+          showFalse={showFalse}
+          chartType="stacked"
+          metricType="evaluations"
+          timeframe={timeframe}
+          selectedTimestamp={selectedTimestamp}
+          selectedTimestamps={selectedTimestamps}
+          onBreakdownToggle={handleBreakdownToggle}
+          hoveredTimestamp={hoveredTimestamp}
+          onHoverTimestamp={handleHoverTimestamp}
+        />
+      )}
       
-      <FlagChangeImpact 
-        chartData={filteredConversionData} 
-        selectedTimestamp={selectedTimestamp}
-        selectedTimestamps={selectedTimestamps}
-      />
+      {isBreakdownEnabled ? (
+        <div className="flex flex-col gap-4">
+          <FlagChangeImpact
+            chartData={filteredConversionData}
+            className="flex-1 animate-slide-up [animation-delay:200ms]"
+            selectedTimestamp={selectedTimestamp}
+            selectedTimestamps={selectedTimestamps}
+            timeframe={timeframe}
+            hoveredTimestamp={hoveredTimestamp}
+          />
+        </div>
+      ) : (
+        <FlagChangeImpact
+          chartData={filteredConversionData}
+          className="animate-slide-up [animation-delay:200ms]"
+          selectedTimestamp={selectedTimestamp}
+          selectedTimestamps={selectedTimestamps}
+          timeframe={timeframe}
+          hoveredTimestamp={hoveredTimestamp}
+        />
+      )}
     </div>
   );
 };
 
 export default DashboardMetrics;
-
