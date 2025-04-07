@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { DataPoint } from '@/components/BarChart';
 import ChartArea from './impact/ChartArea';
@@ -21,28 +22,38 @@ const FlagChangeImpact = ({
   timeframe,
   hoveredTimestamp
 }: FlagChangeImpactProps) => {
-  // Process data to create the flag impact line (much lower than the area chart)
-  const processedData = chartData.map((data, index) => {
-    // Generate values for "All flags" metric (up to 80)
-    const scaledValue = data.value * (80 / 4); // Scale up the original value to fit in 0-80 range
-    
-    // Generate lower values for "This flag" with some points at 0
-    let flagImpact = 0;
-    if (index % 7 === 0) {
-      // Every 7th point will be 0
-      flagImpact = 0;
-    } else {
-      // Otherwise, make it lower than the main value
-      const ratio = Math.random() * 0.4 + 0.2; // Random between 0.2 and 0.6
-      flagImpact = scaledValue * ratio;
-    }
-    
-    return {
-      ...data,
-      value: scaledValue,
-      flag: flagImpact
-    };
-  });
+  // Process data to create the flag impact line with a distinct pattern
+  // Using useMemo to ensure data doesn't change on hover
+  const processedData = useMemo(() => {
+    return chartData.map((data, index) => {
+      // Generate values for "All flags" metric (up to 80)
+      const scaledValue = data.value * (80 / 4); // Scale up the original value to fit in 0-80 range
+      
+      // Generate a distinct pattern for "This flag" that doesn't follow "All flags" shape
+      let flagImpact = 0;
+      
+      // Create a wave-like pattern that's independent of the main chart shape
+      if (index % 10 === 0 || index % 10 === 9) {
+        // Valleys - near zero
+        flagImpact = Math.random() * 5;
+      } else if (index % 10 === 4 || index % 10 === 5) {
+        // Peaks - higher but still below the main values
+        flagImpact = 20 + Math.random() * 15;
+      } else if (index % 10 === 2 || index % 10 === 7) {
+        // Mid-range values
+        flagImpact = 10 + Math.random() * 10;
+      } else {
+        // Transition values
+        flagImpact = 5 + Math.random() * 15;
+      }
+      
+      return {
+        ...data,
+        value: scaledValue,
+        flag: flagImpact
+      };
+    });
+  }, [chartData]); // Only recompute when chartData changes, not on hover
 
   return (
     <div className={cn("bg-white p-4 rounded-lg shadow-sm border", className)}>
