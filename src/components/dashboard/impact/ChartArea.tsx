@@ -106,6 +106,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({
           fill="url(#areaFill)"
           activeDot={false}
           isAnimationActive={false}
+          style={{ stroke: '#A9AFB4', strokeWidth: '1px' }}
         />
         
         <Line

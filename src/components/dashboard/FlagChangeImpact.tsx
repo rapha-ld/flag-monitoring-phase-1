@@ -1,10 +1,11 @@
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { DataPoint } from '@/components/BarChart';
 import ChartArea from './impact/ChartArea';
 import CustomLegend from './impact/CustomLegend';
 import { historyData } from '@/components/history/historyEventData';
+import ImpactLevelSelector, { ImpactLevel } from './impact/ImpactLevelSelector';
 
 interface FlagChangeImpactProps {
   chartData: DataPoint[];
@@ -23,6 +24,9 @@ const FlagChangeImpact = ({
   timeframe,
   hoveredTimestamp
 }: FlagChangeImpactProps) => {
+  // State for impact level selection (default to all levels selected)
+  const [selectedImpactLevels, setSelectedImpactLevels] = useState<ImpactLevel[]>(['high', 'medium', 'low']);
+
   // Extract all event dates from history data to use for flag impact
   const eventDates = useMemo(() => {
     return historyData.map(event => {
@@ -31,12 +35,24 @@ const FlagChangeImpact = ({
     });
   }, []);
 
+  // Get impact multiplier based on selected levels
+  const getImpactMultiplier = useMemo(() => {
+    let multiplier = 0;
+    
+    if (selectedImpactLevels.includes('high')) multiplier += 1;
+    if (selectedImpactLevels.includes('medium')) multiplier += 0.6;
+    if (selectedImpactLevels.includes('low')) multiplier += 0.3;
+    
+    // Normalize to ensure we don't exceed original scale when all are selected
+    return multiplier / (selectedImpactLevels.length ? selectedImpactLevels.length : 1);
+  }, [selectedImpactLevels]);
+
   // Process data to create the flag impact line with a distinct pattern
   // Using useMemo to ensure data doesn't change on hover
   const processedData = useMemo(() => {
     return chartData.map((data, index) => {
-      // Generate values for "All flags" metric (up to 80)
-      const scaledValue = Math.min(data.value * (80 / 4), 80); // Scale up the original value to fit in 0-80 range, cap at 80
+      // Apply impact multiplier to scale the values based on selected impact levels
+      const scaledValue = Math.min(data.value * (80 / 4) * getImpactMultiplier, 80);
       
       // Check if this data point corresponds to a date that has an event in history
       const dataDate = data.date ? new Date(data.date) : new Date(data.name);
@@ -49,7 +65,7 @@ const FlagChangeImpact = ({
       
       if (hasEventOnDate) {
         // Create value that's always lower than the scaledValue
-        flagImpact = Math.max(5, scaledValue * (0.25 + Math.random() * 0.3)); // Between 25-55% of the main value, minimum 5
+        flagImpact = Math.max(5, scaledValue * (0.25 + Math.random() * 0.3) * getImpactMultiplier);
       }
       
       return {
@@ -58,12 +74,16 @@ const FlagChangeImpact = ({
         flag: flagImpact
       };
     });
-  }, [chartData, eventDates]); // Only recompute when chartData or eventDates change, not on hover
+  }, [chartData, eventDates, getImpactMultiplier]); // Include getImpactMultiplier in dependencies
 
   return (
     <div className={cn("bg-white p-4 rounded-lg shadow-sm border border-gray-200", className)}>
-      <div className="mb-2">
+      <div className="mb-2 flex justify-between items-center">
         <h3 className="font-medium text-sm">Flag Change Impact</h3>
+        <ImpactLevelSelector 
+          selectedLevels={selectedImpactLevels} 
+          onLevelChange={setSelectedImpactLevels} 
+        />
       </div>
       
       <ChartArea 
