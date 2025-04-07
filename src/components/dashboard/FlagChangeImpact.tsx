@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { DataPoint } from '@/components/BarChart';
 import ChartArea from './impact/ChartArea';
 import CustomLegend from './impact/CustomLegend';
+import { historyData } from '@/components/history/historyEventData';
 
 interface FlagChangeImpactProps {
   chartData: DataPoint[];
@@ -22,29 +23,33 @@ const FlagChangeImpact = ({
   timeframe,
   hoveredTimestamp
 }: FlagChangeImpactProps) => {
+  // Extract all event dates from history data to use for flag impact
+  const eventDates = useMemo(() => {
+    return historyData.map(event => {
+      // Format date to match our chart data format (just the date part)
+      return event.timestamp.toISOString().split('T')[0];
+    });
+  }, []);
+
   // Process data to create the flag impact line with a distinct pattern
   // Using useMemo to ensure data doesn't change on hover
   const processedData = useMemo(() => {
     return chartData.map((data, index) => {
       // Generate values for "All flags" metric (up to 80)
-      const scaledValue = data.value * (80 / 4); // Scale up the original value to fit in 0-80 range
+      const scaledValue = Math.min(data.value * (80 / 4), 80); // Scale up the original value to fit in 0-80 range, cap at 80
       
-      // Generate a distinct pattern for "This flag" that doesn't follow "All flags" shape
+      // Check if this data point corresponds to a date that has an event in history
+      const dataDate = data.date ? new Date(data.date) : new Date(data.name);
+      const dataDateStr = dataDate.toISOString().split('T')[0];
+      const hasEventOnDate = eventDates.includes(dataDateStr);
+      
+      // "This flag" will only have values above 0 for dates with events
+      // And those values will always be lower than the "All flags" data
       let flagImpact = 0;
       
-      // Create a wave-like pattern that's independent of the main chart shape
-      if (index % 10 === 0 || index % 10 === 9) {
-        // Valleys - near zero
-        flagImpact = Math.random() * 5;
-      } else if (index % 10 === 4 || index % 10 === 5) {
-        // Peaks - higher but still below the main values
-        flagImpact = 20 + Math.random() * 15;
-      } else if (index % 10 === 2 || index % 10 === 7) {
-        // Mid-range values
-        flagImpact = 10 + Math.random() * 10;
-      } else {
-        // Transition values
-        flagImpact = 5 + Math.random() * 15;
+      if (hasEventOnDate) {
+        // Create value that's always lower than the scaledValue
+        flagImpact = Math.max(5, scaledValue * (0.25 + Math.random() * 0.3)); // Between 25-55% of the main value, minimum 5
       }
       
       return {
@@ -53,10 +58,10 @@ const FlagChangeImpact = ({
         flag: flagImpact
       };
     });
-  }, [chartData]); // Only recompute when chartData changes, not on hover
+  }, [chartData, eventDates]); // Only recompute when chartData or eventDates change, not on hover
 
   return (
-    <div className={cn("bg-white p-4 rounded-lg shadow-sm border", className)}>
+    <div className={cn("bg-white p-4 rounded-lg shadow-sm border border-gray-200", className)}>
       <div className="mb-2">
         <h3 className="font-medium text-sm">Flag Change Impact</h3>
       </div>
