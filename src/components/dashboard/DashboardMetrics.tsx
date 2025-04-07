@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import MetricCard from '@/components/metric/MetricCard';
 import { DataPoint, VersionChange } from '@/components/BarChart';
@@ -62,9 +61,6 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   
   return (
     <>
-      <div className="text-xs text-textSecondary pl-4 pb-2">
-        Data refreshed every 2min. Last updated: about 1min ago
-      </div>
       <div className={cn(
         "grid gap-4",
         isBreakdownEnabled
