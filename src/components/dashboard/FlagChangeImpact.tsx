@@ -80,7 +80,7 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
 
   const CustomLegend = () => {
     return (
-      <div className="flex items-center space-x-2 text-xs ml-8 mt-[-10px]">
+      <div className="flex items-center space-x-2 text-xs ml-8 mt-[-10px] mb-[20px]">
         <div className="flex items-center">
           <div className="h-3 w-3 rounded-sm mr-1.5" style={{ backgroundColor: IMPACT_COLOR, opacity: 0.3 }}></div>
           <span>All flags</span>
