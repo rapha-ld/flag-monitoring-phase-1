@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { BarChart3, Plus, X } from 'lucide-react';
+import { BarChart3, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -35,7 +36,7 @@ const MetricsSelector = ({
 
   const getMetricDisplayName = (metric: string) => {
     if (metric === 'evaluations') return 'Unique Users';
-    if (metric === 'conversion') return 'Avg. Checkout Conversion Rate';
+    if (metric === 'conversion') return 'Flag Change Impact';
     if (metric === 'errorRate') return 'Avg. Error Rate';
     return metric.charAt(0).toUpperCase() + metric.slice(1).replace(/([A-Z])/g, ' $1');
   };

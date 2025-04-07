@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import MetricCard from '@/components/metric/MetricCard';
 import { DataPoint, VersionChange } from '@/components/BarChart';
 import { cn } from '@/lib/utils';
+import FlagChangeImpact from './FlagChangeImpact';
 
 interface DashboardMetricsProps {
   selectedMetrics: string[];
@@ -89,117 +90,25 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
       
       {isBreakdownEnabled ? (
         <div className="flex flex-col gap-4">
-          {selectedMetrics.includes('conversion') && (
-            <MetricCard 
-              title="Avg. Conversion Rate" 
-              value={`${currentMetrics.conversion.value}%`}
-              change={currentMetrics.conversion.change}
-              info="Percentage of checkout completions from initiated sessions"
-              className="animate-slide-up [animation-delay:200ms]"
-              chartData={filteredConversionData}
-              versionChanges={conversionVersionChanges.filter(change => 
-                change.position < filteredConversionData.length
-              )}
-              valueFormatter={(value) => `${value}%`}
-              tooltipValueFormatter={(value) => `${value}%`}
-              barColor="#6E6F96"
-              showTrue={showTrue}
-              showFalse={showFalse}
-              chartType="mixed"
-              metricType="conversion"
-              timeframe={timeframe}
-              selectedTimestamp={selectedTimestamp}
-              selectedTimestamps={selectedTimestamps}
-              hoveredTimestamp={hoveredTimestamp}
-              onHoverTimestamp={handleHoverTimestamp}
-            />
-          )}
-          
-          {selectedMetrics.includes('errorRate') && (
-            <MetricCard 
-              title="Avg. Error Rate" 
-              value={`${currentMetrics.errorRate.value}%`}
-              change={{
-                value: Math.abs(currentMetrics.errorRate.change.value),
-                trend: currentMetrics.errorRate.change.value < 0 ? 'up' : 'down'
-              }}
-              info="Percentage of requests resulting in error responses"
-              className="animate-slide-up [animation-delay:300ms]"
-              chartData={filteredErrorRateData}
-              versionChanges={errorRateVersionChanges.filter(change => 
-                change.position < filteredErrorRateData.length
-              )}
-              valueFormatter={(value) => `${value}%`}
-              tooltipValueFormatter={(value) => `${value}%`}
-              barColor="#6E6F96"
-              showTrue={showTrue}
-              showFalse={showFalse}
-              chartType="mixed"
-              metricType="errorRate"
-              timeframe={timeframe}
-              selectedTimestamp={selectedTimestamp}
-              selectedTimestamps={selectedTimestamps}
-              hoveredTimestamp={hoveredTimestamp}
-              onHoverTimestamp={handleHoverTimestamp}
-            />
-          )}
+          <FlagChangeImpact
+            chartData={filteredConversionData}
+            className="flex-1 animate-slide-up [animation-delay:200ms]"
+            selectedTimestamp={selectedTimestamp}
+            selectedTimestamps={selectedTimestamps}
+            timeframe={timeframe}
+          />
         </div>
       ) : (
         <>
-          {selectedMetrics.includes('conversion') && (
-            <MetricCard 
-              title="Avg. Conversion Rate" 
-              value={`${currentMetrics.conversion.value}%`}
-              change={currentMetrics.conversion.change}
-              info="Percentage of checkout completions from initiated sessions"
-              className="animate-slide-up [animation-delay:200ms]"
-              chartData={filteredConversionData}
-              versionChanges={conversionVersionChanges.filter(change => 
-                change.position < filteredConversionData.length
-              )}
-              valueFormatter={(value) => `${value}%`}
-              tooltipValueFormatter={(value) => `${value}%`}
-              barColor="#6E6F96"
-              showTrue={showTrue}
-              showFalse={showFalse}
-              chartType="mixed"
-              metricType="conversion"
-              timeframe={timeframe}
-              selectedTimestamp={selectedTimestamp}
-              selectedTimestamps={selectedTimestamps}
-              hoveredTimestamp={hoveredTimestamp}
-              onHoverTimestamp={handleHoverTimestamp}
-            />
-          )}
+          <FlagChangeImpact
+            chartData={filteredConversionData}
+            className="animate-slide-up [animation-delay:200ms]"
+            selectedTimestamp={selectedTimestamp}
+            selectedTimestamps={selectedTimestamps}
+            timeframe={timeframe}
+          />
           
-          {selectedMetrics.includes('errorRate') && (
-            <MetricCard 
-              title="Avg. Error Rate" 
-              value={`${currentMetrics.errorRate.value}%`}
-              change={{
-                value: Math.abs(currentMetrics.errorRate.change.value),
-                trend: currentMetrics.errorRate.change.value < 0 ? 'up' : 'down'
-              }}
-              info="Percentage of requests resulting in error responses"
-              className="animate-slide-up [animation-delay:300ms]"
-              chartData={filteredErrorRateData}
-              versionChanges={errorRateVersionChanges.filter(change => 
-                change.position < filteredErrorRateData.length
-              )}
-              valueFormatter={(value) => `${value}%`}
-              tooltipValueFormatter={(value) => `${value}%`}
-              barColor="#6E6F96"
-              showTrue={showTrue}
-              showFalse={showFalse}
-              chartType="mixed"
-              metricType="errorRate"
-              timeframe={timeframe}
-              selectedTimestamp={selectedTimestamp}
-              selectedTimestamps={selectedTimestamps}
-              hoveredTimestamp={hoveredTimestamp}
-              onHoverTimestamp={handleHoverTimestamp}
-            />
-          )}
+          {/* Removed the error rate card as per the request */}
         </>
       )}
     </div>

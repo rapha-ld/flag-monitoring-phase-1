@@ -18,7 +18,7 @@ export const useDashboardData = () => {
   const [timeframe, setTimeframe] = useState("30d");
   const [environment, setEnvironment] = useState("production");
   const [selectedDevice, setSelectedDevice] = useState("all");
-  const [selectedMetrics, setSelectedMetrics] = useState(['evaluations', 'conversion', 'errorRate']);
+  const [selectedMetrics, setSelectedMetrics] = useState(['evaluations', 'conversion']);
   const [hiddenMetrics, setHiddenMetrics] = useState<string[]>([]);
   const [showTrue, setShowTrue] = useState(true);
   const [showFalse, setShowFalse] = useState(true);
