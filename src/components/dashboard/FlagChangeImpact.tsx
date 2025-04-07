@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -85,7 +84,7 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
     <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", className)}>
       <div className="flex justify-between items-center px-6 pt-6">
         <div>
-          <h3 className="text-lg font-semibold">Flag Change Impact</h3>
+          <h3 className="text-lg font-semibold text-foreground">Flag Change Impact</h3>
           <p className="text-sm text-muted-foreground">Impact severity of flag changes over time</p>
         </div>
         
