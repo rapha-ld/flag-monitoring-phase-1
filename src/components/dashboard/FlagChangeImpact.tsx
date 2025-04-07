@@ -8,16 +8,12 @@ import CustomLegend from './impact/CustomLegend';
 interface FlagChangeImpactProps {
   chartData: DataPoint[];
   className?: string;
-  selectedTimestamp?: Date | null;
-  selectedTimestamps?: Date[] | null;
   timeframe: string;
 }
 
 const FlagChangeImpact = ({
   chartData,
   className,
-  selectedTimestamp,
-  selectedTimestamps,
   timeframe,
 }: FlagChangeImpactProps) => {
   // Process data to add the flag impact line (simulated data)
@@ -40,8 +36,6 @@ const FlagChangeImpact = ({
       
       <ChartArea 
         chartData={processedData}
-        selectedTimestamp={selectedTimestamp}
-        selectedTimestamps={selectedTimestamps}
         timeframe={timeframe}
       />
       
