@@ -3,19 +3,49 @@ import React from 'react';
 import { Area, Line, XAxis, YAxis, ResponsiveContainer, ComposedChart, Tooltip } from 'recharts';
 import { DataPoint } from '@/components/BarChart';
 import { getXAxisInterval, getBarSize } from '@/utils/chartUtils';
+import { getTimestampPositions } from '@/utils/chartUtils';
 import { IMPACT_COLOR, THIS_FLAG_COLOR, CHART_HEIGHT, CHART_MARGIN } from './constants';
+import SelectedDot from './SelectedDot';
 
 interface ChartAreaProps {
   chartData: DataPoint[];
+  selectedTimestamp?: Date | null;
+  selectedTimestamps?: Date[] | null;
   timeframe: string;
 }
 
 const ChartArea: React.FC<ChartAreaProps> = ({
   chartData,
+  selectedTimestamp,
+  selectedTimestamps,
   timeframe,
 }) => {
   const xAxisInterval = getXAxisInterval(chartData.length);
   const barSize = getBarSize(chartData.length);
+
+  // Calculate positions for selected timestamps
+  const selectedPositions = selectedTimestamps 
+    ? getTimestampPositions(chartData, selectedTimestamps)
+    : selectedTimestamp 
+      ? getTimestampPositions(chartData, [selectedTimestamp])
+      : [];
+
+  const renderSelectedDots = (data: any, dataKey: string) => {
+    if (!selectedPositions.length) return null;
+    
+    return selectedPositions.map((position, index) => {
+      if (position < 0 || position >= data.length) return null;
+      const dataPoint = data[position];
+      if (!dataPoint) return null;
+      
+      const x = dataPoint.x;
+      const y = dataPoint[dataKey];
+      
+      if (x === undefined || y === undefined) return null;
+      
+      return <SelectedDot key={`selected-dot-${index}`} cx={x} cy={y} />;
+    });
+  };
 
   return (
     <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
@@ -73,6 +103,8 @@ const ChartArea: React.FC<ChartAreaProps> = ({
           dot={false}
           activeDot={{ r: 4, stroke: THIS_FLAG_COLOR, strokeWidth: 2, fill: 'white' }}
         />
+        
+        {renderSelectedDots(chartData, 'flag')}
       </ComposedChart>
     </ResponsiveContainer>
   );

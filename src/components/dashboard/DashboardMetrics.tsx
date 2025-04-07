@@ -98,6 +98,8 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
           <FlagChangeImpact
             chartData={filteredConversionData}
             className="flex-1 animate-slide-up [animation-delay:200ms]"
+            selectedTimestamp={selectedTimestamp}
+            selectedTimestamps={selectedTimestamps}
             timeframe={timeframe}
           />
         </div>
@@ -105,6 +107,8 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
         <FlagChangeImpact
           chartData={filteredConversionData}
           className="animate-slide-up [animation-delay:200ms]"
+          selectedTimestamp={selectedTimestamp}
+          selectedTimestamps={selectedTimestamps}
           timeframe={timeframe}
         />
       )}
