@@ -105,6 +105,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({
           fillOpacity={1}
           fill="url(#areaFill)"
           activeDot={false}
+          isAnimationActive={false}
         />
         
         <Line
@@ -114,6 +115,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({
           strokeWidth={2}
           dot={false}
           activeDot={{ r: 4, stroke: THIS_FLAG_COLOR, strokeWidth: 2, fill: 'white' }}
+          isAnimationActive={false}
         />
         
         {renderSelectedDots(chartData, 'flag')}
