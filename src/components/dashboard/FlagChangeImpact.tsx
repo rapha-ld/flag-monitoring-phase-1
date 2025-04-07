@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -150,7 +151,7 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
               top: 10,
               right: 30,
               left: 0,
-              bottom: 20
+              bottom: 10  // Reduced bottom margin from 20 to 10
             }}
           >
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
