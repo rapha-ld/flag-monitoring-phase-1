@@ -80,7 +80,7 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
 
   const CustomLegend = () => {
     return (
-      <div className="flex items-center space-x-2 text-xs pl-[28px] pt-1"> {/* Moved 22px to the right */}
+      <div className="flex items-center space-x-2 text-xs ml-8 mt-[-10px]">
         <div className="flex items-center">
           <div className="h-3 w-3 rounded-sm mr-1.5" style={{ backgroundColor: IMPACT_COLOR, opacity: 0.3 }}></div>
           <span>All flags</span>
@@ -143,90 +143,93 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
       </div>
       
       <CardContent className="pt-4 px-0 h-[200px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart 
-            data={impactData} 
-            margin={{
-              top: 10,
-              right: 30,
-              left: 0,
-              bottom: 5
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-            <XAxis 
-              dataKey="name" 
-              axisLine={false} 
-              tickLine={false} 
-              interval={xAxisInterval} 
-              tick={{
-                fontSize: 10
-              }} 
-              tickFormatter={value => 
-                new Date(value).toLocaleDateString(undefined, {
-                  month: 'short',
-                  day: 'numeric'
-                })
-              } 
-            />
-            <YAxis 
-              axisLine={false} 
-              tickLine={false} 
-              tick={{
-                fontSize: 10
-              }} 
-              tickFormatter={value => value.toFixed(0)} 
-            />
-            <Tooltip 
-              formatter={(value: number) => [value.toFixed(1), '']} 
-              labelFormatter={label => 
-                new Date(label).toLocaleDateString(undefined, {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric'
-                })
-              } 
-            />
-            
-            <Area 
-              type="monotone" 
-              dataKey="aggregateValue" 
-              stroke={IMPACT_COLOR} 
-              fill={IMPACT_COLOR} 
-              fillOpacity={0.2} 
-              name="All flags" 
-            />
-            
-            <Line
-              type="monotone"
-              dataKey="thisFlagValue"
-              stroke={THIS_FLAG_COLOR}
-              strokeWidth={2}
-              dot={true} // Added dots to show data points
-              name="This flag"
-            />
-            
-            {timestampPositions.map((position, index) => (
-              <ReferenceLine 
-                key={`selected-${index}`} 
-                x={impactData[position]?.name} 
-                stroke="#1D4ED8" 
-                strokeWidth={1.5} 
-                strokeDasharray="3 3" 
+        <div className="h-[180px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart 
+              data={impactData} 
+              margin={{
+                top: 10,
+                right: 30,
+                left: 0,
+                bottom: 0
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+              <XAxis 
+                dataKey="name" 
+                axisLine={false} 
+                tickLine={false} 
+                interval={xAxisInterval} 
+                tick={{
+                  fontSize: 10
+                }} 
+                tickFormatter={value => 
+                  new Date(value).toLocaleDateString(undefined, {
+                    month: 'short',
+                    day: 'numeric'
+                  })
+                } 
               />
-            ))}
-            
-            {hoveredPosition >= 0 && (
-              <ReferenceLine 
-                key="hovered-line" 
-                x={impactData[hoveredPosition]?.name} 
-                stroke="#6E6F96" 
-                strokeWidth={1.5} 
-                strokeDasharray="3 3" 
+              <YAxis 
+                axisLine={false} 
+                tickLine={false} 
+                tick={{
+                  fontSize: 10
+                }} 
+                tickFormatter={value => value.toFixed(0)} 
               />
-            )}
-          </AreaChart>
-        </ResponsiveContainer>
+              <Tooltip 
+                formatter={(value: number) => [value.toFixed(1), '']} 
+                labelFormatter={label => 
+                  new Date(label).toLocaleDateString(undefined, {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                  })
+                } 
+              />
+              
+              <Area 
+                type="monotone" 
+                dataKey="aggregateValue" 
+                stroke={IMPACT_COLOR} 
+                fill={IMPACT_COLOR} 
+                fillOpacity={0.2} 
+                name="All flags" 
+              />
+              
+              <Line
+                type="monotone"
+                dataKey="thisFlagValue"
+                stroke={THIS_FLAG_COLOR}
+                strokeWidth={2}
+                dot={{ r: 3 }}
+                activeDot={{ r: 5 }}
+                name="This flag"
+              />
+              
+              {timestampPositions.map((position, index) => (
+                <ReferenceLine 
+                  key={`selected-${index}`} 
+                  x={impactData[position]?.name} 
+                  stroke="#1D4ED8" 
+                  strokeWidth={1.5} 
+                  strokeDasharray="3 3" 
+                />
+              ))}
+              
+              {hoveredPosition >= 0 && (
+                <ReferenceLine 
+                  key="hovered-line" 
+                  x={impactData[hoveredPosition]?.name} 
+                  stroke="#6E6F96" 
+                  strokeWidth={1.5} 
+                  strokeDasharray="3 3" 
+                />
+              )}
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
         
         <CustomLegend />
       </CardContent>
@@ -235,4 +238,3 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
 };
 
 export default FlagChangeImpact;
-
