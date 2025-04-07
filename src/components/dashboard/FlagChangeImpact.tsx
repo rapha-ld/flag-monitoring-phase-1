@@ -11,7 +11,6 @@ interface FlagChangeImpactProps {
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
   timeframe: string;
-  hoveredTimestamp?: string | null;
 }
 
 const FlagChangeImpact = ({
