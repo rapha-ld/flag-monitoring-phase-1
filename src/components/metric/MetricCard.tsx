@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -109,7 +108,7 @@ const MetricCard = ({
           timeframe={timeframe}
         />
         
-        <div className="flex items-center gap-2 pr-4 pt-4">
+        <div className="flex flex-col items-end pr-4 pt-4 space-y-2">
           {showVariantFilters && (
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">

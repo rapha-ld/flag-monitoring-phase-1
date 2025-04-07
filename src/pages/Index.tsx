@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from "@/lib/utils";
 import Header from '@/components/Header';
@@ -35,7 +34,8 @@ const Index = () => {
     handleMetricVisibilityChange,
     handleToggleTrue,
     handleToggleFalse,
-    handleTimestampSelect
+    handleTimestampSelect,
+    handleHoverTimestamp
   } = useDashboardData();
 
   return (
@@ -77,7 +77,7 @@ const Index = () => {
             timeframe={timeframe}
             selectedTimestamp={selectedTimestamp}
             selectedTimestamps={selectedTimestamps}
-            onHoverTimestamp={(timestamp) => {/* no-op */}}
+            onHoverTimestamp={handleHoverTimestamp}
             onToggleTrue={handleToggleTrue}
             onToggleFalse={handleToggleFalse}
           />
