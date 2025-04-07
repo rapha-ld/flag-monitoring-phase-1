@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Area, Line, XAxis, YAxis, ResponsiveContainer, ComposedChart, Tooltip } from 'recharts';
+import { Area, Line, XAxis, YAxis, ResponsiveContainer, ComposedChart, Tooltip, ReferenceLine } from 'recharts';
 import { DataPoint } from '@/components/BarChart';
 import { getXAxisInterval, getBarSize } from '@/utils/chartUtils';
 import { getTimestampPositions } from '@/utils/chartUtils';
@@ -12,6 +12,7 @@ interface ChartAreaProps {
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
   timeframe: string;
+  hoveredTimestamp?: string | null;
 }
 
 const ChartArea: React.FC<ChartAreaProps> = ({
@@ -19,6 +20,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({
   selectedTimestamp,
   selectedTimestamps,
   timeframe,
+  hoveredTimestamp
 }) => {
   const xAxisInterval = getXAxisInterval(chartData.length);
   const barSize = getBarSize(chartData.length);
@@ -84,6 +86,16 @@ const ChartArea: React.FC<ChartAreaProps> = ({
           labelFormatter={(label) => label}
           cursor={{ stroke: '#E5E7EB', strokeWidth: 1 }}
         />
+        
+        {hoveredTimestamp && (
+          <ReferenceLine
+            x={hoveredTimestamp}
+            stroke="#6E6F96"
+            strokeWidth={1}
+            strokeDasharray="3 3"
+            isFront={true}
+          />
+        )}
         
         <Area
           type="monotone"

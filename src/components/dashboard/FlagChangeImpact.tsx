@@ -11,6 +11,7 @@ interface FlagChangeImpactProps {
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
   timeframe: string;
+  hoveredTimestamp?: string | null;
 }
 
 const FlagChangeImpact = ({
@@ -19,6 +20,7 @@ const FlagChangeImpact = ({
   selectedTimestamp,
   selectedTimestamps,
   timeframe,
+  hoveredTimestamp,
 }: FlagChangeImpactProps) => {
   // Process data to add the flag impact line (simulated data)
   const processedData = chartData.map((data, index) => {
@@ -43,6 +45,7 @@ const FlagChangeImpact = ({
         selectedTimestamp={selectedTimestamp}
         selectedTimestamps={selectedTimestamps}
         timeframe={timeframe}
+        hoveredTimestamp={hoveredTimestamp}
       />
       
       <CustomLegend />
