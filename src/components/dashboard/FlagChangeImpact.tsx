@@ -36,13 +36,11 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
   const [selectedImpacts, setSelectedImpacts] = useState<string[]>(['large', 'medium', 'small']);
   const [popoverOpen, setPopoverOpen] = useState(false);
 
-  // Convert the data to include impact values instead of true/false values
   const impactData = chartData.map(point => {
     const dateStr = point.name;
     const index = chartData.indexOf(point);
     const dayOfMonth = new Date(dateStr).getDate();
 
-    // Deterministic but varied values based on the day and index
     const largeFactor = dayOfMonth % 5 * 0.5;
     const mediumFactor = (dayOfMonth + 2) % 4 * 0.7;
     const smallFactor = (dayOfMonth + 4) % 3 * 0.9;
@@ -58,10 +56,8 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
     setSelectedImpacts(prev => prev.includes(impact) ? prev.filter(i => i !== impact) : [...prev, impact]);
   };
 
-  // Calculate timestamp positions for reference lines
   const timestampPositions = selectedTimestamps ? getTimestampPositions(chartData, selectedTimestamps) : selectedTimestamp ? getTimestampPositions(chartData, [selectedTimestamp]) : [];
 
-  // Find the position for hovered timestamp
   const hoveredPosition = hoveredTimestamp ? 
     impactData.findIndex(point => point.name === hoveredTimestamp) : -1;
 
@@ -71,7 +67,7 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
     <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", className)}>
       <div className="flex justify-between items-center px-6 pt-6">
         <div>
-          <h3 className="text-foreground text-sm font-medium">Flag Change Impact</h3>
+          <h3 className="text-muted-foreground text-sm font-medium">Flag Change Impact</h3>
         </div>
         
         <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
@@ -164,7 +160,6 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
               } 
             />
             
-            {/* Render areas in reverse order to ensure small appears on top, then medium, then large */}
             {selectedImpacts.includes('small') && 
               <Area 
                 type="monotone" 
@@ -199,7 +194,6 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
               />
             }
             
-            {/* Reference lines for selected timestamps */}
             {timestampPositions.map((position, index) => (
               <ReferenceLine 
                 key={`selected-${index}`} 
@@ -210,7 +204,6 @@ const FlagChangeImpact: React.FC<FlagChangeImpactProps> = ({
               />
             ))}
             
-            {/* Reference line for hovered timestamp */}
             {hoveredPosition >= 0 && (
               <ReferenceLine 
                 key="hovered-line" 
