@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { cn } from "@/lib/utils";
 import Header from '@/components/Header';
@@ -76,6 +77,9 @@ const Index = () => {
             timeframe={timeframe}
             selectedTimestamp={selectedTimestamp}
             selectedTimestamps={selectedTimestamps}
+            onHoverTimestamp={(timestamp) => {/* no-op */}}
+            onToggleTrue={handleToggleTrue}
+            onToggleFalse={handleToggleFalse}
           />
           
           <DashboardFooter />

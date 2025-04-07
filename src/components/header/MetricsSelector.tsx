@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { BarChart3, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,7 @@ interface MetricsSelectorProps {
   onMetricsChange: (metrics: string[]) => void;
   hiddenMetrics: string[];
   onMetricVisibilityChange: (metric: string, visible: boolean) => void;
-  isVisible?: boolean; // New prop to control visibility
+  isVisible?: boolean;
 }
 
 const MetricsSelector = ({
@@ -19,7 +20,7 @@ const MetricsSelector = ({
   onMetricsChange,
   hiddenMetrics,
   onMetricVisibilityChange,
-  isVisible = true, // Default to visible, but can be hidden
+  isVisible = true,
   ...props
 }: MetricsSelectorProps) => {
   const [metricsOpen, setMetricsOpen] = useState(false);
