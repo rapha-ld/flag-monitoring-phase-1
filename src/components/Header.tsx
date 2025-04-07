@@ -7,7 +7,6 @@ import EnvironmentSelector from './header/EnvironmentSelector';
 import DeviceSelector from './header/DeviceSelector';
 import TimeframeSelector from './header/TimeframeSelector';
 import VariantFilters from './header/VariantFilters';
-import MetricsSelector from './header/MetricsSelector';
 
 interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   timeframe: string;
@@ -16,10 +15,6 @@ interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   onEnvironmentChange: (value: string) => void;
   selectedDevice?: string;
   onDeviceChange?: (value: string) => void;
-  selectedMetrics?: string[];
-  onMetricsChange?: (metrics: string[]) => void;
-  hiddenMetrics?: string[];
-  onMetricVisibilityChange?: (metric: string, visible: boolean) => void;
   showTrue?: boolean;
   showFalse?: boolean;
   onToggleTrue?: () => void;
@@ -33,10 +28,6 @@ const Header = ({
   onEnvironmentChange,
   selectedDevice = 'all',
   onDeviceChange = () => {},
-  selectedMetrics = ['evaluations', 'conversion', 'errorRate'],
-  onMetricsChange = () => {},
-  hiddenMetrics = [],
-  onMetricVisibilityChange = () => {},
   showTrue = true,
   showFalse = false,
   onToggleTrue = () => {},
@@ -77,16 +68,10 @@ const Header = ({
           onToggleTrue={onToggleTrue}
           onToggleFalse={onToggleFalse}
         />
-        
-        <MetricsSelector 
-          selectedMetrics={selectedMetrics}
-          onMetricsChange={onMetricsChange}
-          hiddenMetrics={hiddenMetrics}
-          onMetricVisibilityChange={onMetricVisibilityChange}
-        />
       </div>
     </header>
   );
 };
 
 export default Header;
+
