@@ -46,20 +46,26 @@ const ImpactLevelSelector: React.FC<ImpactLevelSelectorProps> = ({
         <DropdownMenuCheckboxItem
           checked={selectedLevels.includes('high')}
           onCheckedChange={() => handleLevelToggle('high')}
+          className="flex flex-col items-start"
         >
-          High
+          <span>High</span>
+          <span className="text-xs text-gray-500 font-normal ml-5 mt-0.5">Over 80% of users saw flag changes</span>
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
           checked={selectedLevels.includes('medium')}
           onCheckedChange={() => handleLevelToggle('medium')}
+          className="flex flex-col items-start"
         >
-          Medium
+          <span>Medium</span>
+          <span className="text-xs text-gray-500 font-normal ml-5 mt-0.5">20-80% of users saw flag changes</span>
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
           checked={selectedLevels.includes('low')}
           onCheckedChange={() => handleLevelToggle('low')}
+          className="flex flex-col items-start"
         >
-          Low
+          <span>Low</span>
+          <span className="text-xs text-gray-500 font-normal ml-5 mt-0.5">Under 20% of users saw flag changes</span>
         </DropdownMenuCheckboxItem>
       </DropdownMenuContent>
     </DropdownMenu>
