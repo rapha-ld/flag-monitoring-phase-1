@@ -56,7 +56,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
       "grid gap-4",
       isBreakdownEnabled
         ? "grid-cols-3"
-        : "grid-cols-1 md:grid-cols-3"
+        : "grid-cols-2" // Changed from "grid-cols-1 md:grid-cols-3" to "grid-cols-2"
     )}>
       {selectedMetrics.includes('evaluations') && (
         <MetricCard 
@@ -99,17 +99,13 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
           />
         </div>
       ) : (
-        <>
-          <FlagChangeImpact
-            chartData={filteredConversionData}
-            className="animate-slide-up [animation-delay:200ms]"
-            selectedTimestamp={selectedTimestamp}
-            selectedTimestamps={selectedTimestamps}
-            timeframe={timeframe}
-          />
-          
-          {/* Removed the error rate card as per the request */}
-        </>
+        <FlagChangeImpact
+          chartData={filteredConversionData}
+          className="animate-slide-up [animation-delay:200ms]"
+          selectedTimestamp={selectedTimestamp}
+          selectedTimestamps={selectedTimestamps}
+          timeframe={timeframe}
+        />
       )}
     </div>
   );
