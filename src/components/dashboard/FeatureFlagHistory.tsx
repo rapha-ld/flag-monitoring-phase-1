@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import HistoryTabs from '@/components/history/HistoryTabs';
 import SessionsTable from '@/components/history/SessionsTable';
-import UserFeedbackTable from '@/components/history/UserFeedbackTable';
 import SearchInput from '@/components/history/SearchInput';
 import HistoryEventTable from '@/components/history/HistoryEventTable';
 
@@ -67,18 +66,6 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
           <SessionsTable 
             selectedTimestamp={selectedTimestamp}
             selectedTimestamps={selectedTimestamps}
-          />
-        </TabsContent>
-        
-        <TabsContent value="feedback" className="mt-0">
-          <UserFeedbackTable 
-            onFeedbackSelect={(timestamp) => {
-              if (timestamp) {
-                onEventSelect([timestamp]);
-              } else {
-                onEventSelect(null);
-              }
-            }}
           />
         </TabsContent>
       </Tabs>
