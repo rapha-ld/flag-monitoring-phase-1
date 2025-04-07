@@ -129,6 +129,13 @@ export const useDashboardData = () => {
     }
   };
 
+  // Add the missing handleHoverTimestamp function
+  const handleHoverTimestamp = (timestamp: string | null) => {
+    // This function will be used to handle hover events on the chart
+    // No state update is needed here as it's just for UI feedback
+    // The actual handling is done in child components
+  };
+
   return {
     isLoaded,
     timeframe,
@@ -155,6 +162,7 @@ export const useDashboardData = () => {
     handleMetricVisibilityChange,
     handleToggleTrue,
     handleToggleFalse,
-    handleTimestampSelect
+    handleTimestampSelect,
+    handleHoverTimestamp  // Add the function to the returned object
   };
 };
