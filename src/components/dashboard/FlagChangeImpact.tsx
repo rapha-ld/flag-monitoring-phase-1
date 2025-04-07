@@ -40,8 +40,6 @@ const FlagChangeImpact = ({
         <p className="text-xs text-textSecondary">How this flag affects conversion rate</p>
       </div>
       
-      <CustomLegend />
-      
       <ChartArea 
         chartData={processedData}
         selectedTimestamp={selectedTimestamp}
@@ -49,6 +47,8 @@ const FlagChangeImpact = ({
         timeframe={timeframe}
         hoveredTimestamp={hoveredTimestamp || null}
       />
+      
+      <CustomLegend />
     </div>
   );
 };
