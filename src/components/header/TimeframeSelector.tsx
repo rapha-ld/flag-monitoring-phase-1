@@ -9,10 +9,8 @@ interface TimeframeSelectorProps {
 }
 
 const TimeframeSelector = ({ timeframe, onTimeframeChange }: TimeframeSelectorProps) => {
-  const getButtonVariant = (currentTimeframe: string) => {
-    return timeframe === currentTimeframe 
-      ? "outline" 
-      : "outline";
+  const getButtonVariant = (currentTimeframe: string): "link" | "outline" | "default" | "destructive" | "secondary" | "ghost" => {
+    return "outline";
   };
 
   const getButtonClassName = (currentTimeframe: string) => {
