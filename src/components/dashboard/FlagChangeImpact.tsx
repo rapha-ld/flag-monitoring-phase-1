@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { DataPoint } from '@/components/BarChart';
@@ -6,6 +5,8 @@ import ChartArea from './impact/ChartArea';
 import CustomLegend from './impact/CustomLegend';
 import { historyData } from '@/components/history/historyEventData';
 import ImpactLevelSelector, { ImpactLevel } from './impact/ImpactLevelSelector';
+import { Info } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface FlagChangeImpactProps {
   chartData: DataPoint[];
@@ -14,6 +15,7 @@ interface FlagChangeImpactProps {
   selectedTimestamps?: Date[] | null;
   timeframe: string;
   hoveredTimestamp?: string | null;
+  onHoverTimestamp?: (timestamp: string | null) => void;
 }
 
 const FlagChangeImpact = ({
@@ -22,7 +24,8 @@ const FlagChangeImpact = ({
   selectedTimestamp,
   selectedTimestamps,
   timeframe,
-  hoveredTimestamp
+  hoveredTimestamp,
+  onHoverTimestamp
 }: FlagChangeImpactProps) => {
   // State for impact level selection (default to all levels selected)
   const [selectedImpactLevels, setSelectedImpactLevels] = useState<ImpactLevel[]>(['high', 'medium', 'low']);
@@ -87,10 +90,29 @@ const FlagChangeImpact = ({
     });
   }, [chartData, eventDates, getImpactMultiplier, timeframe]);
 
+  // Handle hover events from the chart
+  const handleChartHover = (timestamp: string | null) => {
+    if (onHoverTimestamp) {
+      onHoverTimestamp(timestamp);
+    }
+  };
+
   return (
     <div className={cn("bg-white p-4 rounded-lg shadow-sm border border-gray-200", className)}>
       <div className="mb-2 flex justify-between items-center">
-        <h3 className="font-medium text-sm">Flag Change Impact</h3>
+        <div className="flex items-center gap-1">
+          <h3 className="font-medium text-sm">Flag Change Impact</h3>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Info className="h-3.5 w-3.5 text-gray-400" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-xs">Number of flag changes</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <ImpactLevelSelector 
           selectedLevels={selectedImpactLevels} 
           onLevelChange={setSelectedImpactLevels} 
@@ -102,7 +124,8 @@ const FlagChangeImpact = ({
         selectedTimestamp={selectedTimestamp} 
         selectedTimestamps={selectedTimestamps} 
         timeframe={timeframe} 
-        hoveredTimestamp={hoveredTimestamp} 
+        hoveredTimestamp={hoveredTimestamp}
+        onHoverTimestamp={handleChartHover} 
       />
       
       <CustomLegend />

@@ -11,6 +11,7 @@ interface ImpactCardProps {
   selectedTimestamps?: Date[] | null;
   timeframe: string;
   hoveredTimestamp?: string | null;
+  onHoverTimestamp?: (timestamp: string | null) => void;
 }
 
 const ImpactCard: React.FC<ImpactCardProps> = ({
@@ -19,7 +20,8 @@ const ImpactCard: React.FC<ImpactCardProps> = ({
   selectedTimestamp,
   selectedTimestamps,
   timeframe,
-  hoveredTimestamp
+  hoveredTimestamp,
+  onHoverTimestamp
 }) => {
   return (
     <FlagChangeImpact
@@ -32,6 +34,7 @@ const ImpactCard: React.FC<ImpactCardProps> = ({
       selectedTimestamps={selectedTimestamps}
       timeframe={timeframe}
       hoveredTimestamp={hoveredTimestamp}
+      onHoverTimestamp={onHoverTimestamp}
     />
   );
 };

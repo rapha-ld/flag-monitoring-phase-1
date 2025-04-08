@@ -14,6 +14,7 @@ interface ChartAreaProps {
   selectedTimestamps?: Date[] | null;
   timeframe: string;
   hoveredTimestamp?: string | null;
+  onHoverTimestamp?: (timestamp: string | null) => void;
 }
 
 const ChartArea: React.FC<ChartAreaProps> = ({
@@ -21,7 +22,8 @@ const ChartArea: React.FC<ChartAreaProps> = ({
   selectedTimestamp,
   selectedTimestamps,
   timeframe,
-  hoveredTimestamp
+  hoveredTimestamp,
+  onHoverTimestamp
 }) => {
   const xAxisInterval = timeframe === "1d" ? 2 : getXAxisInterval(chartData.length);
   const barSize = getBarSize(chartData.length);
@@ -59,11 +61,25 @@ const ChartArea: React.FC<ChartAreaProps> = ({
 
   const tooltipValueFormatter = (value: number) => `${Math.round(value)}`;
 
+  const handleMouseMove = (e: any) => {
+    if (e && e.activeLabel && onHoverTimestamp) {
+      onHoverTimestamp(e.activeLabel);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (onHoverTimestamp) {
+      onHoverTimestamp(null);
+    }
+  };
+
   return (
     <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
       <ComposedChart
         data={chartData}
-        margin={CHART_MARGIN} // Using the updated margin with reduced left padding
+        margin={CHART_MARGIN}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
       >
         <defs>
           <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
