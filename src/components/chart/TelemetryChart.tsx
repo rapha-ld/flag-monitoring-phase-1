@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,7 +20,6 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
 }) => {
   const data = React.useMemo(() => {
     if (timeframe === "1h") {
-      // For 1h timeframe, generate data for every minute for 60 minutes
       return Array.from({ length: 60 }, (_, i) => {
         const minutes = i;
         const minuteStr = minutes.toString().padStart(2, '0');
@@ -154,7 +152,6 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     }
   };
 
-  // Calculate height for ResponsiveContainer based on original height plus 30%
   const chartHeight = 78 * 1.3;
 
   return (
@@ -162,7 +159,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
       <CardHeader className="p-3 pb-0">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium mb-4">{title}</CardTitle>
-          <span className="text-xs text-textSecondary">Avg. {average}</span>
+          <span className="text-xs text-textSecondary mt-0.5">{`Avg. ${average}`}</span>
         </div>
       </CardHeader>
       <CardContent className="p-3 pt-0 pb-1">
@@ -175,9 +172,9 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
               onMouseLeave={handleMouseLeave}
             >
               <defs>
-                <linearGradient id={`colorGradient-${title.replace(/\s+/g, '')}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={chartColor} stopOpacity={0.2} />
-                  <stop offset="100%" stopColor={chartColor} stopOpacity={0.05} />
+                <linearGradient id={`colorGradient-${title.replace(/\s+/g, '')}`} x1="0" y1="1" x2="0" y2="0">
+                  <stop offset="0%" stopColor={chartColor} stopOpacity={0.05} />
+                  <stop offset="100%" stopColor={chartColor} stopOpacity={0.2} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
