@@ -30,6 +30,8 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
     if (value !== 'history') {
       setSelectedRows([]);
       setHoveredRowId(null);
+      // Clear hover timestamp when switching tabs
+      onHoverTimestamp?.(null);
     }
   };
 
@@ -66,6 +68,7 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
           <SessionsTable 
             selectedTimestamp={selectedTimestamp}
             selectedTimestamps={selectedTimestamps}
+            onHoverTimestamp={onHoverTimestamp}
           />
         </TabsContent>
       </Tabs>

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { formatDistanceToNow } from 'date-fns';
@@ -15,6 +14,7 @@ interface Feedback {
 interface FeedbackTableProps {
   feedbackData: Feedback[];
   onFeedbackSelect?: (timestamp: Date | null) => void;
+  onHoverTimestamp?: (timestamp: string | null) => void;
 }
 
 const formatTimestamp = (date: Date) => {
@@ -46,7 +46,7 @@ const getSentimentBadge = (sentiment: Feedback['sentiment']) => {
   }
 };
 
-const FeedbackTable: React.FC<FeedbackTableProps> = ({ feedbackData, onFeedbackSelect }) => {
+const FeedbackTable: React.FC<FeedbackTableProps> = ({ feedbackData, onFeedbackSelect, onHoverTimestamp }) => {
   const [selectedFeedbackId, setSelectedFeedbackId] = useState<string | null>(null);
   const [hoveredFeedbackId, setHoveredFeedbackId] = useState<string | null>(null);
 
@@ -54,9 +54,15 @@ const FeedbackTable: React.FC<FeedbackTableProps> = ({ feedbackData, onFeedbackS
     if (selectedFeedbackId === feedbackId) {
       setSelectedFeedbackId(null);
       onFeedbackSelect?.(null);
+      if (onHoverTimestamp) {
+        onHoverTimestamp(null);
+      }
     } else {
       setSelectedFeedbackId(feedbackId);
       onFeedbackSelect?.(timestamp);
+      if (onHoverTimestamp) {
+        onHoverTimestamp(timestamp.toISOString());
+      }
     }
   };
 
@@ -64,6 +70,9 @@ const FeedbackTable: React.FC<FeedbackTableProps> = ({ feedbackData, onFeedbackS
     if (!selectedFeedbackId) {
       setHoveredFeedbackId(feedbackId);
       onFeedbackSelect?.(timestamp);
+      if (onHoverTimestamp) {
+        onHoverTimestamp(timestamp.toISOString());
+      }
     }
   };
 
@@ -71,6 +80,9 @@ const FeedbackTable: React.FC<FeedbackTableProps> = ({ feedbackData, onFeedbackS
     setHoveredFeedbackId(null);
     if (!selectedFeedbackId) {
       onFeedbackSelect?.(null);
+      if (onHoverTimestamp) {
+        onHoverTimestamp(null);
+      }
     }
   };
   

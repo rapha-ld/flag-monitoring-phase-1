@@ -112,6 +112,11 @@ const HistoryEventTable: React.FC<HistoryEventTableProps> = ({
       selectedTimestamps.sort((a, b) => a.getTime() - b.getTime());
       
       onEventSelect(selectedTimestamps);
+      
+      // If there are selected rows, update the hover timestamp with the first selected timestamp
+      if (selectedEvents.length > 0 && onHoverTimestamp) {
+        onHoverTimestamp(selectedEvents[0].timestamp.toISOString());
+      }
     } else if (hoveredRowId) {
       // When a row is hovered but not selected, show just that timestamp
       const hoveredEvent = sortedHistoryData.find(event => event.id === hoveredRowId);
