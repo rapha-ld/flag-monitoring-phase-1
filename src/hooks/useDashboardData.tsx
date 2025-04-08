@@ -27,6 +27,7 @@ export const useDashboardData = () => {
   const [filteredErrorRateData, setFilteredErrorRateData] = useState<DataPoint[]>(errorRateData);
   const [selectedTimestamp, setSelectedTimestamp] = useState<Date | null>(null);
   const [selectedTimestamps, setSelectedTimestamps] = useState<Date[] | null>(null);
+  const [hoveredTimestampState, setHoveredTimestampState] = useState<string | null>(null);
   const [currentMetrics, setCurrentMetrics] = useState({
     evaluations: { value: 0, change: { value: 0, trend: 'up' as 'up' | 'down' } },
     conversion: { value: 0, change: { value: 0, trend: 'up' as 'up' | 'down' } },
@@ -131,11 +132,9 @@ export const useDashboardData = () => {
     }
   };
 
-  // Add the missing handleHoverTimestamp function
+  // Update the handleHoverTimestamp function to actually store the hovered timestamp
   const handleHoverTimestamp = (timestamp: string | null) => {
-    // This function will be used to handle hover events on the chart
-    // No state update is needed here as it's just for UI feedback
-    // The actual handling is done in child components
+    setHoveredTimestampState(timestamp);
   };
 
   return {
@@ -157,6 +156,7 @@ export const useDashboardData = () => {
     errorRateVersionChanges,
     selectedTimestamp,
     selectedTimestamps,
+    hoveredTimestamp: hoveredTimestampState,
     handleTimeframeChange,
     handleEnvironmentChange,
     handleDeviceChange,
@@ -165,6 +165,6 @@ export const useDashboardData = () => {
     handleToggleTrue,
     handleToggleFalse,
     handleTimestampSelect,
-    handleHoverTimestamp  // Add the function to the returned object
+    handleHoverTimestamp
   };
 };
