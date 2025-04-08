@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -126,7 +125,6 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                     tooltipLabelFormatter={tooltipLabelFormatter}
                     showTrue={false}
                     showFalse={false}
-                    isTelemetryChart={true}
                   />
                 }
               />
