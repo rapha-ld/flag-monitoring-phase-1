@@ -2,6 +2,7 @@
 import React from 'react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import CustomTooltip from './CustomTooltip';
 
 interface TelemetryChartProps {
   title: string;
@@ -31,6 +32,9 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({ title, timeframe = "7d"
 
   // Use chart color based on title
   const chartColor = title === "Error Rate" ? "#DB2251" : "#7861C6";
+
+  const tooltipLabelFormatter = (label: string) => label;
+  const tooltipValueFormatter = (value: number) => value.toFixed(2);
 
   return (
     <Card className="flex-1 bg-white">
@@ -62,8 +66,14 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({ title, timeframe = "7d"
                 width={20}
               />
               <Tooltip 
-                formatter={(value: any) => [typeof value === 'number' ? value.toFixed(2) : value, title]}
-                labelFormatter={() => ''}
+                content={
+                  <CustomTooltip 
+                    tooltipValueFormatter={tooltipValueFormatter}
+                    tooltipLabelFormatter={tooltipLabelFormatter}
+                    showTrue={false}
+                    showFalse={false}
+                  />
+                }
               />
               <Area 
                 type="monotone" 

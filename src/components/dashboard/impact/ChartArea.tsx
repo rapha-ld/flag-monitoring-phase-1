@@ -6,6 +6,7 @@ import { getXAxisInterval, getBarSize } from '@/utils/chartUtils';
 import { getTimestampPositions } from '@/utils/chartUtils';
 import { IMPACT_COLOR, THIS_FLAG_COLOR, CHART_HEIGHT, CHART_MARGIN } from './constants';
 import SelectedDot from './SelectedDot';
+import CustomTooltip from '@/components/chart/CustomTooltip';
 
 interface ChartAreaProps {
   chartData: DataPoint[];
@@ -49,6 +50,15 @@ const ChartArea: React.FC<ChartAreaProps> = ({
     });
   };
 
+  const tooltipLabelFormatter = (label: string) => {
+    if (timeframe === "1d") {
+      return `${label}`;
+    }
+    return label;
+  };
+
+  const tooltipValueFormatter = (value: number) => `${Math.round(value)}`;
+
   return (
     <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
       <ComposedChart
@@ -90,13 +100,14 @@ const ChartArea: React.FC<ChartAreaProps> = ({
         />
         
         <Tooltip
-          formatter={(value) => [`${Math.round(Number(value))}`, 'Impact']}
-          labelFormatter={(label) => {
-            if (timeframe === "1d") {
-              return `${label}`; // Already formatted properly for 1d
-            }
-            return label;
-          }}
+          content={
+            <CustomTooltip
+              tooltipValueFormatter={tooltipValueFormatter}
+              tooltipLabelFormatter={tooltipLabelFormatter}
+              showTrue={false}
+              showFalse={false}
+            />
+          }
           cursor={{ stroke: '#E5E7EB', strokeWidth: 1 }}
         />
         

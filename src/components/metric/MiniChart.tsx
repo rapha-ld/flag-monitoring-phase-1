@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
@@ -48,7 +47,6 @@ const MiniChart: React.FC<MiniChartProps> = ({
   const yAxisMax = maxYValue !== undefined ? maxYValue : localMaxValue * 1.1;
   
   const tooltipLabelFormatter = (label: string) => {
-    // Check if it's in hourly format (contains ":")
     if (label.includes(":")) {
       return label;
     }
@@ -160,7 +158,6 @@ const MiniChart: React.FC<MiniChartProps> = ({
             position={{ y: -75 }}  // Move the tooltip 75px higher
           />
           
-          {/* Hovered timestamp reference line */}
           {hoveredTimestamp && (
             <ReferenceLine
               x={hoveredTimestamp}
