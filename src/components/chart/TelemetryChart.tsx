@@ -50,7 +50,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({ title }) => {
                 domain={['auto', 'auto']} 
               />
               <Tooltip 
-                formatter={(value) => [`${value.toFixed(2)}`, title]}
+                formatter={(value: any) => [typeof value === 'number' ? value.toFixed(2) : value, title]}
                 labelFormatter={() => ''}
               />
               <Area 
