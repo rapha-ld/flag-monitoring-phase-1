@@ -7,7 +7,6 @@ import DashboardMetrics from '@/components/dashboard/DashboardMetrics';
 import DashboardFooter from '@/components/dashboard/DashboardFooter';
 import FeatureFlagHistory from '@/components/dashboard/FeatureFlagHistory';
 import { useDashboardData } from '@/hooks/useDashboardData';
-import CollapsibleBanner from '@/components/layout/CollapsibleBanner';
 
 const Index = () => {
   const {
@@ -72,12 +71,6 @@ const Index = () => {
             onToggleTrue={handleToggleTrue}
             onToggleFalse={handleToggleFalse}
             metricsButtonVisible={false}
-          />
-          
-          <CollapsibleBanner 
-            timeframe={timeframe} 
-            hoveredTimestamp={hoveredTimestamp}
-            onHoverTimestamp={handleChartHover}
           />
           
           <DashboardMetrics 

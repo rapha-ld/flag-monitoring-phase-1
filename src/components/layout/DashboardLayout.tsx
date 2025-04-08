@@ -1,7 +1,5 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
-import CollapsibleBanner from './CollapsibleBanner';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -18,9 +16,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       
       {/* Main Content with padding to account for sidebars */}
       <div className="fixed inset-0 pt-0 pb-0 pl-[244px] pr-[300px] overflow-y-auto bg-white">
-        {/* Collapsible Banner */}
-        <CollapsibleBanner />
-        
         {/* Main content */}
         {children}
       </div>

@@ -52,7 +52,7 @@ const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({
       
       <CollapsibleTrigger className="flex items-center justify-center w-full h-6 hover:bg-gray-50 transition-colors">
         <Activity className="h-3 w-3 text-gray-500 mr-1" />
-        <span className="mr-2 text-xs text-gray-600">System telemetry</span>
+        <span className="mr-2 text-xs text-gray-600">System-wide telemetry</span>
         {isOpen ? (
           <ChevronUp className="h-4 w-4 text-gray-500" />
         ) : (
