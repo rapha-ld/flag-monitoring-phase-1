@@ -3,9 +3,11 @@ import React from 'react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import CustomTooltip from './CustomTooltip';
+import { cn } from '@/lib/utils';
 
 interface TelemetryChartProps {
   title: string;
+  titleClassName?: string;
   timeframe?: string;
   hoveredTimestamp?: string | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
@@ -13,6 +15,7 @@ interface TelemetryChartProps {
 
 const TelemetryChart: React.FC<TelemetryChartProps> = ({ 
   title, 
+  titleClassName,
   timeframe = "7d",
   hoveredTimestamp,
   onHoverTimestamp
@@ -88,7 +91,14 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   return (
     <Card className="flex-1 bg-white">
       <CardHeader className="p-3 pb-0">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <CardTitle 
+          className={cn(
+            "text-sm font-medium text-muted-foreground", 
+            titleClassName
+          )}
+        >
+          {title}
+        </CardTitle>
       </CardHeader>
       <CardContent className="p-3 pt-0 pb-1">
         <div className="h-[60px]">

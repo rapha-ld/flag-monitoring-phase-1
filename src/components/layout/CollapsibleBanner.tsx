@@ -31,18 +31,21 @@ const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({
         <div className="flex gap-4 px-4">
           <TelemetryChart 
             title="Error Rate" 
+            titleClassName="text-sm font-medium text-muted-foreground"
             timeframe={timeframe} 
             hoveredTimestamp={hoveredTimestamp}
             onHoverTimestamp={onHoverTimestamp}
           />
           <TelemetryChart 
             title="Latency p90" 
+            titleClassName="text-sm font-medium text-muted-foreground"
             timeframe={timeframe} 
             hoveredTimestamp={hoveredTimestamp}
             onHoverTimestamp={onHoverTimestamp}
           />
           <TelemetryChart 
             title="Checkout Conversion Rate" 
+            titleClassName="text-sm font-medium text-muted-foreground"
             timeframe={timeframe} 
             hoveredTimestamp={hoveredTimestamp}
             onHoverTimestamp={onHoverTimestamp}
