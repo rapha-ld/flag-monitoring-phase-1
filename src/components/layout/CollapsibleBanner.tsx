@@ -8,6 +8,7 @@ import TelemetryChart from '@/components/chart/TelemetryChart';
 interface CollapsibleBannerProps {
   className?: string;
   timeframe?: string;
+  environment?: string; // Add environment prop
   hoveredTimestamp?: string | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
 }
@@ -15,6 +16,7 @@ interface CollapsibleBannerProps {
 const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({ 
   className, 
   timeframe = "7d",
+  environment = "production", // Default to production
   hoveredTimestamp,
   onHoverTimestamp
 }) => {
@@ -32,18 +34,21 @@ const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({
           <TelemetryChart 
             title="Error Rate" 
             timeframe={timeframe} 
+            environment={environment}
             hoveredTimestamp={hoveredTimestamp}
             onHoverTimestamp={onHoverTimestamp}
           />
           <TelemetryChart 
             title="Latency p90" 
             timeframe={timeframe} 
+            environment={environment}
             hoveredTimestamp={hoveredTimestamp}
             onHoverTimestamp={onHoverTimestamp}
           />
           <TelemetryChart 
             title="Checkout Conversion Rate" 
             timeframe={timeframe} 
+            environment={environment}
             hoveredTimestamp={hoveredTimestamp}
             onHoverTimestamp={onHoverTimestamp}
           />
@@ -64,4 +69,3 @@ const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({
 };
 
 export default CollapsibleBanner;
-

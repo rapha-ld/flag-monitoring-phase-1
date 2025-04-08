@@ -76,6 +76,7 @@ const Index = () => {
           
           <CollapsibleBanner 
             timeframe={timeframe} 
+            environment={environment} // Pass environment to CollapsibleBanner
             hoveredTimestamp={hoveredTimestamp}
             onHoverTimestamp={handleChartHover}
           />

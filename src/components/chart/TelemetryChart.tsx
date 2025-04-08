@@ -7,6 +7,7 @@ import CustomTooltip from './CustomTooltip';
 interface TelemetryChartProps {
   title: string;
   timeframe?: string;
+  environment?: string; // Add environment prop
   hoveredTimestamp?: string | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
 }
@@ -14,20 +15,36 @@ interface TelemetryChartProps {
 const TelemetryChart: React.FC<TelemetryChartProps> = ({ 
   title, 
   timeframe = "7d",
+  environment = "production", // Default to production
   hoveredTimestamp,
   onHoverTimestamp
 }) => {
-  // Generate data based on timeframe
+  // Generate data based on timeframe and environment
   const data = React.useMemo(() => {
     if (timeframe === "1d") {
       // For 1-day timeframe, generate hourly data (24 hours)
       return Array.from({ length: 24 }, (_, i) => {
         const hour = i.toString().padStart(2, '0');
+        
+        // Adjust values based on environment
+        let baseValue = Math.random() * 100;
+        if (environment === "staging") {
+          // In staging, values are generally higher for error rates and latency
+          if (title === "Error Rate") {
+            baseValue = Math.random() * 100 + 20; // Higher error rates in staging
+          } else if (title === "Latency p90") {
+            baseValue = Math.random() * 100 + 30; // Higher latency in staging
+          } else {
+            baseValue = Math.max(10, Math.random() * 80); // Lower conversion in staging
+          }
+        }
+        
         return {
           time: `${hour}:00`,
-          value: Math.random() * 100,
+          value: baseValue,
           // Adding the date property for hover coordination
-          date: new Date().toISOString()
+          date: new Date().toISOString(),
+          environment: environment // Store environment with each data point
         };
       });
     } else {
@@ -46,14 +63,37 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         const month = date.toLocaleString('en-US', { month: 'short' });
         const day = date.getDate();
         
-        // Adjust value generation based on chart title
+        // Adjust value generation based on chart title and environment
         let value;
         if (title === "Error Rate") {
           // Set error rate between 5% and 15% with occasional spikes up to 30%
           const isSpike = Math.random() < 0.15; // 15% chance of spike
-          value = isSpike 
-            ? 15 + Math.random() * 15 // Spike between 15-30%
-            : 5 + Math.random() * 10; // Normal between 5-15%
+          
+          if (environment === "staging") {
+            // Higher error rates and more spikes in staging
+            const isStagingSpike = Math.random() < 0.25; // 25% chance of spike in staging
+            value = isStagingSpike 
+              ? 20 + Math.random() * 20 // Spike between 20-40% in staging
+              : 10 + Math.random() * 15; // Normal between 10-25% in staging
+          } else {
+            value = isSpike 
+              ? 15 + Math.random() * 15 // Spike between 15-30% in production
+              : 5 + Math.random() * 10; // Normal between 5-15% in production
+          }
+        } else if (title === "Latency p90") {
+          if (environment === "staging") {
+            // Higher latency in staging
+            value = 90 + Math.random() * 80; // 90-170ms in staging
+          } else {
+            value = 60 + Math.random() * 60; // 60-120ms in production
+          }
+        } else if (title === "Checkout Conversion Rate") {
+          if (environment === "staging") {
+            // Lower conversion in staging
+            value = 5 + Math.random() * 10; // 5-15% in staging
+          } else {
+            value = 10 + Math.random() * 15; // 10-25% in production
+          }
         } else {
           value = Math.random() * 100;
         }
@@ -61,11 +101,12 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         return {
           time: `${month} ${day}`,
           value: value,
-          date: date.toISOString()
+          date: date.toISOString(),
+          environment: environment // Store environment with each data point
         };
       });
     }
-  }, [timeframe, title]);
+  }, [timeframe, title, environment]); // Add environment to dependencies
 
   // Calculate the average value for the entire dataset
   const average = React.useMemo(() => {
