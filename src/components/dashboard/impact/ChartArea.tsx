@@ -63,7 +63,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({
     <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
       <ComposedChart
         data={chartData}
-        margin={CHART_MARGIN}
+        margin={CHART_MARGIN} // Using the updated margin with reduced left padding
       >
         <defs>
           <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
