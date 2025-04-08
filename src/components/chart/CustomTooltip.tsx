@@ -15,6 +15,7 @@ interface CustomTooltipProps {
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
   showAverage?: boolean;
   isTelemetryChart?: boolean;
+  isImpactChart?: boolean;
 }
 
 const CustomTooltip = ({ 
@@ -28,11 +29,48 @@ const CustomTooltip = ({
   chartType = 'stacked',
   metricType,
   showAverage,
-  isTelemetryChart = false
+  isTelemetryChart = false,
+  isImpactChart = false
 }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
-    console.log("Tooltip payload:", payload);
+    // For the flag impact chart, we want to show both series
+    if (isImpactChart) {
+      const allFlagsValue = payload.find(p => p.dataKey === 'value')?.value || 0;
+      const thisFlagValue = payload.find(p => p.dataKey === 'flag')?.value || 0;
+      
+      return (
+        <div className="bg-white border border-gray-200 shadow-md rounded-md p-3 text-xs z-[100]">
+          <p className="font-medium text-sm mb-2">{tooltipLabelFormatter(label || '')}</p>
+          <div className="space-y-2 mt-1">
+            {/* All Flags value */}
+            <div className="flex justify-between gap-2 items-center">
+              <div className="flex items-center gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-[#A9AFB4]" />
+                <span className="text-gray-700">All flags:</span>
+              </div>
+              <span className="text-gray-900 font-medium">
+                {tooltipValueFormatter(allFlagsValue)}
+              </span>
+            </div>
+            
+            {/* This Flag value - only show if greater than 0 */}
+            {thisFlagValue > 0 && (
+              <div className="flex justify-between gap-2 items-center">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-[#7861C6]" />
+                  <span className="text-gray-700">This flag:</span>
+                </div>
+                <span className="text-gray-900 font-medium">
+                  {tooltipValueFormatter(thisFlagValue)}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
     
+    // Original tooltip for other chart types
     return (
       <div className="bg-white border border-gray-200 shadow-md rounded-md p-3 text-xs z-[100]">
         <p className="font-medium text-sm mb-2">{tooltipLabelFormatter(label || '')}</p>

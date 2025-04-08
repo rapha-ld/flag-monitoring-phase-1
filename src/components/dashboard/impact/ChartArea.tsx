@@ -106,6 +106,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({
               tooltipLabelFormatter={tooltipLabelFormatter}
               showTrue={false}
               showFalse={false}
+              isImpactChart={true}
             />
           }
           cursor={{ stroke: '#E5E7EB', strokeWidth: 1 }}
