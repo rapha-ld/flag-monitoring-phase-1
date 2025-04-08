@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -147,7 +148,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
               onMouseLeave={handleMouseLeave}
             >
               <defs>
-                <linearGradient id={`colorGradient-${title.replace(/\s+/g, '')}`} x1="0" y1="1" x2="0" y2="0">
+                <linearGradient id={`colorGradient-${title.replace(/\s+/g, '')}`} x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor={chartColor} stopOpacity={0.2} />
                   <stop offset="100%" stopColor={chartColor} stopOpacity={0.05} />
                 </linearGradient>
