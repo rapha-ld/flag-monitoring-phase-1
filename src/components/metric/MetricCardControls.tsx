@@ -39,7 +39,7 @@ const MetricCardControls: React.FC<MetricCardControlsProps> = ({
             <Checkbox 
               id="filter-true" 
               checked={showTrue}
-              onCheckedChange={onToggleTrue}
+              onCheckedChange={() => onToggleTrue && onToggleTrue()}
               className="data-[state=checked]:bg-[#2BB7D2] data-[state=checked]:border-[#2BB7D2]"
             />
             <Label htmlFor="filter-true" className="text-sm">True</Label>
@@ -48,7 +48,7 @@ const MetricCardControls: React.FC<MetricCardControlsProps> = ({
             <Checkbox 
               id="filter-false" 
               checked={showFalse}
-              onCheckedChange={onToggleFalse}
+              onCheckedChange={() => onToggleFalse && onToggleFalse()}
               className="data-[state=checked]:bg-[#FFD099] data-[state=checked]:border-[#FFD099] data-[state=checked]:text-black"
             />
             <Label htmlFor="filter-false" className="text-sm">False</Label>

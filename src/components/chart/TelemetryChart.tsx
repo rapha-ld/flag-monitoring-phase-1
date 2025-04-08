@@ -67,6 +67,23 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     }
   }, [timeframe, title]);
 
+  // Calculate the average value for the entire dataset
+  const average = React.useMemo(() => {
+    const sum = data.reduce((acc, item) => acc + item.value, 0);
+    const avg = sum / data.length;
+    
+    // Format based on chart type
+    if (title === "Error Rate") {
+      return `${avg.toFixed(1)}%`;
+    } else if (title === "Latency p90") {
+      return `${avg.toFixed(0)}ms`;
+    } else if (title === "Checkout Conversion Rate") {
+      return `${avg.toFixed(1)}%`;
+    } else {
+      return avg.toFixed(1);
+    }
+  }, [data, title]);
+
   // Use chart color based on title
   const chartColor = 
     title === "Error Rate" ? "#DB2251" : 
@@ -91,7 +108,10 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   return (
     <Card className="flex-1 bg-white">
       <CardHeader className="p-3 pb-0">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm font-medium">{title}</CardTitle>
+          <span className="text-xs text-textSecondary">Avg. {average}</span>
+        </div>
       </CardHeader>
       <CardContent className="p-3 pt-0 pb-1">
         <div className="h-[60px]">
