@@ -46,7 +46,9 @@ export const useDashboardData = () => {
   useEffect(() => {
     let days = 30; // default
     
-    if (timeframe.startsWith('custom-')) {
+    if (timeframe === "1d") {
+      days = 1; // 1 day timeframe for hourly data
+    } else if (timeframe.startsWith('custom-')) {
       days = parseInt(timeframe.replace('custom-', '').replace('d', ''));
     } else {
       days = parseInt(timeframe.replace('d', ''));

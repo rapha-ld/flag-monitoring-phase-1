@@ -54,10 +54,20 @@ const FlagChangeImpact = ({
       // Apply impact multiplier to scale the values based on selected impact levels
       const scaledValue = Math.min(data.value * (80 / 4) * getImpactMultiplier, 80);
       
-      // Check if this data point corresponds to a date that has an event in history
-      const dataDate = data.date ? new Date(data.date) : new Date(data.name);
-      const dataDateStr = dataDate.toISOString().split('T')[0];
-      const hasEventOnDate = eventDates.includes(dataDateStr);
+      // For 1d timeframe, handle hourly data differently
+      let hasEventOnDate = false;
+      
+      if (timeframe === "1d") {
+        // For 1d view, simulate events at specific hours
+        const hour = parseInt(data.name?.split(":")[0] || "0");
+        // Add events at 8:00, 12:00 and 16:00
+        hasEventOnDate = [8, 12, 16].includes(hour);
+      } else {
+        // For other timeframes, check history data as before
+        const dataDate = data.date ? new Date(data.date) : new Date(data.name);
+        const dataDateStr = dataDate.toISOString().split('T')[0];
+        hasEventOnDate = eventDates.includes(dataDateStr);
+      }
       
       // "This flag" will only have values above 0 for dates with events
       // And those values will always be lower than the "All flags" data
@@ -74,7 +84,7 @@ const FlagChangeImpact = ({
         flag: flagImpact
       };
     });
-  }, [chartData, eventDates, getImpactMultiplier]); // Include getImpactMultiplier in dependencies
+  }, [chartData, eventDates, getImpactMultiplier, timeframe]); // Include timeframe in dependencies
 
   return (
     <div className={cn("bg-white p-4 rounded-lg shadow-sm border border-gray-200", className)}>

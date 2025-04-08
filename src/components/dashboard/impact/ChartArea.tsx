@@ -22,7 +22,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({
   timeframe,
   hoveredTimestamp
 }) => {
-  const xAxisInterval = getXAxisInterval(chartData.length);
+  const xAxisInterval = timeframe === "1d" ? 2 : getXAxisInterval(chartData.length);
   const barSize = getBarSize(chartData.length);
 
   // Calculate positions for selected timestamps
@@ -70,7 +70,13 @@ const ChartArea: React.FC<ChartAreaProps> = ({
           interval={xAxisInterval}
           tickMargin={10}
           minTickGap={10}
-          tickFormatter={(value) => value.split(" ")[0]}
+          tickFormatter={(value) => {
+            if (timeframe === "1d") {
+              // For 1-day timeframe, show hours
+              return value.split(":")[0];
+            }
+            return value.split(" ")[0];
+          }}
         />
         
         <YAxis
@@ -83,7 +89,12 @@ const ChartArea: React.FC<ChartAreaProps> = ({
         
         <Tooltip
           formatter={(value) => [`${Math.round(Number(value))}`, 'Impact']}
-          labelFormatter={(label) => label}
+          labelFormatter={(label) => {
+            if (timeframe === "1d") {
+              return label; // Already formatted properly for 1d
+            }
+            return label;
+          }}
           cursor={{ stroke: '#E5E7EB', strokeWidth: 1 }}
         />
         

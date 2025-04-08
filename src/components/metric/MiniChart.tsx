@@ -48,6 +48,11 @@ const MiniChart: React.FC<MiniChartProps> = ({
   const yAxisMax = maxYValue !== undefined ? maxYValue : localMaxValue * 1.1;
   
   const tooltipLabelFormatter = (label: string) => {
+    // Check if it's in hourly format (contains ":")
+    if (label.includes(":")) {
+      return label;
+    }
+    
     const date = new Date(label);
     return isNaN(date.getTime()) 
       ? label

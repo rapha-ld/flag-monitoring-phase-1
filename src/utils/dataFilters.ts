@@ -19,6 +19,39 @@ export const getFilteredData = (
     ? envFilteredData
     : envFilteredData.filter(item => item.device === device);
   
+  // For 1-day timeframe, generate hourly data
+  if (days === 1) {
+    // Generate 24 hours of data
+    const hourlyData = Array.from({ length: 24 }, (_, i) => {
+      const hour = i.toString().padStart(2, '0');
+      const time = `${hour}:00`;
+      
+      // Apply different base values based on metric type
+      let baseValue = 0;
+      if (metricType === 'evaluations') {
+        baseValue = 15 + Math.floor(Math.random() * 25);
+      } else if (metricType === 'conversion') {
+        baseValue = 2 + Math.floor(Math.random() * 5);
+      } else if (metricType === 'errorRate') {
+        baseValue = 1 + Math.floor(Math.random() * 4);
+      } else {
+        baseValue = 5 + Math.floor(Math.random() * 15);
+      }
+      
+      return {
+        name: time,
+        time: time,
+        value: baseValue,
+        // Add device and environment to match the structure
+        device: device === 'all' ? 'mobile' : device,
+        environment: environment === 'all' ? 'production' : environment,
+        date: new Date().setHours(i, 0, 0, 0)
+      };
+    });
+    
+    return hourlyData;
+  }
+  
   // Generate exact dates we need for the timeframe
   const requiredDates = generatePastDates(days).map(date => formatDate(date));
   
