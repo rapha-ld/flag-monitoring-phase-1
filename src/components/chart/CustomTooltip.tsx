@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent } from "@/components/ui/popover";
@@ -14,7 +13,6 @@ interface CustomTooltipProps {
   chartType?: 'stacked' | 'mixed';
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
   showAverage?: boolean;
-  isTelemetryChart?: boolean;
   isImpactChart?: boolean;
 }
 
@@ -29,11 +27,10 @@ const CustomTooltip = ({
   chartType = 'stacked',
   metricType,
   showAverage,
-  isTelemetryChart = false,
   isImpactChart = false
 }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
-    // For the flag impact chart, we want to show both series
+    // For the flag impact chart
     if (isImpactChart) {
       const allFlagsValue = payload.find(p => p.dataKey === 'value')?.value || 0;
       const thisFlagValue = payload.find(p => p.dataKey === 'flag')?.value || 0;
@@ -53,18 +50,16 @@ const CustomTooltip = ({
               </span>
             </div>
             
-            {/* This Flag value - only show if greater than 0 */}
-            {thisFlagValue > 0 && (
-              <div className="flex justify-between gap-2 items-center">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-[#7861C6]" />
-                  <span className="text-gray-700">This flag:</span>
-                </div>
-                <span className="text-gray-900 font-medium">
-                  {tooltipValueFormatter(thisFlagValue)}
-                </span>
+            {/* This Flag value - now always shown */}
+            <div className="flex justify-between gap-2 items-center">
+              <div className="flex items-center gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-[#7861C6]" />
+                <span className="text-gray-700">This flag:</span>
               </div>
-            )}
+              <span className="text-gray-900 font-medium">
+                {tooltipValueFormatter(thisFlagValue)}
+              </span>
+            </div>
           </div>
         </div>
       );
@@ -125,7 +120,7 @@ const CustomTooltip = ({
         {/* If we're showing the original value - simplified for telemetry charts */}
         {!showTrue && !showFalse && (
           <div className="mt-1">
-            {isTelemetryChart ? (
+            {isImpactChart ? (
               <p className="text-gray-900 font-medium text-center">
                 {tooltipValueFormatter(payload[0].value)}
               </p>
