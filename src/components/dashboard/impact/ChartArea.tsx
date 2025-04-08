@@ -72,9 +72,11 @@ const ChartArea: React.FC<ChartAreaProps> = ({
           minTickGap={10}
           tickFormatter={(value) => {
             if (timeframe === "1d") {
-              // For 1-day timeframe, show hours
-              return value.split(":")[0];
+              // For 1-day timeframe, show just the hour
+              const hourPart = value.split(":")[0];
+              return hourPart;
             }
+            // For other timeframes, show just the date part
             return value.split(" ")[0];
           }}
         />
@@ -91,7 +93,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({
           formatter={(value) => [`${Math.round(Number(value))}`, 'Impact']}
           labelFormatter={(label) => {
             if (timeframe === "1d") {
-              return label; // Already formatted properly for 1d
+              return `${label}`; // Already formatted properly for 1d
             }
             return label;
           }}

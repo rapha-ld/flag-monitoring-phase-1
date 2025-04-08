@@ -59,7 +59,8 @@ const FlagChangeImpact = ({
       
       if (timeframe === "1d") {
         // For 1d view, simulate events at specific hours
-        const hour = parseInt(data.name?.split(":")[0] || "0");
+        const hourStr = data.name?.split(":")[0] || "0";
+        const hour = parseInt(hourStr);
         // Add events at 8:00, 12:00 and 16:00
         hasEventOnDate = [8, 12, 16].includes(hour);
       } else {
@@ -84,7 +85,7 @@ const FlagChangeImpact = ({
         flag: flagImpact
       };
     });
-  }, [chartData, eventDates, getImpactMultiplier, timeframe]); // Include timeframe in dependencies
+  }, [chartData, eventDates, getImpactMultiplier, timeframe]);
 
   return (
     <div className={cn("bg-white p-4 rounded-lg shadow-sm border border-gray-200", className)}>
