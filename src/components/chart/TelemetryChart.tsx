@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -158,8 +159,8 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     <Card className="flex-1 bg-white">
       <CardHeader className="p-3 pb-0">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium mb-4">{title}</CardTitle>
-          <span className="text-xs text-textSecondary mt-0.5">{`Avg. ${average}`}</span>
+          <CardTitle className="text-sm font-medium">{title}</CardTitle>
+          <span className="text-xs text-textSecondary">{`Avg. ${average}`}</span>
         </div>
       </CardHeader>
       <CardContent className="p-3 pt-0 pb-1">
