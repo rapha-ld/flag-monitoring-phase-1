@@ -5,16 +5,29 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface TelemetryChartProps {
   title: string;
+  timeframe?: string;
 }
 
-const TelemetryChart: React.FC<TelemetryChartProps> = ({ title }) => {
-  // Generate random data for demonstration
+const TelemetryChart: React.FC<TelemetryChartProps> = ({ title, timeframe = "7d" }) => {
+  // Generate data based on timeframe
   const data = React.useMemo(() => {
-    return Array.from({ length: 24 }, (_, i) => ({
-      time: `${i}h`,
-      value: Math.random() * 100
-    }));
-  }, []);
+    if (timeframe === "1d") {
+      // For 1-day timeframe, generate hourly data (24 hours)
+      return Array.from({ length: 24 }, (_, i) => {
+        const hour = i.toString().padStart(2, '0');
+        return {
+          time: `${hour}:00`,
+          value: Math.random() * 100
+        };
+      });
+    } else {
+      // For other timeframes, use daily data
+      return Array.from({ length: 24 }, (_, i) => ({
+        time: `${i}h`,
+        value: Math.random() * 100
+      }));
+    }
+  }, [timeframe]);
 
   // Use chart color based on title
   const chartColor = title === "Error Rate" ? "#DB2251" : "#7861C6";
@@ -40,6 +53,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({ title }) => {
                 tick={{ fontSize: 8 }}
                 axisLine={{ stroke: '#eee' }} 
                 tickLine={{ stroke: '#eee' }} 
+                interval={timeframe === "1d" ? 3 : "preserveEnd"} // Show fewer ticks for the 1d view
               />
               <YAxis 
                 tick={{ fontSize: 8 }}

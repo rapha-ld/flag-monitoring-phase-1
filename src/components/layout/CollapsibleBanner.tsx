@@ -7,9 +7,10 @@ import TelemetryChart from '@/components/chart/TelemetryChart';
 
 interface CollapsibleBannerProps {
   className?: string;
+  timeframe?: string;
 }
 
-const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({ className }) => {
+const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({ className, timeframe = "7d" }) => {
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
@@ -21,9 +22,9 @@ const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({ className }) => {
     >
       <CollapsibleContent className="w-full py-4">
         <div className="flex gap-4 px-4">
-          <TelemetryChart title="Error Rate" />
-          <TelemetryChart title="Latency" />
-          <TelemetryChart title="Checkout Conversion Rate" />
+          <TelemetryChart title="Error Rate" timeframe={timeframe} />
+          <TelemetryChart title="Latency" timeframe={timeframe} />
+          <TelemetryChart title="Checkout Conversion Rate" timeframe={timeframe} />
         </div>
       </CollapsibleContent>
       
