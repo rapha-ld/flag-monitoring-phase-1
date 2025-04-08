@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
-import MetricCard from '@/components/metric/MetricCard';
 import { DataPoint, VersionChange } from '@/components/BarChart';
 import { cn } from '@/lib/utils';
-import FlagChangeImpact from './FlagChangeImpact';
+import EvaluationsCard from './cards/EvaluationsCard';
+import ImpactCard from './cards/ImpactCard';
 
 interface DashboardMetricsProps {
   selectedMetrics: string[];
@@ -61,29 +62,17 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
         : "grid-cols-2"
     )}>
       {selectedMetrics.includes('evaluations') && (
-        <MetricCard 
-          title="Evaluations" 
+        <EvaluationsCard
           value={currentMetrics.evaluations.value}
           change={currentMetrics.evaluations.change}
-          info="Total evaluations for the selected time period"
-          className={cn(
-            "animate-slide-up [animation-delay:100ms]",
-            isBreakdownEnabled ? "col-span-2" : ""
-          )}
           chartData={filteredEvaluationData}
-          versionChanges={evaluationVersionChanges.filter(change => 
-            change.position < filteredEvaluationData.length
-          )}
-          valueFormatter={(value) => `${value}`}
-          tooltipValueFormatter={(value) => `${value}`}
-          barColor="#6E6F96"
+          versionChanges={evaluationVersionChanges}
           showTrue={showTrue}
           showFalse={showFalse}
-          chartType="stacked"
-          metricType="evaluations"
           timeframe={timeframe}
           selectedTimestamp={selectedTimestamp}
           selectedTimestamps={selectedTimestamps}
+          isBreakdownEnabled={isBreakdownEnabled}
           onBreakdownToggle={handleBreakdownToggle}
           hoveredTimestamp={hoveredTimestamp}
           onHoverTimestamp={onHoverTimestamp}
@@ -92,12 +81,9 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
         />
       )}
       
-      <FlagChangeImpact
+      <ImpactCard
         chartData={filteredConversionData}
-        className={cn(
-          "animate-slide-up [animation-delay:200ms]",
-          isBreakdownEnabled ? "h-[522px]" : ""
-        )}
+        isBreakdownEnabled={isBreakdownEnabled}
         selectedTimestamp={selectedTimestamp}
         selectedTimestamps={selectedTimestamps}
         timeframe={timeframe}
