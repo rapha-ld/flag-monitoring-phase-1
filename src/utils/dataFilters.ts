@@ -19,6 +19,47 @@ export const getFilteredData = (
     ? envFilteredData
     : envFilteredData.filter(item => item.device === device);
   
+  // For 1-hour timeframe, generate minute-based data
+  if (days < 0.05) { // About 1 hour (1/24th of a day)
+    // Generate 60 minutes of data
+    const minuteData = Array.from({ length: 60 }, (_, i) => {
+      const minute = i.toString().padStart(2, '0');
+      const time = `${minute}m`;
+      
+      // Apply different base values based on metric type
+      let baseValue = 0;
+      if (metricType === 'evaluations') {
+        baseValue = 5 + Math.floor(Math.random() * 10);
+      } else if (metricType === 'conversion') {
+        baseValue = 1 + Math.floor(Math.random() * 3);
+      } else if (metricType === 'errorRate') {
+        baseValue = 0.5 + Math.floor(Math.random() * 2);
+      } else {
+        baseValue = 2 + Math.floor(Math.random() * 5);
+      }
+      
+      // Add some spikes for visual interest
+      if (i % 5 === 0) {
+        baseValue += Math.floor(Math.random() * 8);
+      }
+      
+      const now = new Date();
+      const minuteDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), i);
+      
+      return {
+        name: time,
+        time: time,
+        value: baseValue,
+        // Add device and environment to match the structure
+        device: device === 'all' ? 'mobile' : device,
+        environment: environment === 'all' ? 'production' : environment,
+        date: minuteDate.toISOString()
+      };
+    });
+    
+    return minuteData;
+  }
+  
   // For 1-day timeframe, generate hourly data
   if (days === 1) {
     // Generate 24 hours of data
@@ -112,7 +153,7 @@ export const calculateMetrics = (
   const errorAvg = parseFloat((errorSum / errorRateData.length).toFixed(1));
   
   // Calculate change (comparing to the first half of the period)
-  const middleIndex = Math.floor(days / 2);
+  const middleIndex = Math.floor(evaluationData.length / 2);
   
   // For evaluations, compare totals
   const evalFirstHalf = evaluationData.slice(0, middleIndex);

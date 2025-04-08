@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
@@ -47,7 +48,7 @@ const MiniChart: React.FC<MiniChartProps> = ({
   const yAxisMax = maxYValue !== undefined ? maxYValue : localMaxValue * 1.1;
   
   const tooltipLabelFormatter = (label: string) => {
-    if (label.includes(":")) {
+    if (label.includes(":") || label.includes("m")) {
       return label;
     }
     

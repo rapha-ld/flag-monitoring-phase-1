@@ -25,7 +25,16 @@ const ChartArea: React.FC<ChartAreaProps> = ({
   hoveredTimestamp,
   onHoverTimestamp
 }) => {
-  const xAxisInterval = timeframe === "1d" ? 2 : getXAxisInterval(chartData.length);
+  // Adjust interval based on timeframe
+  let xAxisInterval;
+  if (timeframe === "1h") {
+    xAxisInterval = 9; // Show fewer ticks for minute-based data
+  } else if (timeframe === "1d") {
+    xAxisInterval = 2;
+  } else {
+    xAxisInterval = getXAxisInterval(chartData.length);
+  }
+  
   const barSize = getBarSize(chartData.length);
 
   // Calculate positions for selected timestamps
@@ -53,7 +62,9 @@ const ChartArea: React.FC<ChartAreaProps> = ({
   };
 
   const tooltipLabelFormatter = (label: string) => {
-    if (timeframe === "1d") {
+    if (timeframe === "1h") {
+      return `${label}`;
+    } else if (timeframe === "1d") {
       return `${label}`;
     }
     return label;
@@ -97,7 +108,10 @@ const ChartArea: React.FC<ChartAreaProps> = ({
           tickMargin={10}
           minTickGap={10}
           tickFormatter={(value) => {
-            if (timeframe === "1d") {
+            if (timeframe === "1h") {
+              // For 1-hour timeframe, show just the minute
+              return value.replace('m', '');
+            } else if (timeframe === "1d") {
               // For 1-day timeframe, show just the hour
               const hourPart = value.split(":")[0];
               return hourPart;

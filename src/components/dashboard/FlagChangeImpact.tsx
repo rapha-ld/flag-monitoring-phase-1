@@ -1,3 +1,4 @@
+
 import React, { useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { DataPoint } from '@/components/BarChart';
@@ -57,10 +58,16 @@ const FlagChangeImpact = ({
       // Apply impact multiplier to scale the values based on selected impact levels
       const scaledValue = Math.min(data.value * (80 / 4) * getImpactMultiplier, 80);
       
-      // For 1d timeframe, handle hourly data differently
+      // Handle different timeframes
       let hasEventOnDate = false;
       
-      if (timeframe === "1d") {
+      if (timeframe === "1h") {
+        // For 1h view, simulate events at specific minutes
+        const minuteStr = data.name?.replace('m', '') || "0";
+        const minute = parseInt(minuteStr);
+        // Add events at minutes 10, 25, 40, and 55
+        hasEventOnDate = [10, 25, 40, 55].includes(minute);
+      } else if (timeframe === "1d") {
         // For 1d view, simulate events at specific hours
         const hourStr = data.name?.split(":")[0] || "0";
         const hour = parseInt(hourStr);

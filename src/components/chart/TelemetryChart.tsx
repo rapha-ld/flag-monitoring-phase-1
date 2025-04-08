@@ -20,7 +20,31 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   onHoverTimestamp
 }) => {
   const data = React.useMemo(() => {
-    if (timeframe === "1d") {
+    if (timeframe === "1h") {
+      // For 1h timeframe, generate data for every minute for 60 minutes
+      return Array.from({ length: 60 }, (_, i) => {
+        const minutes = i;
+        const minuteStr = minutes.toString().padStart(2, '0');
+        
+        let baseValue = Math.random() * 100;
+        if (environment === "staging") {
+          if (title === "Error Rate") {
+            baseValue = Math.random() * 100 + 20;
+          } else if (title === "Latency p90") {
+            baseValue = Math.random() * 100 + 30;
+          } else {
+            baseValue = Math.max(10, Math.random() * 80);
+          }
+        }
+        
+        return {
+          time: `${minuteStr}m`,
+          value: baseValue,
+          date: new Date().toISOString(),
+          environment: environment
+        };
+      });
+    } else if (timeframe === "1d") {
       return Array.from({ length: 24 }, (_, i) => {
         const hour = i.toString().padStart(2, '0');
         
@@ -130,17 +154,20 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     }
   };
 
+  // Calculate height for ResponsiveContainer based on original height plus 30%
+  const chartHeight = 78 * 1.3;
+
   return (
     <Card className="flex-1 bg-white">
       <CardHeader className="p-3 pb-0">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium mb-2">{title}</CardTitle>
+          <CardTitle className="text-sm font-medium mb-4">{title}</CardTitle>
           <span className="text-xs text-textSecondary">Avg. {average}</span>
         </div>
       </CardHeader>
       <CardContent className="p-3 pt-0 pb-1">
-        <div className="h-[78px]">
-          <ResponsiveContainer width="100%" height="100%">
+        <div className={`h-[${chartHeight}px]`}>
+          <ResponsiveContainer width="100%" height={chartHeight}>
             <AreaChart 
               data={data} 
               margin={{ top: 5, right: 5, left: 5, bottom: 0 }}
@@ -159,7 +186,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                 tick={{ fontSize: 8 }}
                 axisLine={{ stroke: '#eee' }} 
                 tickLine={{ stroke: '#eee' }} 
-                interval={timeframe === "1d" ? 3 : "preserveEnd"}
+                interval={timeframe === "1h" ? 4 : timeframe === "1d" ? 3 : "preserveEnd"}
               />
               <YAxis 
                 tick={{ fontSize: 8 }}
