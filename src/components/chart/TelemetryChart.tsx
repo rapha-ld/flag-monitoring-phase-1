@@ -126,6 +126,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                     tooltipLabelFormatter={tooltipLabelFormatter}
                     showTrue={false}
                     showFalse={false}
+                    isTelemetryChart={true}
                   />
                 }
               />

@@ -14,6 +14,7 @@ interface CustomTooltipProps {
   chartType?: 'stacked' | 'mixed';
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
   showAverage?: boolean;
+  isTelemetryChart?: boolean;
 }
 
 const CustomTooltip = ({ 
@@ -26,7 +27,8 @@ const CustomTooltip = ({
   showFalse,
   chartType = 'stacked',
   metricType,
-  showAverage
+  showAverage,
+  isTelemetryChart = false
 }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     console.log("Tooltip payload:", payload);
@@ -82,19 +84,27 @@ const CustomTooltip = ({
           </div>
         )}
         
-        {/* If we're showing the original value */}
+        {/* If we're showing the original value - simplified for telemetry charts */}
         {!showTrue && !showFalse && (
-          <div className="flex justify-between gap-2 items-center mt-1">
-            <div className="flex items-center gap-1.5">
-              <div 
-                className="w-3 h-3 rounded-full" 
-                style={{ backgroundColor: payload[0].color }}
-              />
-              <span className="text-gray-700">Value:</span>
-            </div>
-            <p className="text-gray-900 font-medium">
-              {tooltipValueFormatter(payload[0].value)}
-            </p>
+          <div className="mt-1">
+            {isTelemetryChart ? (
+              <p className="text-gray-900 font-medium text-center">
+                {tooltipValueFormatter(payload[0].value)}
+              </p>
+            ) : (
+              <div className="flex justify-between gap-2 items-center">
+                <div className="flex items-center gap-1.5">
+                  <div 
+                    className="w-3 h-3 rounded-full" 
+                    style={{ backgroundColor: payload[0].color }}
+                  />
+                  <span className="text-gray-700">Value:</span>
+                </div>
+                <p className="text-gray-900 font-medium">
+                  {tooltipValueFormatter(payload[0].value)}
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>
