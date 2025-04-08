@@ -147,6 +147,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                 stroke={chartColor} 
                 strokeWidth={1}
                 fill={`url(#colorGradient-${title.replace(/\s+/g, '')})`}
+                isAnimationActive={false}
               />
             </AreaChart>
           </ResponsiveContainer>
