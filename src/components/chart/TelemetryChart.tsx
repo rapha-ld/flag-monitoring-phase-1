@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface TelemetryChartProps {
@@ -16,19 +16,8 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({ title }) => {
     }));
   }, []);
 
-  // Choose color based on chart type
-  const getChartColor = () => {
-    switch (title) {
-      case 'Error Rate':
-        return '#FF6B6B';
-      case 'Latency':
-        return '#4D96FF';
-      case 'Checkout Conversion Rate':
-        return '#6BCB77';
-      default:
-        return '#6E6F96';
-    }
-  };
+  // Use consistent chart color
+  const chartColor = '#7861C6';
 
   return (
     <Card className="flex-1 bg-white">
@@ -39,15 +28,18 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({ title }) => {
         <div className="h-[60px]">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
               <XAxis 
                 dataKey="time" 
-                tick={false} 
-                axisLine={false} 
-                tickLine={false} 
+                tick={{ fontSize: 8 }}
+                axisLine={{ stroke: '#eee' }} 
+                tickLine={{ stroke: '#eee' }} 
               />
               <YAxis 
-                hide 
-                domain={['auto', 'auto']} 
+                tick={{ fontSize: 8 }}
+                axisLine={{ stroke: '#eee' }} 
+                tickLine={{ stroke: '#eee' }}
+                width={20}
               />
               <Tooltip 
                 formatter={(value: any) => [typeof value === 'number' ? value.toFixed(2) : value, title]}
@@ -56,10 +48,10 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({ title }) => {
               <Area 
                 type="monotone" 
                 dataKey="value" 
-                stroke={getChartColor()} 
-                fill={getChartColor()} 
+                stroke={chartColor} 
+                strokeWidth={1}
+                fill={chartColor} 
                 fillOpacity={0.2} 
-                strokeWidth={2}
               />
             </AreaChart>
           </ResponsiveContainer>
