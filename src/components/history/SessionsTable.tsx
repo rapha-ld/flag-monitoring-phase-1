@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Play, Search } from 'lucide-react';
@@ -18,6 +17,7 @@ interface Session {
 interface SessionsTableProps {
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
+  onHoverTimestamp?: (timestamp: string | null) => void;
 }
 
 const sessionsData: Session[] = [
@@ -213,7 +213,8 @@ const getErrorDisplay = (errorCount: number) => {
 
 const SessionsTable: React.FC<SessionsTableProps> = ({ 
   selectedTimestamp, 
-  selectedTimestamps 
+  selectedTimestamps,
+  onHoverTimestamp
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredSessions, setFilteredSessions] = useState(sessionsData);
@@ -253,6 +254,18 @@ const SessionsTable: React.FC<SessionsTableProps> = ({
     setFilteredSessions(sortedFilteredSessions);
   }, [searchQuery, selectedTimestamp, selectedTimestamps]);
 
+  const handleRowMouseEnter = (session: Session) => {
+    if (onHoverTimestamp) {
+      onHoverTimestamp(session.timestamp.toISOString());
+    }
+  };
+
+  const handleRowMouseLeave = () => {
+    if (onHoverTimestamp) {
+      onHoverTimestamp(null);
+    }
+  };
+
   return (
     <div className="space-y-4 animate-fade-in">
       <div className="flex justify-start items-center mt-5">
@@ -280,7 +293,12 @@ const SessionsTable: React.FC<SessionsTableProps> = ({
         <TableBody>
           {filteredSessions.length > 0 ? (
             filteredSessions.map((session) => (
-              <TableRow key={session.id}>
+              <TableRow 
+                key={session.id}
+                className="cursor-pointer hover:bg-primary/5 transition-colors"
+                onMouseEnter={() => handleRowMouseEnter(session)}
+                onMouseLeave={handleRowMouseLeave}
+              >
                 <TableCell className="font-medium">{session.account}</TableCell>
                 <TableCell>{session.os}</TableCell>
                 <TableCell>{getConversionBadge(session.conversions)}</TableCell>
