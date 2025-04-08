@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -69,7 +70,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   // Use chart color based on title
   const chartColor = 
     title === "Error Rate" ? "#DB2251" : 
-    title === "Latency p90" || title === "Checkout Conversion Rate" ? "#6E6F96" : 
+    title === "Latency p90" || title === "Checkout Conversion Rate" ? "#525EB7" : 
     "#7861C6";
 
   const tooltipLabelFormatter = (label: string) => label;
