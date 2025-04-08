@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import MetricCard from '@/components/metric/MetricCard';
 import { DataPoint, VersionChange } from '@/components/BarChart';
@@ -25,6 +26,7 @@ interface DashboardMetricsProps {
   onHoverTimestamp?: (timestamp: string | null) => void;
   onToggleTrue?: () => void;
   onToggleFalse?: () => void;
+  hoveredTimestamp?: string | null;
 }
 
 const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
@@ -43,20 +45,13 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   selectedTimestamps,
   onHoverTimestamp,
   onToggleTrue,
-  onToggleFalse
+  onToggleFalse,
+  hoveredTimestamp
 }) => {
   const [isBreakdownEnabled, setIsBreakdownEnabled] = useState(false);
-  const [hoveredTimestamp, setHoveredTimestamp] = useState<string | null>(null);
   
   const handleBreakdownToggle = (enabled: boolean) => {
     setIsBreakdownEnabled(enabled);
-  };
-  
-  const handleHoverTimestamp = (timestamp: string | null) => {
-    setHoveredTimestamp(timestamp);
-    if (onHoverTimestamp) {
-      onHoverTimestamp(timestamp);
-    }
   };
   
   return (
@@ -93,7 +88,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
             selectedTimestamps={selectedTimestamps}
             onBreakdownToggle={handleBreakdownToggle}
             hoveredTimestamp={hoveredTimestamp}
-            onHoverTimestamp={handleHoverTimestamp}
+            onHoverTimestamp={onHoverTimestamp}
             onToggleTrue={onToggleTrue}
             onToggleFalse={onToggleFalse}
           />

@@ -1,15 +1,22 @@
 
 import React from 'react';
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import CustomTooltip from './CustomTooltip';
 
 interface TelemetryChartProps {
   title: string;
   timeframe?: string;
+  hoveredTimestamp?: string | null;
+  onHoverTimestamp?: (timestamp: string | null) => void;
 }
 
-const TelemetryChart: React.FC<TelemetryChartProps> = ({ title, timeframe = "7d" }) => {
+const TelemetryChart: React.FC<TelemetryChartProps> = ({ 
+  title, 
+  timeframe = "7d",
+  hoveredTimestamp,
+  onHoverTimestamp
+}) => {
   // Generate data based on timeframe
   const data = React.useMemo(() => {
     if (timeframe === "1d") {
@@ -22,11 +29,28 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({ title, timeframe = "7d"
         };
       });
     } else {
-      // For other timeframes, use daily data
-      return Array.from({ length: 24 }, (_, i) => ({
-        time: `${i}h`,
-        value: Math.random() * 100
-      }));
+      // For other timeframes, determine number of days
+      let days = 30; // default
+      if (timeframe.endsWith('d')) {
+        days = parseInt(timeframe.replace('d', ''));
+      }
+      
+      // Generate data based on the selected timeframe
+      return Array.from({ length: days }, (_, i) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (days - 1) + i);
+        
+        // Format date as Mar 25, etc.
+        const month = date.toLocaleString('en-US', { month: 'short' });
+        const day = date.getDate();
+        
+        return {
+          time: `${month} ${day}`,
+          value: Math.random() * 100,
+          // Adding the date property for hover coordination
+          date: date.toISOString()
+        };
+      });
     }
   }, [timeframe]);
 
@@ -35,6 +59,18 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({ title, timeframe = "7d"
 
   const tooltipLabelFormatter = (label: string) => label;
   const tooltipValueFormatter = (value: number) => value.toFixed(2);
+  
+  const handleMouseMove = (e: any) => {
+    if (e && e.activeLabel && onHoverTimestamp) {
+      onHoverTimestamp(e.activeLabel);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (onHoverTimestamp) {
+      onHoverTimestamp(null);
+    }
+  };
 
   return (
     <Card className="flex-1 bg-white">
@@ -44,7 +80,12 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({ title, timeframe = "7d"
       <CardContent className="p-3 pt-0 pb-1">
         <div className="h-[60px]">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 5, right: 5, left: 5, bottom: 0 }}>
+            <AreaChart 
+              data={data} 
+              margin={{ top: 5, right: 5, left: 5, bottom: 0 }}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+            >
               <defs>
                 <linearGradient id={`colorGradient-${title.replace(/\s+/g, '')}`} x1="0" y1="1" x2="0" y2="0">
                   <stop offset="0%" stopColor={chartColor} stopOpacity={0.1} />
@@ -75,6 +116,17 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({ title, timeframe = "7d"
                   />
                 }
               />
+              
+              {hoveredTimestamp && (
+                <ReferenceLine
+                  x={hoveredTimestamp}
+                  stroke="#6E6F96"
+                  strokeWidth={1}
+                  strokeDasharray="3 3"
+                  isFront={true}
+                />
+              )}
+              
               <Area 
                 type="monotone" 
                 dataKey="value" 

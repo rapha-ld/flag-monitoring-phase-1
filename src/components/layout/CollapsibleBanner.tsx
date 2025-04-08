@@ -8,9 +8,16 @@ import TelemetryChart from '@/components/chart/TelemetryChart';
 interface CollapsibleBannerProps {
   className?: string;
   timeframe?: string;
+  hoveredTimestamp?: string | null;
+  onHoverTimestamp?: (timestamp: string | null) => void;
 }
 
-const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({ className, timeframe = "7d" }) => {
+const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({ 
+  className, 
+  timeframe = "7d",
+  hoveredTimestamp,
+  onHoverTimestamp
+}) => {
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
@@ -22,9 +29,24 @@ const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({ className, timefr
     >
       <CollapsibleContent className="w-full py-4">
         <div className="flex gap-4 px-4">
-          <TelemetryChart title="Error Rate" timeframe={timeframe} />
-          <TelemetryChart title="Latency" timeframe={timeframe} />
-          <TelemetryChart title="Checkout Conversion Rate" timeframe={timeframe} />
+          <TelemetryChart 
+            title="Error Rate" 
+            timeframe={timeframe} 
+            hoveredTimestamp={hoveredTimestamp}
+            onHoverTimestamp={onHoverTimestamp}
+          />
+          <TelemetryChart 
+            title="Latency" 
+            timeframe={timeframe} 
+            hoveredTimestamp={hoveredTimestamp}
+            onHoverTimestamp={onHoverTimestamp}
+          />
+          <TelemetryChart 
+            title="Checkout Conversion Rate" 
+            timeframe={timeframe} 
+            hoveredTimestamp={hoveredTimestamp}
+            onHoverTimestamp={onHoverTimestamp}
+          />
         </div>
       </CollapsibleContent>
       

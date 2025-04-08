@@ -7,6 +7,7 @@ import DashboardMetrics from '@/components/dashboard/DashboardMetrics';
 import DashboardFooter from '@/components/dashboard/DashboardFooter';
 import FeatureFlagHistory from '@/components/dashboard/FeatureFlagHistory';
 import { useDashboardData } from '@/hooks/useDashboardData';
+import CollapsibleBanner from '@/components/layout/CollapsibleBanner';
 
 const Index = () => {
   const {
@@ -39,6 +40,15 @@ const Index = () => {
     handleHoverTimestamp
   } = useDashboardData();
 
+  // State to track hovered timestamp across all charts
+  const [hoveredTimestamp, setHoveredTimestamp] = React.useState<string | null>(null);
+
+  // Centralized handler for chart hover events
+  const handleChartHover = (timestamp: string | null) => {
+    setHoveredTimestamp(timestamp);
+    handleHoverTimestamp(timestamp);
+  };
+
   return (
     <DashboardLayout>
       <div className={cn(
@@ -64,6 +74,12 @@ const Index = () => {
             metricsButtonVisible={false}
           />
           
+          <CollapsibleBanner 
+            timeframe={timeframe} 
+            hoveredTimestamp={hoveredTimestamp}
+            onHoverTimestamp={handleChartHover}
+          />
+          
           <DashboardMetrics 
             selectedMetrics={visibleMetrics}
             currentMetrics={currentMetrics}
@@ -78,9 +94,10 @@ const Index = () => {
             timeframe={timeframe}
             selectedTimestamp={selectedTimestamp}
             selectedTimestamps={selectedTimestamps}
-            onHoverTimestamp={handleHoverTimestamp}
+            onHoverTimestamp={handleChartHover}
             onToggleTrue={handleToggleTrue}
             onToggleFalse={handleToggleFalse}
+            hoveredTimestamp={hoveredTimestamp}
           />
           
           <DashboardFooter />
