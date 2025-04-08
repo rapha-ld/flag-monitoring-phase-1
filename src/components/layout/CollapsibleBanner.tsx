@@ -36,7 +36,7 @@ const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({
             onHoverTimestamp={onHoverTimestamp}
           />
           <TelemetryChart 
-            title="Latency" 
+            title="Latency p90" 
             timeframe={timeframe} 
             hoveredTimestamp={hoveredTimestamp}
             onHoverTimestamp={onHoverTimestamp}

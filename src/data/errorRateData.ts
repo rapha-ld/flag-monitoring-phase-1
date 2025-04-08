@@ -6,27 +6,30 @@ const devices = ['windows', 'macos', 'linux', 'ios', 'android'];
 
 // Generate error rate data for the past 90 days
 export const errorRateData = generatePastDates(90).map((date, index) => {
-  // Create some variations in the data with more pronounced fluctuations
+  // Create error rate data between 5-15% with occasional spikes up to 30%
   let value: number;
-
-  if (index < 15) {
-    // First 15 days - high error rate with volatility
-    value = 3.8 + Math.sin(index * 0.5) * 0.7 + Math.random() * 0.4;
-  } else if (index < 25) {
-    // Days 15-25 - spike in errors 
-    value = 4.2 + Math.sin((index - 15) * 0.7) * 0.5 + Math.random() * 0.3;
-  } else if (index < 40) {
-    // Days 25-40 - decreasing after version change but with fluctuations
-    value = 3.5 - (index - 25) * 0.07 + Math.sin(index * 0.4) * 0.6 + Math.random() * 0.3;
-  } else if (index < 60) {
-    // Days 40-60 - gradual improvement with setbacks
-    value = 2.5 - (index - 40) * 0.04 + Math.sin(index * 0.6) * 0.5 + Math.random() * 0.2;
-  } else if (index < 75) {
-    // Days 60-75 - further improvement with oscillation
-    value = 1.8 + Math.sin(index * 0.5) * 0.4 + Math.random() * 0.2;
+  
+  // Determine if this should be a spike day (approximately 10% of days)
+  const isSpike = Math.random() < 0.1;
+  
+  if (isSpike) {
+    // Spike values between 15-30%
+    value = 15 + Math.random() * 15;
   } else {
-    // Days 75-90 - stabilizing at a lower level with minor fluctuations
-    value = 1.3 + Math.sin(index * 0.4) * 0.3 + Math.random() * 0.15;
+    // Normal values between 5-15%
+    value = 5 + Math.random() * 10;
+  }
+  
+  // Create specific patterns in the data
+  if (index < 10) {
+    // First 10 days - slightly elevated baseline
+    value = isSpike ? 20 + Math.random() * 10 : 8 + Math.random() * 5;
+  } else if (index > 25 && index < 35) {
+    // Days 25-35 - create a pronounced spike period
+    value = 12 + Math.random() * 18;
+  } else if (index > 60 && index < 70) {
+    // Days 60-70 - create another event period
+    value = isSpike ? 25 + Math.random() * 5 : 10 + Math.random() * 5;
   }
 
   return {

@@ -25,7 +25,9 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         const hour = i.toString().padStart(2, '0');
         return {
           time: `${hour}:00`,
-          value: Math.random() * 100
+          value: Math.random() * 100,
+          // Adding the date property for hover coordination
+          date: new Date().toISOString()
         };
       });
     } else {
@@ -44,15 +46,26 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         const month = date.toLocaleString('en-US', { month: 'short' });
         const day = date.getDate();
         
+        // Adjust value generation based on chart title
+        let value;
+        if (title === "Error Rate") {
+          // Set error rate between 5% and 15% with occasional spikes up to 30%
+          const isSpike = Math.random() < 0.15; // 15% chance of spike
+          value = isSpike 
+            ? 15 + Math.random() * 15 // Spike between 15-30%
+            : 5 + Math.random() * 10; // Normal between 5-15%
+        } else {
+          value = Math.random() * 100;
+        }
+        
         return {
           time: `${month} ${day}`,
-          value: Math.random() * 100,
-          // Adding the date property for hover coordination
+          value: value,
           date: date.toISOString()
         };
       });
     }
-  }, [timeframe]);
+  }, [timeframe, title]);
 
   // Use chart color based on title
   const chartColor = title === "Error Rate" ? "#DB2251" : "#7861C6";
