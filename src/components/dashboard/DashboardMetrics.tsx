@@ -95,10 +95,10 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
         )}
         
         {isBreakdownEnabled ? (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col">
             <FlagChangeImpact
               chartData={filteredConversionData}
-              className="flex-1 animate-slide-up [animation-delay:200ms]"
+              className="h-full animate-slide-up [animation-delay:200ms]"
               selectedTimestamp={selectedTimestamp}
               selectedTimestamps={selectedTimestamps}
               timeframe={timeframe}
