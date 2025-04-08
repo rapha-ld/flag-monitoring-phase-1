@@ -67,7 +67,10 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   }, [timeframe, title]);
 
   // Use chart color based on title
-  const chartColor = title === "Error Rate" ? "#DB2251" : "#7861C6";
+  const chartColor = 
+    title === "Error Rate" ? "#DB2251" : 
+    title === "Latency p90" || title === "Checkout Conversion Rate" ? "#6E6F96" : 
+    "#7861C6";
 
   const tooltipLabelFormatter = (label: string) => label;
   const tooltipValueFormatter = (value: number) => value.toFixed(2);
