@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import MetricCard from '@/components/metric/MetricCard';
 import { DataPoint, VersionChange } from '@/components/BarChart';
@@ -55,68 +54,56 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   };
   
   return (
-    <>
-      <div className={cn(
-        "grid gap-4",
-        isBreakdownEnabled
-          ? "grid-cols-3"
-          : "grid-cols-2"
-      )}>
-        {selectedMetrics.includes('evaluations') && (
-          <MetricCard 
-            title="Evaluations" 
-            value={currentMetrics.evaluations.value}
-            change={currentMetrics.evaluations.change}
-            info="Total evaluations for the selected time period"
-            className={cn(
-              "animate-slide-up [animation-delay:100ms]",
-              isBreakdownEnabled && "col-span-2"
-            )}
-            chartData={filteredEvaluationData}
-            versionChanges={evaluationVersionChanges.filter(change => 
-              change.position < filteredEvaluationData.length
-            )}
-            valueFormatter={(value) => `${value}`}
-            tooltipValueFormatter={(value) => `${value}`}
-            barColor="#6E6F96"
-            showTrue={showTrue}
-            showFalse={showFalse}
-            chartType="stacked"
-            metricType="evaluations"
-            timeframe={timeframe}
-            selectedTimestamp={selectedTimestamp}
-            selectedTimestamps={selectedTimestamps}
-            onBreakdownToggle={handleBreakdownToggle}
-            hoveredTimestamp={hoveredTimestamp}
-            onHoverTimestamp={onHoverTimestamp}
-            onToggleTrue={onToggleTrue}
-            onToggleFalse={onToggleFalse}
-          />
+    <div className={cn(
+      "grid gap-4",
+      isBreakdownEnabled
+        ? "grid-cols-3"
+        : "grid-cols-2"
+    )}>
+      {selectedMetrics.includes('evaluations') && (
+        <MetricCard 
+          title="Evaluations" 
+          value={currentMetrics.evaluations.value}
+          change={currentMetrics.evaluations.change}
+          info="Total evaluations for the selected time period"
+          className={cn(
+            "animate-slide-up [animation-delay:100ms]",
+            isBreakdownEnabled ? "col-span-2" : ""
+          )}
+          chartData={filteredEvaluationData}
+          versionChanges={evaluationVersionChanges.filter(change => 
+            change.position < filteredEvaluationData.length
+          )}
+          valueFormatter={(value) => `${value}`}
+          tooltipValueFormatter={(value) => `${value}`}
+          barColor="#6E6F96"
+          showTrue={showTrue}
+          showFalse={showFalse}
+          chartType="stacked"
+          metricType="evaluations"
+          timeframe={timeframe}
+          selectedTimestamp={selectedTimestamp}
+          selectedTimestamps={selectedTimestamps}
+          onBreakdownToggle={handleBreakdownToggle}
+          hoveredTimestamp={hoveredTimestamp}
+          onHoverTimestamp={onHoverTimestamp}
+          onToggleTrue={onToggleTrue}
+          onToggleFalse={onToggleFalse}
+        />
+      )}
+      
+      <FlagChangeImpact
+        chartData={filteredConversionData}
+        className={cn(
+          "animate-slide-up [animation-delay:200ms]",
+          isBreakdownEnabled ? "h-[522px]" : ""
         )}
-        
-        {isBreakdownEnabled ? (
-          <div className="flex flex-col">
-            <FlagChangeImpact
-              chartData={filteredConversionData}
-              className="h-full animate-slide-up [animation-delay:200ms]"
-              selectedTimestamp={selectedTimestamp}
-              selectedTimestamps={selectedTimestamps}
-              timeframe={timeframe}
-              hoveredTimestamp={hoveredTimestamp}
-            />
-          </div>
-        ) : (
-          <FlagChangeImpact
-            chartData={filteredConversionData}
-            className="animate-slide-up [animation-delay:200ms]"
-            selectedTimestamp={selectedTimestamp}
-            selectedTimestamps={selectedTimestamps}
-            timeframe={timeframe}
-            hoveredTimestamp={hoveredTimestamp}
-          />
-        )}
-      </div>
-    </>
+        selectedTimestamp={selectedTimestamp}
+        selectedTimestamps={selectedTimestamps}
+        timeframe={timeframe}
+        hoveredTimestamp={hoveredTimestamp}
+      />
+    </div>
   );
 };
 
