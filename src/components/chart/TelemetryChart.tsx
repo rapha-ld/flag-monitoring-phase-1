@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import CustomTooltip from './CustomTooltip';
 
@@ -19,6 +19,9 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   hoveredTimestamp,
   onHoverTimestamp
 }) => {
+  // Rename "Error Rate" to "Errors" for display
+  const displayTitle = title === "Error Rate" ? "Errors" : title;
+  
   const data = React.useMemo(() => {
     if (timeframe === "1h") {
       return Array.from({ length: 60 }, (_, i) => {
@@ -154,74 +157,134 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   };
 
   const chartHeight = 78 * 1.3;
+  
+  // Determine if we should use BarChart instead of AreaChart
+  const useBarChart = title === "Error Rate";
 
   return (
     <Card className="flex-1 bg-white">
       <CardHeader className="p-3 pb-0">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium">{title}</CardTitle>
+          <CardTitle className="text-sm font-medium">{displayTitle}</CardTitle>
           <span className="text-xs text-textSecondary">{`Avg. ${average}`}</span>
         </div>
       </CardHeader>
       <CardContent className="p-3 pt-0 pb-1">
         <div className={`h-[${chartHeight}px]`}>
           <ResponsiveContainer width="100%" height={chartHeight}>
-            <AreaChart 
-              data={data} 
-              margin={{ top: 5, right: 5, left: 5, bottom: 0 }}
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
-            >
-              <defs>
-                <linearGradient id={`colorGradient-${title.replace(/\s+/g, '')}`} x1="0" y1="1" x2="0" y2="0">
-                  <stop offset="0%" stopColor={chartColor} stopOpacity={0.05} />
-                  <stop offset="100%" stopColor={chartColor} stopOpacity={0.2} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
-              <XAxis 
-                dataKey="time" 
-                tick={{ fontSize: 8 }}
-                axisLine={{ stroke: '#eee' }} 
-                tickLine={{ stroke: '#eee' }} 
-                interval={timeframe === "1h" ? 4 : timeframe === "1d" ? 3 : "preserveEnd"}
-              />
-              <YAxis 
-                tick={{ fontSize: 8 }}
-                axisLine={{ stroke: '#eee' }} 
-                tickLine={{ stroke: '#eee' }}
-                width={20}
-              />
-              <Tooltip 
-                content={
-                  <CustomTooltip 
-                    tooltipValueFormatter={tooltipValueFormatter}
-                    tooltipLabelFormatter={tooltipLabelFormatter}
-                    showTrue={false}
-                    showFalse={false}
-                  />
-                }
-              />
-              
-              {hoveredTimestamp && (
-                <ReferenceLine
-                  x={hoveredTimestamp}
-                  stroke="#6E6F96"
-                  strokeWidth={1}
-                  strokeDasharray="3 3"
-                  isFront={true}
+            {useBarChart ? (
+              <BarChart 
+                data={data} 
+                margin={{ top: 5, right: 5, left: 5, bottom: 0 }}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+              >
+                <defs>
+                  <linearGradient id={`colorGradient-${title.replace(/\s+/g, '')}`} x1="0" y1="1" x2="0" y2="0">
+                    <stop offset="0%" stopColor={chartColor} stopOpacity={0.05} />
+                    <stop offset="100%" stopColor={chartColor} stopOpacity={0.2} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
+                <XAxis 
+                  dataKey="time" 
+                  tick={{ fontSize: 8 }}
+                  axisLine={{ stroke: '#eee' }} 
+                  tickLine={{ stroke: '#eee' }} 
+                  interval={timeframe === "1h" ? 4 : timeframe === "1d" ? 3 : "preserveEnd"}
                 />
-              )}
-              
-              <Area 
-                type="monotone" 
-                dataKey="value" 
-                stroke={chartColor} 
-                strokeWidth={1}
-                fill={`url(#colorGradient-${title.replace(/\s+/g, '')})`}
-                isAnimationActive={false}
-              />
-            </AreaChart>
+                <YAxis 
+                  tick={{ fontSize: 8 }}
+                  axisLine={{ stroke: '#eee' }} 
+                  tickLine={{ stroke: '#eee' }}
+                  width={20}
+                />
+                <Tooltip 
+                  content={
+                    <CustomTooltip 
+                      tooltipValueFormatter={tooltipValueFormatter}
+                      tooltipLabelFormatter={tooltipLabelFormatter}
+                      showTrue={false}
+                      showFalse={false}
+                    />
+                  }
+                />
+                
+                {hoveredTimestamp && (
+                  <ReferenceLine
+                    x={hoveredTimestamp}
+                    stroke="#6E6F96"
+                    strokeWidth={1}
+                    strokeDasharray="3 3"
+                    isFront={true}
+                  />
+                )}
+                
+                <Bar 
+                  dataKey="value" 
+                  fill={chartColor}
+                  radius={[2, 2, 0, 0]}
+                  isAnimationActive={false}
+                />
+              </BarChart>
+            ) : (
+              <AreaChart 
+                data={data} 
+                margin={{ top: 5, right: 5, left: 5, bottom: 0 }}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+              >
+                <defs>
+                  <linearGradient id={`colorGradient-${title.replace(/\s+/g, '')}`} x1="0" y1="1" x2="0" y2="0">
+                    <stop offset="0%" stopColor={chartColor} stopOpacity={0.05} />
+                    <stop offset="100%" stopColor={chartColor} stopOpacity={0.2} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
+                <XAxis 
+                  dataKey="time" 
+                  tick={{ fontSize: 8 }}
+                  axisLine={{ stroke: '#eee' }} 
+                  tickLine={{ stroke: '#eee' }} 
+                  interval={timeframe === "1h" ? 4 : timeframe === "1d" ? 3 : "preserveEnd"}
+                />
+                <YAxis 
+                  tick={{ fontSize: 8 }}
+                  axisLine={{ stroke: '#eee' }} 
+                  tickLine={{ stroke: '#eee' }}
+                  width={20}
+                />
+                <Tooltip 
+                  content={
+                    <CustomTooltip 
+                      tooltipValueFormatter={tooltipValueFormatter}
+                      tooltipLabelFormatter={tooltipLabelFormatter}
+                      showTrue={false}
+                      showFalse={false}
+                    />
+                  }
+                />
+                
+                {hoveredTimestamp && (
+                  <ReferenceLine
+                    x={hoveredTimestamp}
+                    stroke="#6E6F96"
+                    strokeWidth={1}
+                    strokeDasharray="3 3"
+                    isFront={true}
+                  />
+                )}
+                
+                <Area 
+                  type="monotone" 
+                  dataKey="value" 
+                  stroke={chartColor} 
+                  strokeWidth={1}
+                  fill={`url(#colorGradient-${title.replace(/\s+/g, '')})`}
+                  isAnimationActive={false}
+                />
+              </AreaChart>
+            )}
           </ResponsiveContainer>
         </div>
       </CardContent>
