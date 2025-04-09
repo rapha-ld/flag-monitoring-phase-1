@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -221,7 +222,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   dataKey="value" 
                   fill={chartColor}
                   radius={[2, 2, 0, 0]}
-                  fillOpacity={0.3}
+                  fillOpacity={0.3}  // Set opacity to 30%
                   isAnimationActive={false}
                 />
               </BarChart>
