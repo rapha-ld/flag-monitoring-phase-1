@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,7 +18,6 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   hoveredTimestamp,
   onHoverTimestamp
 }) => {
-  // Rename "Error Rate" to "Errors" for display
   const displayTitle = title === "Error Rate" ? "Errors" : title;
   
   const data = React.useMemo(() => {
@@ -158,8 +156,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
 
   const chartHeight = 78 * 1.3;
   
-  // Determine if we should use BarChart instead of AreaChart
-  const useBarChart = title === "Error Rate";
+  const useBarChart = title === "Errors";
 
   return (
     <Card className="flex-1 bg-white">
@@ -224,6 +221,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   dataKey="value" 
                   fill={chartColor}
                   radius={[2, 2, 0, 0]}
+                  fillOpacity={0.3}
                   isAnimationActive={false}
                 />
               </BarChart>
