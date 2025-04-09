@@ -108,8 +108,8 @@ const MetricCard = ({
           breakdownType={breakdownType}
           onBreakdownTypeChange={handleBreakdownTypeChange}
           showVariantFilters={showVariantFilters}
-          showTrue={!!showTrue}
-          showFalse={!!showFalse}
+          showTrue={!!showTrue}  // Convert to boolean with !!
+          showFalse={!!showFalse}  // Convert to boolean with !!
           onToggleTrue={onToggleTrue}
           onToggleFalse={onToggleFalse}
         />
