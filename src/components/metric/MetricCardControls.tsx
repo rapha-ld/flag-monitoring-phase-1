@@ -13,8 +13,8 @@ interface MetricCardControlsProps {
   breakdownType: 'application' | 'sdk';
   onBreakdownTypeChange: (type: 'application' | 'sdk') => void;
   showVariantFilters: boolean;
-  showTrue?: boolean;
-  showFalse?: boolean;
+  showTrue: boolean;
+  showFalse: boolean;
   onToggleTrue?: () => void;
   onToggleFalse?: () => void;
 }
