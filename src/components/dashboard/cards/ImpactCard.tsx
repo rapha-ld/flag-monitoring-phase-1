@@ -27,8 +27,7 @@ const ImpactCard: React.FC<ImpactCardProps> = ({
     <FlagChangeImpact
       chartData={chartData}
       className={cn(
-        "animate-slide-up [animation-delay:200ms]",
-        isBreakdownEnabled ? "h-[522px]" : ""
+        "animate-slide-up [animation-delay:200ms]"
       )}
       selectedTimestamp={selectedTimestamp}
       selectedTimestamps={selectedTimestamps}
