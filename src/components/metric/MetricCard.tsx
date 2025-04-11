@@ -60,7 +60,7 @@ const MetricCard = ({
   metricType,
   selectedTimestamp,
   selectedTimestamps,
-  onBreakdownToggle,
+  onBreakdownToggle: userOnBreakdownToggle,
   hoveredTimestamp,
   onHoverTimestamp,
   onToggleTrue,
@@ -76,8 +76,8 @@ const MetricCard = ({
   
   const handleBreakdownToggle = (enabled: boolean) => {
     setBreakdownEnabled(enabled);
-    if (onBreakdownToggle) {
-      onBreakdownToggle(enabled);
+    if (userOnBreakdownToggle) {
+      userOnBreakdownToggle(enabled);
     }
   };
   

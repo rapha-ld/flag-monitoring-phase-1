@@ -69,7 +69,7 @@ const MetricCardContent: React.FC<MetricCardContentProps> = ({
   
   if (chartData && chartData.length > 0) {
     return (
-      <div className={cn("w-full px-0", containerClassName)}>
+      <div className={cn("w-full -mx-4 px-0", containerClassName)}>
         <BarChart
           data={chartData}
           versionChanges={versionChanges}
