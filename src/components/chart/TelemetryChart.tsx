@@ -114,16 +114,19 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     }
   }, [timeframe, title, environment]);
 
-  const average = React.useMemo(() => {
-    const sum = data.reduce((acc, item) => acc + item.value, 0);
-    const avg = sum / data.length;
-    
+  const calculateTotal = React.useMemo(() => {
     if (title === "Error Rate") {
-      return `${Math.round(avg)}%`;
-    } else if (title === "Largest Contentful Paint") {
-      return `${avg.toFixed(1)}s`;
+      const total = data.reduce((sum, item) => sum + Math.round(item.value), 0);
+      return total;
     } else {
-      return Math.round(avg);
+      const sum = data.reduce((acc, item) => acc + item.value, 0);
+      const avg = sum / data.length;
+      
+      if (title === "Largest Contentful Paint") {
+        return `${avg.toFixed(1)}s`;
+      } else {
+        return Math.round(avg);
+      }
     }
   }, [data, title]);
 
@@ -170,7 +173,11 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
       <CardHeader className="p-4 pb-0">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium">{displayTitle}</CardTitle>
-          <span className="text-xs text-muted-foreground">{`Avg. ${average}`}</span>
+          {title === "Error Rate" ? (
+            <span className="text-xs text-muted-foreground">{`Total: ${calculateTotal}`}</span>
+          ) : (
+            <span className="text-xs text-muted-foreground">{`Avg. ${calculateTotal}`}</span>
+          )}
         </div>
       </CardHeader>
       <CardContent className="p-4 pt-2">
