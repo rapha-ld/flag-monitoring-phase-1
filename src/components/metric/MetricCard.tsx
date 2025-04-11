@@ -88,7 +88,7 @@ const MetricCard = ({
   
   return (
     <Card className={cn(
-      "overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", 
+      "overflow-hidden transition-all duration-300", // Removed hover:shadow-md
       className,
       metricType === 'evaluations' && breakdownEnabled ? 'h-[560px]' : ''
     )}>
