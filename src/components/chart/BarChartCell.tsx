@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Cell } from 'recharts';
-import type { DataPoint } from './useBarChartState';
+import { DataPoint } from '../BarChart';
 
 interface BarChartCellProps {
   index: number;

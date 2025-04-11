@@ -85,14 +85,14 @@ export function useBarChartState(
     }).sort((a, b) => a.timestamp! - b.timestamp!);
   }, [data, selectedTimestamp, selectedTimestamps]);
   
-  const hasSelectedPoints = !!selectedPoints && selectedPoints.length > 0;
+  const hasSelectedPoints = selectedPoints && selectedPoints.length > 0;
   
   const firstPoint = hasSelectedPoints ? selectedPoints[0] : null;
   const lastPoint = hasSelectedPoints && selectedPoints.length > 1 
     ? selectedPoints[selectedPoints.length - 1] 
     : null;
   
-  const showReferenceArea = !!firstPoint && !!lastPoint;
+  const showReferenceArea = firstPoint && lastPoint;
   
   const getPointOpacity = () => 1;
   

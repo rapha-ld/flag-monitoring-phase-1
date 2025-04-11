@@ -1,18 +1,15 @@
 
 import React, { useState } from 'react';
 import { ComposedChart, ResponsiveContainer, Tooltip } from 'recharts';
-import { useBarChartState } from './chart/useBarChartState';
+import { useBarChartState, DataPoint } from './chart/useBarChartState';
 import BarChartAxes from './chart/BarChartAxes';
 import BarChartSeries from './chart/BarChartSeries';
 import BarChartReferenceLines from './chart/BarChartReferenceLines';
-import VersionMarkers from './chart/VersionMarkers';
+import VersionMarkers, { VersionChange } from './chart/VersionMarkers';
 import CustomTooltip from './chart/CustomTooltip';
 import { referenceLineMarkers, thresholdLines } from '@/utils/chartReferenceLines';
-import type { DataPoint } from './chart/useBarChartState';
-import type { VersionChange } from './chart/VersionMarkers';
 
-// Re-export types with the correct syntax
-export type { DataPoint, VersionChange };
+export { DataPoint, VersionChange };
 
 interface BarChartProps {
   data: DataPoint[];
