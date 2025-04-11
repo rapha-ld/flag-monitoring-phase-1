@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { LineChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea, Line } from 'recharts';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ReferenceLine } from 'recharts';
 import CustomTooltip from '../CustomTooltip';
-import { useChartProps } from './useChartProps';
+import { getXAxisInterval } from '@/utils/chartUtils';
 
 interface TelemetryLineChartProps {
   data: any[];
@@ -11,138 +11,82 @@ interface TelemetryLineChartProps {
   hoveredTimestamp?: string | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
   timeframe: string;
-  height: number;
+  height?: number;
 }
 
-const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
-  data,
-  title,
-  chartColor,
+const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({ 
+  data, 
+  title, 
+  chartColor, 
   hoveredTimestamp,
   onHoverTimestamp,
   timeframe,
-  height
+  height = 160 
 }) => {
-  const { 
-    handleMouseMove, 
-    handleMouseLeave, 
-    tooltipLabelFormatter, 
-    tooltipValueFormatter,
-    axisLabelColor
-  } = useChartProps(onHoverTimestamp);
+  const interval = getXAxisInterval(data.length);
 
-  // Constants for performance zones
-  const goodZoneColor = "#F2FCE2";
-  const needsImprovementZoneColor = "#FEF7CD";
-  const poorZoneColor = "#FEC6A1";
-  const dashedLineColor = "#8E9196";
-  const goodThreshold = 2.5;
-  const needsImprovementThreshold = 4;
+  const formatTimeLabel = (value: string) => {
+    if (/^\d{1,2}:\d{2}$/.test(value)) {
+      const hour = parseInt(value.split(':')[0], 10);
+      const period = hour >= 12 ? 'PM' : 'AM';
+      const formattedHour = hour % 12 || 12;
+      return `${formattedHour}${period}`;
+    }
+    
+    // For minute-based labels
+    if (/^\d{1,2}m$/.test(value)) {
+      return value.replace('m', '');
+    }
+    
+    return value;
+  };
+
+  const tooltipValueFormatter = (value: number) => {
+    // For Largest Contentful Paint, display value in seconds
+    return title === "Largest Contentful Paint" 
+      ? `${value.toFixed(1)} sec` 
+      : `${value.toFixed(1)}`;
+  };
+
+  const handleMouseMove = (e: any) => {
+    if (e && e.activeLabel && onHoverTimestamp) {
+      onHoverTimestamp(e.activeLabel);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (onHoverTimestamp) {
+      onHoverTimestamp(null);
+    }
+  };
 
   return (
     <ResponsiveContainer width="100%" height={height}>
       <LineChart 
         data={data} 
-        margin={{ top: 10, right: 5, left: 0, bottom: 5 }}
+        margin={{ top: 5, right: 0, left: 0, bottom: 5 }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
-        <CartesianGrid strokeDasharray="3 3" opacity={0.1} vertical={false} />
-        
-        <ReferenceArea 
-          y1={needsImprovementThreshold} 
-          y2={6}
-          fill={poorZoneColor} 
-          fillOpacity={0.5}
-          ifOverflow="extendDomain"
-          label={{ 
-            value: "Poor", 
-            position: "insideTopRight",
-            fontSize: 10,  // Increased from 8 to 10
-            fill: "#B45309",
-            dy: 5,
-            dx: -5
-          }}
-        />
-        
-        <ReferenceLine
-          y={needsImprovementThreshold}
-          stroke={dashedLineColor}
-          strokeWidth={1}
-          strokeDasharray="3 3"
-          opacity={0.5}
-        />
-        
-        <ReferenceArea 
-          y1={goodThreshold} 
-          y2={needsImprovementThreshold} 
-          fill={needsImprovementZoneColor} 
-          fillOpacity={0.5}
-          ifOverflow="extendDomain"
-          label={{ 
-            value: "Needs improvement", 
-            position: "insideTopRight",
-            fontSize: 10,  // Increased from 8 to 10
-            fill: "#854D0E",
-            dy: 5,
-            dx: -5
-          }}
-        />
-        
-        <ReferenceLine
-          y={goodThreshold}
-          stroke={dashedLineColor}
-          strokeWidth={1}
-          strokeDasharray="3 3"
-          opacity={0.5}
-        />
-        
-        <ReferenceArea 
-          y1={0} 
-          y2={goodThreshold} 
-          fill={goodZoneColor} 
-          fillOpacity={0.5}
-          ifOverflow="extendDomain"
-          label={{ 
-            value: "Good", 
-            position: "insideTopRight",
-            fontSize: 10,  // Increased from 8 to 10
-            fill: "#3F6212",
-            dy: 5,
-            dx: -5
-          }}
-        />
-        
+        <CartesianGrid strokeDasharray="3 3" vertical={false} />
         <XAxis 
-          dataKey="time" 
-          tick={{ fontSize: 10, fill: axisLabelColor }}
-          axisLine={{ stroke: '#eee' }} 
-          tickLine={false}
-          interval={timeframe === "1h" ? 4 : timeframe === "1d" ? 3 : "preserveEnd"}
-          tickMargin={10}
-          minTickGap={10}
-          padding={{ left: 10, right: 10 }}
+          dataKey="name" 
+          interval={interval}
+          tick={{ fontSize: 10 }} 
+          tickFormatter={formatTimeLabel}
         />
         <YAxis 
-          tick={{ fontSize: 10, fill: axisLabelColor }}
-          axisLine={false}
-          tickLine={false}
-          width={20}
-          domain={[0, 6]}
-          tickFormatter={(value) => Math.round(value).toString()}
+          tick={{ fontSize: 10 }} 
+          tickFormatter={(value) => `${value.toFixed(1)}`} 
         />
         <Tooltip 
           content={
             <CustomTooltip 
               tooltipValueFormatter={tooltipValueFormatter}
-              tooltipLabelFormatter={tooltipLabelFormatter}
-              showTrue={false}
-              showFalse={false}
+              tooltipLabelFormatter={formatTimeLabel}
             />
           }
-          cursor={{ stroke: '#E5E7EB', strokeWidth: 1 }}
         />
-        
         {hoveredTimestamp && (
           <ReferenceLine
             x={hoveredTimestamp}
@@ -152,16 +96,13 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
             isFront={true}
           />
         )}
-        
         <Line 
           type="monotone" 
           dataKey="value" 
           stroke={chartColor} 
-          strokeWidth={2}
-          dot={false}
-          activeDot={false}
-          isAnimationActive={false}
-          strokeOpacity={1}
+          strokeWidth={2} 
+          dot={false} 
+          activeDot={{ r: 5 }} 
         />
       </LineChart>
     </ResponsiveContainer>
@@ -169,4 +110,3 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
 };
 
 export default TelemetryLineChart;
-

@@ -114,7 +114,7 @@ export const useTelemetryData = (title: string, timeframe: string, environment: 
       const avg = sum / data.length;
       
       if (title === "Largest Contentful Paint") {
-        return `${avg.toFixed(1)}s`;
+        return `${avg.toFixed(1)}`; // Remove 's' to match the UI requirement
       } else {
         return Math.round(avg);
       }
