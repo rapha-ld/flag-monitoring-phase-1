@@ -6,7 +6,7 @@ import SessionsTable from '@/components/history/SessionsTable';
 import SearchInput from '@/components/history/SearchInput';
 import HistoryEventTable from '@/components/history/HistoryEventTable';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, EyeOff, Eye } from 'lucide-react';
 
 interface FeatureFlagHistoryProps {
   onEventSelect: (timestamps: Date[] | null) => void;
@@ -29,6 +29,7 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
   const [activeTab, setActiveTab] = useState<string>('history');
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
+  const [isCodeHidden, setIsCodeHidden] = useState(false);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -48,13 +49,29 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
     setIsCollapsed(!isCollapsed);
   };
 
+  const toggleCodeHidden = () => {
+    setIsCodeHidden(!isCodeHidden);
+  };
+
   return (
     <div className="space-y-4 animate-fade-in border-t border-border mt-8 pt-4">
-      <div 
-        className="flex items-center justify-between cursor-pointer"
-        onClick={toggleCollapse}
-      >
-        <h2 className="text-lg font-medium">Feature Flag History</h2>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <h2 className="text-lg font-medium">Feature Flag History</h2>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={toggleCodeHidden}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            {isCodeHidden ? (
+              <Eye className="h-4 w-4" />
+            ) : (
+              <EyeOff className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+        
         <Button 
           variant="ghost" 
           size="sm"
@@ -77,7 +94,7 @@ const FeatureFlagHistory: React.FC<FeatureFlagHistoryProps> = ({
         </Button>
       </div>
       
-      {!isCollapsed && (
+      {!isCollapsed && !isCodeHidden && (
         <Tabs value={activeTab} onValueChange={handleTabChange}>
           <HistoryTabs activeTab={activeTab} onChange={handleTabChange} />
           
