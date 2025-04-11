@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -27,6 +28,7 @@ const TimeframeSelector = ({ timeframe, onTimeframeChange }: TimeframeSelectorPr
     );
   };
 
+  // Handle dropdown menu actions
   const handleExportPDF = () => {
     toast.success('Exporting chart as PDF');
   };
@@ -91,30 +93,22 @@ const TimeframeSelector = ({ timeframe, onTimeframeChange }: TimeframeSelectorPr
       >
         3M
       </Button>
-      <Button 
-        variant="outline" 
-        size="sm" 
-        className="ml-4 flex items-center gap-2" 
-        onClick={() => {}} // Prevents default click behavior
-      >
-        <Share className="h-4 w-4" />
-        <DropdownMenu>
-          <DropdownMenuTrigger className="outline-none">
-            <span className="sr-only">Share options</span>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-white">
-            <DropdownMenuItem onClick={handleExportPDF} className="cursor-pointer">
-              <span>Export as PDF</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleExportJPEG} className="cursor-pointer">
-              <span>Export as JPEG</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
-              <span>Copy Link</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center rounded-md hover:bg-slate-100 ml-1">
+          <Share className="h-4 w-4 text-slate-500" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="bg-white">
+          <DropdownMenuItem onClick={handleExportPDF} className="cursor-pointer">
+            <span>Export as PDF</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleExportJPEG} className="cursor-pointer">
+            <span>Export as JPEG</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
+            <span>Copy Link</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };
