@@ -136,9 +136,10 @@ export const useDashboardData = () => {
 
   // Update the handleHoverTimestamp function to actually store the hovered timestamp
   const handleHoverTimestamp = (timestamp: string | null) => {
+    // Only update if there's an actual change
     if (hoveredTimestampState !== timestamp) {
-      setHoveredTimestampState(timestamp);
       console.log(`Hover timestamp changed to: ${timestamp}`);
+      setHoveredTimestampState(timestamp);
     }
   };
 

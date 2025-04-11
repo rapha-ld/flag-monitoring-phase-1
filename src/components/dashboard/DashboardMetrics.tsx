@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataPoint, VersionChange } from '@/components/BarChart';
 import { cn } from '@/lib/utils';
 import EvaluationsCard from './cards/EvaluationsCard';
@@ -54,6 +54,19 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
     setIsBreakdownEnabled(enabled);
   };
   
+  // Debug log to track hover events at this level
+  useEffect(() => {
+    console.log(`DashboardMetrics detected hoveredTimestamp: ${hoveredTimestamp}`);
+  }, [hoveredTimestamp]);
+  
+  // Centralized handler for chart hover events
+  const handleHoverEvent = (timestamp: string | null) => {
+    if (onHoverTimestamp) {
+      console.log(`DashboardMetrics forwarding hover: ${timestamp}`);
+      onHoverTimestamp(timestamp);
+    }
+  };
+  
   return (
     <div className="space-y-4">
       <h2 className="text-base font-medium text-gray-800 px-1">Flag-specific metrics</h2>
@@ -77,7 +90,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
             isBreakdownEnabled={isBreakdownEnabled}
             onBreakdownToggle={handleBreakdownToggle}
             hoveredTimestamp={hoveredTimestamp}
-            onHoverTimestamp={onHoverTimestamp}
+            onHoverTimestamp={handleHoverEvent}
             onToggleTrue={onToggleTrue}
             onToggleFalse={onToggleFalse}
           />
@@ -90,7 +103,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
           selectedTimestamps={selectedTimestamps}
           timeframe={timeframe}
           hoveredTimestamp={hoveredTimestamp}
-          onHoverTimestamp={onHoverTimestamp}
+          onHoverTimestamp={handleHoverEvent}
         />
       </div>
     </div>

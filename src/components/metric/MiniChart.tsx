@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
 import CustomTooltip from '../chart/CustomTooltip';
@@ -39,6 +40,13 @@ const MiniChart: React.FC<MiniChartProps> = ({
   onHoverTimestamp,
   percentage = 0 // Default to 0 if not provided
 }) => {
+  // Debug logging for hover events
+  useEffect(() => {
+    if (hoveredTimestamp) {
+      console.log(`MiniChart ${title} has hoveredTimestamp: ${hoveredTimestamp}`);
+    }
+  }, [hoveredTimestamp, title]);
+
   const localMaxValue = Math.max(...data.map(d => 
     Math.max(
       (showTrue && showFalse) ? (d.valueTrue || 0) + (d.valueFalse || 0) : 
@@ -122,14 +130,17 @@ const MiniChart: React.FC<MiniChartProps> = ({
   const hasSelectedPoints = selectedPoints && selectedPoints.length > 0;
   const textGray = '#545A62';
 
+  // Improved hover event handlers with console logging
   const handleMouseMove = (e: any) => {
     if (e && e.activeLabel && onHoverTimestamp) {
+      console.log(`MiniChart ${title} hover: ${e.activeLabel}`);
       onHoverTimestamp(e.activeLabel);
     }
   };
 
   const handleMouseLeave = () => {
     if (onHoverTimestamp) {
+      console.log(`MiniChart ${title} hover cleared`);
       onHoverTimestamp(null);
     }
   };

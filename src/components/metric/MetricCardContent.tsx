@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import BarChart from '../BarChart';
 import { DataPoint, VersionChange } from '../BarChart';
 import ChartBreakdown from './ChartBreakdown';
@@ -46,9 +46,17 @@ const MetricCardContent: React.FC<MetricCardContentProps> = ({
   children,
   containerClassName
 }) => {
+  // Debug logging for hover events
+  useEffect(() => {
+    if (hoveredTimestamp) {
+      console.log(`MetricCardContent has hoveredTimestamp: ${hoveredTimestamp}`);
+    }
+  }, [hoveredTimestamp]);
+
   // Make sure to properly relay the hover timestamp event to parent components
   const handleHoverTimestamp = (timestamp: string | null) => {
     if (onHoverTimestamp) {
+      console.log(`MetricCardContent forwarding hover: ${timestamp}`);
       onHoverTimestamp(timestamp);
     }
   };

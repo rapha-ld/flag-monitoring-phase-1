@@ -40,8 +40,9 @@ const Index = () => {
     handleHoverTimestamp
   } = useDashboardData();
 
-  // Centralized handler for chart hover events from any chart
-  const handleChartHover = (timestamp: string | null) => {
+  // Global handler for chart hover events to sync across all charts
+  const handleGlobalHover = (timestamp: string | null) => {
+    console.log(`Index global hover handler called with: ${timestamp}`);
     handleHoverTimestamp(timestamp);
   };
 
@@ -87,7 +88,7 @@ const Index = () => {
             timeframe={timeframe}
             selectedTimestamp={selectedTimestamp}
             selectedTimestamps={selectedTimestamps}
-            onHoverTimestamp={handleChartHover}
+            onHoverTimestamp={handleGlobalHover}
             onToggleTrue={handleToggleTrue}
             onToggleFalse={handleToggleFalse}
             hoveredTimestamp={hoveredTimestamp}
@@ -97,7 +98,7 @@ const Index = () => {
             timeframe={timeframe} 
             environment={environment}
             hoveredTimestamp={hoveredTimestamp}
-            onHoverTimestamp={handleChartHover}
+            onHoverTimestamp={handleGlobalHover}
           />
           
           <DashboardFooter />
