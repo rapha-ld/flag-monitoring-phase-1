@@ -179,7 +179,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
             {useBarChart ? (
               <BarChart 
                 data={data} 
-                margin={{ top: 10, right: 5, left: 5, bottom: 5 }}
+                margin={{ top: 10, right: 5, left: 0, bottom: 5 }}
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
               >
@@ -192,15 +192,17 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                 <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                 <XAxis 
                   dataKey="time" 
-                  tick={{ fontSize: 10 }}
+                  tick={{ fontSize: 10, fill: '#9CA3AF' }}
                   axisLine={{ stroke: '#eee' }} 
-                  tickLine={{ stroke: '#eee' }} 
+                  tickLine={false}
                   interval={timeframe === "1h" ? 4 : timeframe === "1d" ? 3 : "preserveEnd"}
+                  tickMargin={10}
+                  minTickGap={10}
                 />
                 <YAxis 
-                  tick={{ fontSize: 10 }}
-                  axisLine={{ stroke: '#eee' }} 
-                  tickLine={{ stroke: '#eee' }}
+                  tick={{ fontSize: 10, fill: '#9CA3AF' }}
+                  axisLine={false}
+                  tickLine={false}
                   width={20}
                   tickFormatter={(value) => Math.round(value).toString()}
                 />
@@ -213,6 +215,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                       showFalse={false}
                     />
                   }
+                  cursor={{ stroke: '#E5E7EB', strokeWidth: 1 }}
                 />
                 
                 {hoveredTimestamp && (
@@ -236,7 +239,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
             ) : (
               <AreaChart 
                 data={data} 
-                margin={{ top: 10, right: 5, left: 5, bottom: 5 }}
+                margin={{ top: 10, right: 5, left: 0, bottom: 5 }}
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
               >
@@ -318,15 +321,17 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                 <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                 <XAxis 
                   dataKey="time" 
-                  tick={{ fontSize: 10 }}
+                  tick={{ fontSize: 10, fill: '#9CA3AF' }}
                   axisLine={{ stroke: '#eee' }} 
-                  tickLine={{ stroke: '#eee' }} 
+                  tickLine={false}
                   interval={timeframe === "1h" ? 4 : timeframe === "1d" ? 3 : "preserveEnd"}
+                  tickMargin={10}
+                  minTickGap={10}
                 />
                 <YAxis 
-                  tick={{ fontSize: 10 }}
-                  axisLine={{ stroke: '#eee' }} 
-                  tickLine={{ stroke: '#eee' }}
+                  tick={{ fontSize: 10, fill: '#9CA3AF' }}
+                  axisLine={false}
+                  tickLine={false}
                   width={20}
                   domain={title === "Largest Contentful Paint" ? [0, 6] : ['auto', 'auto']}
                   tickFormatter={(value) => Math.round(value).toString()}
@@ -340,6 +345,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                       showFalse={false}
                     />
                   }
+                  cursor={{ stroke: '#E5E7EB', strokeWidth: 1 }}
                 />
                 
                 {hoveredTimestamp && (
