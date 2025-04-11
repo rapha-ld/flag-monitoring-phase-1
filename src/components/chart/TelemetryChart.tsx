@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -381,7 +380,6 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   );
 };
 
-// Helper function to calculate bar size based on data length
 function getBarSize(dataLength: number): number {
   if (dataLength <= 5) return 30;
   if (dataLength <= 10) return 20;
