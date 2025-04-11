@@ -1,8 +1,10 @@
+
 import React from 'react';
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+
 interface MetricCardHeaderProps {
   title: string;
   value: string | number;
@@ -12,13 +14,16 @@ interface MetricCardHeaderProps {
   };
   info?: string;
   timeframe?: string;
+  valueFormatter?: (value: number) => string;
 }
+
 const MetricCardHeader = ({
   title,
   value,
   change,
   info,
-  timeframe
+  timeframe,
+  valueFormatter
 }: MetricCardHeaderProps) => {
   // Extract the number of days from the timeframe
   const getDaysFromTimeframe = () => {
@@ -30,6 +35,12 @@ const MetricCardHeader = ({
       return parseInt(timeframe.replace('d', ''));
     }
   };
+
+  // Format the value if valueFormatter is provided and value is a number
+  const formattedValue = valueFormatter && typeof value === 'number' 
+    ? valueFormatter(value) 
+    : value;
+
   return <CardHeader className="pb-2">
       <div className="flex items-center justify-between">
         <CardTitle className="text-sm font-medium flex items-center gap-1.5 text-inherit">
@@ -48,7 +59,7 @@ const MetricCardHeader = ({
       </div>
       <div className="flex items-center gap-2">
         <CardDescription className="text-2xl font-semibold text-foreground">
-          {value}
+          {formattedValue}
         </CardDescription>
         {change && <TooltipProvider delayDuration={200}>
             <Tooltip>
@@ -65,4 +76,5 @@ const MetricCardHeader = ({
       </div>
     </CardHeader>;
 };
+
 export default MetricCardHeader;
