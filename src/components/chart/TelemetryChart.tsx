@@ -31,10 +31,8 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         if (environment === "staging") {
           if (title === "Error Rate") {
             baseValue = Math.random() * 100 + 20;
-          } else if (title === "Latency p90") {
+          } else if (title === "Largest Contentful Paint") {
             baseValue = Math.random() * 100 + 30;
-          } else {
-            baseValue = Math.max(10, Math.random() * 80);
           }
         }
         
@@ -53,10 +51,8 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         if (environment === "staging") {
           if (title === "Error Rate") {
             baseValue = Math.random() * 100 + 20;
-          } else if (title === "Latency p90") {
+          } else if (title === "Largest Contentful Paint") {
             baseValue = Math.random() * 100 + 30;
-          } else {
-            baseValue = Math.max(10, Math.random() * 80);
           }
         }
         
@@ -94,17 +90,11 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
               ? 15 + Math.random() * 15
               : 5 + Math.random() * 10;
           }
-        } else if (title === "Latency p90") {
+        } else if (title === "Largest Contentful Paint") {
           if (environment === "staging") {
             value = 90 + Math.random() * 80;
           } else {
             value = 60 + Math.random() * 60;
-          }
-        } else if (title === "Checkout Conversion Rate") {
-          if (environment === "staging") {
-            value = 5 + Math.random() * 10;
-          } else {
-            value = 10 + Math.random() * 15;
           }
         } else {
           value = Math.random() * 100;
@@ -126,10 +116,8 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     
     if (title === "Error Rate") {
       return `${avg.toFixed(1)}%`;
-    } else if (title === "Latency p90") {
+    } else if (title === "Largest Contentful Paint") {
       return `${avg.toFixed(0)}ms`;
-    } else if (title === "Checkout Conversion Rate") {
-      return `${avg.toFixed(1)}%`;
     } else {
       return avg.toFixed(1);
     }
@@ -137,7 +125,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
 
   const chartColor = 
     title === "Error Rate" ? "#DB2251" : 
-    title === "Latency p90" || title === "Checkout Conversion Rate" ? "#525EB7" : 
+    title === "Largest Contentful Paint" ? "#525EB7" : 
     "#7861C6";
 
   const tooltipLabelFormatter = (label: string) => label;
