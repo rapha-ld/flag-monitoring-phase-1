@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import CustomTooltip from './CustomTooltip';
 
@@ -28,11 +28,18 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         const minuteStr = minutes.toString().padStart(2, '0');
         
         let baseValue = Math.random() * 100;
-        if (environment === "staging") {
+        if (title === "Largest Contentful Paint") {
+          // Generate LCP values between 0.3 and 1.2 sec, with occasional spikes around 3sec
+          const isSpike = Math.random() < 0.1; // 10% chance of a spike
+          baseValue = isSpike 
+            ? 2.5 + Math.random() * 0.8 // Spike between 2.5 and 3.3 sec
+            : 0.3 + Math.random() * 0.9; // Normal values between 0.3 and 1.2 sec
+          
+          // Convert to milliseconds for display
+          baseValue = baseValue * 1000;
+        } else if (environment === "staging") {
           if (title === "Error Rate") {
             baseValue = Math.random() * 100 + 20;
-          } else if (title === "Largest Contentful Paint") {
-            baseValue = Math.random() * 100 + 30;
           }
         }
         
@@ -48,11 +55,18 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         const hour = i.toString().padStart(2, '0');
         
         let baseValue = Math.random() * 100;
-        if (environment === "staging") {
+        if (title === "Largest Contentful Paint") {
+          // Generate LCP values between 0.3 and 1.2 sec, with occasional spikes around 3sec
+          const isSpike = Math.random() < 0.1; // 10% chance of a spike
+          baseValue = isSpike 
+            ? 2.5 + Math.random() * 0.8 // Spike between 2.5 and 3.3 sec
+            : 0.3 + Math.random() * 0.9; // Normal values between 0.3 and 1.2 sec
+          
+          // Convert to milliseconds for display
+          baseValue = baseValue * 1000;
+        } else if (environment === "staging") {
           if (title === "Error Rate") {
             baseValue = Math.random() * 100 + 20;
-          } else if (title === "Largest Contentful Paint") {
-            baseValue = Math.random() * 100 + 30;
           }
         }
         
@@ -77,7 +91,13 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         const day = date.getDate();
         
         let value;
-        if (title === "Error Rate") {
+        if (title === "Largest Contentful Paint") {
+          // Generate LCP values between 0.3 and 1.2 sec, with occasional spikes around 3sec
+          const isSpike = Math.random() < 0.1; // 10% chance of a spike
+          value = isSpike 
+            ? 2500 + Math.random() * 800 // Spike between 2.5 and 3.3 sec (in ms)
+            : 300 + Math.random() * 900; // Normal values between 0.3 and 1.2 sec (in ms)
+        } else if (title === "Error Rate") {
           const isSpike = Math.random() < 0.15;
           
           if (environment === "staging") {
@@ -89,12 +109,6 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
             value = isSpike 
               ? 15 + Math.random() * 15
               : 5 + Math.random() * 10;
-          }
-        } else if (title === "Largest Contentful Paint") {
-          if (environment === "staging") {
-            value = 90 + Math.random() * 80;
-          } else {
-            value = 60 + Math.random() * 60;
           }
         } else {
           value = Math.random() * 100;
@@ -129,7 +143,12 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     "#7861C6";
 
   const tooltipLabelFormatter = (label: string) => label;
-  const tooltipValueFormatter = (value: number) => value.toFixed(2);
+  const tooltipValueFormatter = (value: number) => {
+    if (title === "Largest Contentful Paint") {
+      return `${value.toFixed(0)}ms`;
+    }
+    return value.toFixed(2);
+  };
   
   const handleMouseMove = (e: any) => {
     if (e && e.activeLabel && onHoverTimestamp) {
@@ -146,6 +165,15 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   const chartHeight = 78 * 1.3;
   
   const useBarChart = title === "Errors";
+  
+  // Performance zone colors for LCP
+  const goodZoneColor = "#F2FCE2"; // Soft Green
+  const needsImprovementZoneColor = "#FEF7CD"; // Soft Yellow
+  const poorZoneColor = "#FEC6A1"; // Soft Orange
+  
+  // Performance thresholds for LCP (in milliseconds)
+  const goodThreshold = 2500;  // 2.5 seconds
+  const needsImprovementThreshold = 4000;  // 4 seconds
 
   return (
     <Card className="flex-1 bg-white">
@@ -227,6 +255,63 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                     <stop offset="100%" stopColor={chartColor} stopOpacity={0.2} />
                   </linearGradient>
                 </defs>
+                
+                {/* Add performance zones for LCP */}
+                {title === "Largest Contentful Paint" && (
+                  <>
+                    {/* Poor zone (above 4000ms) */}
+                    <ReferenceArea 
+                      y1={needsImprovementThreshold} 
+                      y2={6000} // Set a reasonable upper bound
+                      fill={poorZoneColor} 
+                      fillOpacity={0.5}
+                      ifOverflow="extendDomain"
+                      label={{ 
+                        value: "Poor", 
+                        position: "insideTopRight",
+                        fontSize: 8,
+                        fill: "#B45309",
+                        dy: 5,
+                        dx: -5
+                      }}
+                    />
+                    
+                    {/* Needs improvement zone (2500-4000ms) */}
+                    <ReferenceArea 
+                      y1={goodThreshold} 
+                      y2={needsImprovementThreshold} 
+                      fill={needsImprovementZoneColor} 
+                      fillOpacity={0.5}
+                      ifOverflow="extendDomain"
+                      label={{ 
+                        value: "Needs improvement", 
+                        position: "insideTopRight",
+                        fontSize: 8,
+                        fill: "#854D0E",
+                        dy: 5,
+                        dx: -5
+                      }}
+                    />
+                    
+                    {/* Good zone (0-2500ms) */}
+                    <ReferenceArea 
+                      y1={0} 
+                      y2={goodThreshold} 
+                      fill={goodZoneColor} 
+                      fillOpacity={0.5}
+                      ifOverflow="extendDomain"
+                      label={{ 
+                        value: "Good", 
+                        position: "insideTopRight",
+                        fontSize: 8,
+                        fill: "#3F6212",
+                        dy: 5,
+                        dx: -5
+                      }}
+                    />
+                  </>
+                )}
+                
                 <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                 <XAxis 
                   dataKey="time" 
@@ -240,6 +325,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   axisLine={{ stroke: '#eee' }} 
                   tickLine={{ stroke: '#eee' }}
                   width={20}
+                  domain={title === "Largest Contentful Paint" ? [0, 6000] : ['auto', 'auto']}
                 />
                 <Tooltip 
                   content={
