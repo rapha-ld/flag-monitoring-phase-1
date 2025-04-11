@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import CustomTooltip from './CustomTooltip';
 
@@ -146,6 +146,29 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   const chartHeight = 78 * 1.3;
   
   const useBarChart = title === "Errors";
+  
+  // LCP performance zones
+  const renderLCPZones = () => {
+    if (title !== "Largest Contentful Paint") return null;
+    
+    return (
+      <>
+        {/* Good zone: under 2.5s */}
+        <ReferenceArea y1={0} y2={2500} fill="#F2FCE2" fillOpacity={0.4} strokeOpacity={0} />
+        
+        {/* Needs improvement zone: between 2.5s and 4s */}
+        <ReferenceArea y1={2500} y2={4000} fill="#FEF7CD" fillOpacity={0.4} strokeOpacity={0} />
+        
+        {/* Poor zone: above 4s */}
+        <ReferenceArea y1={4000} y2={Infinity} fill="#FFEBEC" fillOpacity={0.4} strokeOpacity={0} />
+        
+        {/* Zone dividers */}
+        <ReferenceLine y={2500} stroke="#96CF72" strokeDasharray="3 3" label={{ position: 'right', value: 'Good: < 2.5s', fontSize: 8, fill: '#4B9D38' }} />
+        <ReferenceLine y={4000} stroke="#E9B94B" strokeDasharray="3 3" label={{ position: 'right', value: 'Needs Improvement: < 4s', fontSize: 8, fill: '#C98515' }} />
+        <ReferenceLine y={4001} stroke="#EA5555" strokeWidth={0} label={{ position: 'right', value: 'Poor: > 4s', fontSize: 8, fill: '#D92C2C' }} />
+      </>
+    );
+  };
 
   return (
     <Card className="flex-1 bg-white">
@@ -210,7 +233,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   dataKey="value" 
                   fill={chartColor}
                   radius={[2, 2, 0, 0]}
-                  fillOpacity={0.3}  // Set opacity to 30%
+                  fillOpacity={0.3}  
                   isAnimationActive={false}
                 />
               </BarChart>
@@ -228,6 +251,10 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
+                
+                {/* Add performance zones for LCP chart */}
+                {renderLCPZones()}
+                
                 <XAxis 
                   dataKey="time" 
                   tick={{ fontSize: 8 }}
@@ -240,11 +267,23 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   axisLine={{ stroke: '#eee' }} 
                   tickLine={{ stroke: '#eee' }}
                   width={20}
+                  domain={title === "Largest Contentful Paint" ? [0, 6000] : undefined}
+                  tickFormatter={(value) => {
+                    if (title === "Largest Contentful Paint") {
+                      return value === 0 ? "0" : `${value / 1000}s`;
+                    }
+                    return value.toString();
+                  }}
                 />
                 <Tooltip 
                   content={
                     <CustomTooltip 
-                      tooltipValueFormatter={tooltipValueFormatter}
+                      tooltipValueFormatter={(value) => {
+                        if (title === "Largest Contentful Paint") {
+                          return `${(value / 1000).toFixed(2)}s`;
+                        }
+                        return tooltipValueFormatter(value);
+                      }}
                       tooltipLabelFormatter={tooltipLabelFormatter}
                       showTrue={false}
                       showFalse={false}
