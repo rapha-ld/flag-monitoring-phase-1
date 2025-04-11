@@ -123,7 +123,7 @@ const MetricCard = ({
 
       <CardContent className="p-0">
         <MetricCardContent
-          breakdownEnabled={breakdownEnabled && showBreakdownToggle}
+          breakdownEnabled={breakdownEnabled}
           breakdownType={breakdownType}
           chartData={chartData}
           versionChanges={versionChanges}

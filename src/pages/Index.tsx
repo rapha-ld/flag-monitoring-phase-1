@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from "@/lib/utils";
 import Header from '@/components/Header';
@@ -71,13 +70,6 @@ const Index = () => {
             metricsButtonVisible={false}
           />
           
-          <CollapsibleBanner 
-            timeframe={timeframe} 
-            environment={environment}
-            hoveredTimestamp={hoveredTimestamp}
-            onHoverTimestamp={handleChartHover}
-          />
-          
           <DashboardMetrics 
             selectedMetrics={visibleMetrics}
             currentMetrics={currentMetrics}
@@ -96,6 +88,13 @@ const Index = () => {
             onToggleTrue={handleToggleTrue}
             onToggleFalse={handleToggleFalse}
             hoveredTimestamp={hoveredTimestamp}
+          />
+          
+          <CollapsibleBanner 
+            timeframe={timeframe} 
+            environment={environment}
+            hoveredTimestamp={hoveredTimestamp}
+            onHoverTimestamp={handleChartHover}
           />
           
           <DashboardFooter />

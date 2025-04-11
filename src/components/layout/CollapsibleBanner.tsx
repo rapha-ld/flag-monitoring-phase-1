@@ -20,7 +20,7 @@ const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({
 }) => {
   return (
     <div className={cn("w-full space-y-4", className)}>
-      <h2 className="text-base font-medium text-gray-800">System-wide Telemetry</h2>
+      <h2 className="text-base font-medium text-gray-800">System-wide telemetry</h2>
       
       <div className="flex gap-4 mb-8">
         <TelemetryChart 
