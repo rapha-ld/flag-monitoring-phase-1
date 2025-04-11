@@ -19,7 +19,17 @@ export const useChartProps = (onHoverTimestamp?: (timestamp: string | null) => v
   }, [onHoverTimestamp]);
   
   // Tooltip formatting functions
-  const tooltipLabelFormatter = (label: string) => label;
+  const tooltipLabelFormatter = (label: string) => {
+    // Handle different timestamp formats including 1D view (HH:00 format)
+    if (/^\d{1,2}:\d{2}$/.test(label)) {
+      const hour = parseInt(label.split(':')[0], 10);
+      const period = hour >= 12 ? 'PM' : 'AM';
+      const formattedHour = hour % 12 || 12;
+      return `${formattedHour}${period}`;
+    }
+    
+    return label;
+  };
   
   const tooltipValueFormatter = (value: number) => {
     return `${value.toFixed(1)}`;

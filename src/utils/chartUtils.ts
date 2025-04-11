@@ -95,16 +95,27 @@ export const getTimestampPositions = (
   // Convert timestamps to string format for comparison with data names
   const timestampStrings = timestamps.map(ts => {
     if (!ts) return '';
-    // Format timestamp to match data name format (depends on how your data is formatted)
-    return ts.toISOString().split('T')[0];
-  }).filter(ts => ts !== '');
+    
+    // Format timestamp to match data name format
+    const tsHour = ts.getHours();
+    const formattedHour = `${tsHour}:00`; // Format as HH:00 for 1D view
+    const isoDate = ts.toISOString().split('T')[0]; // YYYY-MM-DD for other views
+    
+    return [isoDate, formattedHour];
+  });
   
-  // Find positions in the data array
-  return timestampStrings.map(tsString => {
-    const position = data.findIndex(item => {
-      // This comparison depends on your data format - adjust as needed
-      return item.name.includes(tsString);
-    });
-    return position >= 0 ? position : -1;
-  }).filter(pos => pos !== -1);
+  // Find positions in the data array, handling different formats
+  return timestampStrings
+    .flatMap(([tsDate, tsHour]) => {
+      // Try to match hourly format (for 1D view)
+      const hourPosition = data.findIndex(item => item.name === tsHour);
+      if (hourPosition >= 0) return hourPosition;
+      
+      // Try to match date format (for other views)
+      const datePosition = data.findIndex(item => item.name.includes(tsDate));
+      if (datePosition >= 0) return datePosition;
+      
+      return -1;
+    })
+    .filter(pos => pos !== -1);
 };
