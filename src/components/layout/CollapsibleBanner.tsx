@@ -44,7 +44,7 @@ const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({
           environment={environment}
           hoveredTimestamp={hoveredTimestamp}
           onHoverTimestamp={handleHoverEvent}
-          height={264}
+          height={198}
         />
         <TelemetryChart 
           title="Largest Contentful Paint" 
@@ -52,7 +52,7 @@ const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({
           environment={environment}
           hoveredTimestamp={hoveredTimestamp}
           onHoverTimestamp={handleHoverEvent}
-          height={264}
+          height={198}
         />
       </div>
     </div>
