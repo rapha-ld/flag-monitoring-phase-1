@@ -5,9 +5,8 @@ import Header from '@/components/Header';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import DashboardMetrics from '@/components/dashboard/DashboardMetrics';
 import DashboardFooter from '@/components/dashboard/DashboardFooter';
-import FeatureFlagHistory from '@/components/dashboard/FeatureFlagHistory';
-import { useDashboardData } from '@/hooks/useDashboardData';
 import CollapsibleBanner from '@/components/layout/CollapsibleBanner';
+import { useDashboardData } from '@/hooks/useDashboardData';
 
 const Index = () => {
   const {
@@ -61,7 +60,6 @@ const Index = () => {
             onTimeframeChange={handleTimeframeChange}
             environment={environment}
             onEnvironmentChange={handleEnvironmentChange}
-            // Removed selectedDevice and onDeviceChange props
             selectedMetrics={selectedMetrics}
             onMetricsChange={handleMetricsChange}
             hiddenMetrics={hiddenMetrics}
@@ -101,13 +99,6 @@ const Index = () => {
           />
           
           <DashboardFooter />
-          
-          <FeatureFlagHistory 
-            onEventSelect={handleTimestampSelect} 
-            selectedTimestamp={selectedTimestamp}
-            selectedTimestamps={selectedTimestamps}
-            onHoverTimestamp={handleHoverTimestamp}
-          />
         </div>
       </div>
     </DashboardLayout>
