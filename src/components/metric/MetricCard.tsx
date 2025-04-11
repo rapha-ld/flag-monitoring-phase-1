@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -141,7 +140,6 @@ const MetricCard = ({
           hoveredTimestamp={hoveredTimestamp}
           onHoverTimestamp={onHoverTimestamp}
           children={children}
-          containerClassName="pl-0"
         />
       </CardContent>
     </Card>
