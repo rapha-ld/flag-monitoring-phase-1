@@ -53,6 +53,12 @@ const EvaluationsCard: React.FC<EvaluationsCardProps> = ({
       versionChanges={versionChanges.filter(change => 
         change.position < chartData.length
       )}
+      valueFormatter={(value) => `${value}`}
+      tooltipValueFormatter={(value) => `${value}`}
+      barColor="#6E6F96"
+      showTrue={showTrue}
+      showFalse={showFalse}
+      chartType="stacked"
       metricType="evaluations"
       timeframe={timeframe}
       selectedTimestamp={selectedTimestamp}
@@ -62,9 +68,6 @@ const EvaluationsCard: React.FC<EvaluationsCardProps> = ({
       onHoverTimestamp={onHoverTimestamp}
       onToggleTrue={onToggleTrue}
       onToggleFalse={onToggleFalse}
-      showTrue={showTrue}
-      showFalse={showFalse}
-      chartType="stacked"
     />
   );
 };
