@@ -2,14 +2,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Share } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { toast } from 'sonner';
 
 interface TimeframeSelectorProps {
   timeframe: string;
@@ -26,21 +18,6 @@ const TimeframeSelector = ({ timeframe, onTimeframeChange }: TimeframeSelectorPr
       "h-8",
       timeframe === currentTimeframe && "bg-[#F6F8FF] border-[#425EFF]"
     );
-  };
-
-  // Handle dropdown menu actions
-  const handleExportPDF = () => {
-    toast.success('Exporting chart as PDF');
-  };
-
-  const handleExportJPEG = () => {
-    toast.success('Exporting chart as JPEG');
-  };
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href)
-      .then(() => toast.success('Link copied to clipboard'))
-      .catch(() => toast.error('Failed to copy link'));
   };
 
   return (
@@ -93,22 +70,6 @@ const TimeframeSelector = ({ timeframe, onTimeframeChange }: TimeframeSelectorPr
       >
         3M
       </Button>
-      <DropdownMenu>
-        <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center rounded-md hover:bg-slate-100 ml-1">
-          <Share className="h-4 w-4 text-slate-500" />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="bg-white">
-          <DropdownMenuItem onClick={handleExportPDF} className="cursor-pointer">
-            <span>Export as PDF</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleExportJPEG} className="cursor-pointer">
-            <span>Export as JPEG</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
-            <span>Copy Link</span>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
     </div>
   );
 };
