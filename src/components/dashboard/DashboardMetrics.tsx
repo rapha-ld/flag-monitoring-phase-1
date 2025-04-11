@@ -55,40 +55,43 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   };
   
   return (
-    <div className={cn(
-      "grid gap-4",
-      isBreakdownEnabled
-        ? "grid-cols-3"
-        : "grid-cols-2"
-    )}>
-      {selectedMetrics.includes('evaluations') && (
-        <EvaluationsCard
-          value={currentMetrics.evaluations.value}
-          change={currentMetrics.evaluations.change}
-          chartData={filteredEvaluationData}
-          versionChanges={evaluationVersionChanges}
-          showTrue={showTrue}
-          showFalse={showFalse}
-          timeframe={timeframe}
+    <div className="space-y-4">
+      <h2 className="text-base font-medium text-gray-800 px-1">Flag-specific Metrics</h2>
+      <div className={cn(
+        "grid gap-4",
+        isBreakdownEnabled
+          ? "grid-cols-3"
+          : "grid-cols-2"
+      )}>
+        {selectedMetrics.includes('evaluations') && (
+          <EvaluationsCard
+            value={currentMetrics.evaluations.value}
+            change={currentMetrics.evaluations.change}
+            chartData={filteredEvaluationData}
+            versionChanges={evaluationVersionChanges}
+            showTrue={showTrue}
+            showFalse={showFalse}
+            timeframe={timeframe}
+            selectedTimestamp={selectedTimestamp}
+            selectedTimestamps={selectedTimestamps}
+            isBreakdownEnabled={isBreakdownEnabled}
+            onBreakdownToggle={handleBreakdownToggle}
+            hoveredTimestamp={hoveredTimestamp}
+            onHoverTimestamp={onHoverTimestamp}
+            onToggleTrue={onToggleTrue}
+            onToggleFalse={onToggleFalse}
+          />
+        )}
+        
+        <ImpactCard
+          chartData={filteredConversionData}
+          isBreakdownEnabled={isBreakdownEnabled}
           selectedTimestamp={selectedTimestamp}
           selectedTimestamps={selectedTimestamps}
-          isBreakdownEnabled={isBreakdownEnabled}
-          onBreakdownToggle={handleBreakdownToggle}
+          timeframe={timeframe}
           hoveredTimestamp={hoveredTimestamp}
-          onHoverTimestamp={onHoverTimestamp}
-          onToggleTrue={onToggleTrue}
-          onToggleFalse={onToggleFalse}
         />
-      )}
-      
-      <ImpactCard
-        chartData={filteredConversionData}
-        isBreakdownEnabled={isBreakdownEnabled}
-        selectedTimestamp={selectedTimestamp}
-        selectedTimestamps={selectedTimestamps}
-        timeframe={timeframe}
-        hoveredTimestamp={hoveredTimestamp}
-      />
+      </div>
     </div>
   );
 };
