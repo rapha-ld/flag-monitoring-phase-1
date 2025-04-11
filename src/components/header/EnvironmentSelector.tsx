@@ -9,8 +9,8 @@ interface EnvironmentSelectorProps {
 
 const EnvironmentSelector = ({ environment, onEnvironmentChange }: EnvironmentSelectorProps) => {
   // Define environment colors
-  const prodColor = "#65A30D"; // Green color for production
-  const stagingColor = "#EBFF38"; // Updated staging color as requested
+  const prodColor = "#8BEF34"; // Updated production color
+  const stagingColor = "#EBFF38"; // Staging color
   const circleBorderColor = "#07080C"; // Border color for the circles
   
   return (
@@ -19,7 +19,7 @@ const EnvironmentSelector = ({ environment, onEnvironmentChange }: EnvironmentSe
         type="button"
         onClick={() => onEnvironmentChange('production')}
         className={cn(
-          "flex items-center w-[240px] h-[32px] rounded-md bg-white pl-4", // Added pl-4 for left alignment
+          "flex items-center w-[240px] h-[32px] rounded-md bg-white pl-4", 
           "hover:bg-gray-50 transition-colors text-[11px]",
           environment === 'production' 
             ? `border-2 border-[${prodColor}]` 
@@ -39,7 +39,7 @@ const EnvironmentSelector = ({ environment, onEnvironmentChange }: EnvironmentSe
         type="button"
         onClick={() => onEnvironmentChange('staging')}
         className={cn(
-          "flex items-center w-[240px] h-[32px] rounded-md bg-white pl-4", // Added pl-4 for left alignment
+          "flex items-center w-[240px] h-[32px] rounded-md bg-white pl-4", 
           "hover:bg-gray-50 transition-colors text-[11px]",
           environment === 'staging' 
             ? `border-2 border-[${stagingColor}]` 
