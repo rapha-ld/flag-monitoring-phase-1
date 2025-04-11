@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -15,13 +14,13 @@ const TimeframeSelector = ({ timeframe, onTimeframeChange }: TimeframeSelectorPr
 
   const getButtonClassName = (currentTimeframe: string) => {
     return cn(
-      "h-8", // Changed from h-9 to h-8 to match 32px height
+      "h-8",
       timeframe === currentTimeframe && "bg-[#F6F8FF] border-[#425EFF]"
     );
   };
 
   return (
-    <div className="flex items-center space-x-2 ml-auto"> {/* Added ml-auto to align right */}
+    <div className="flex items-center space-x-2 ml-auto">
       <Button 
         variant={getButtonVariant("1h")} 
         size="sm" 
@@ -52,7 +51,7 @@ const TimeframeSelector = ({ timeframe, onTimeframeChange }: TimeframeSelectorPr
         className={getButtonClassName("14d")}
         onClick={() => onTimeframeChange("14d")}
       >
-        14D
+        2W
       </Button>
       <Button 
         variant={getButtonVariant("30d")} 
