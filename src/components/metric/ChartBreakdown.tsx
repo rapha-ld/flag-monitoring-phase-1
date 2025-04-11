@@ -29,7 +29,7 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
   const falseColor = '#FFD099';
   
   // Use useMemo to avoid recomputing breakdowns on each render
-  const { breakdowns, maxYValue } = useMemo(() => {
+  const { breakdowns, maxYValue, percentages } = useMemo(() => {
     const getBreakdowns = type === 'application' 
       ? getApplicationBreakdowns 
       : getSDKBreakdowns;
@@ -38,21 +38,41 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
     
     // Calculate the highest value across all charts
     let maxValue = 0;
+    let totalValue = 0;
+    
+    // First, calculate the total value across all charts and find the maximum value
     breakdownData.forEach(item => {
+      let itemTotal = 0;
+      
       item.data.forEach(d => {
-        const currentMax = Math.max(
-          (showTrue && showFalse) ? (d.valueTrue || 0) + (d.valueFalse || 0) : 
-          showTrue ? (d.valueTrue || 0) : 
-          showFalse ? (d.valueFalse || 0) : d.value || 0
-        );
-        maxValue = Math.max(maxValue, currentMax);
+        const trueVal = d.valueTrue || 0;
+        const falseVal = d.valueFalse || 0;
+        const pointValue = (showTrue && showFalse) ? (trueVal + falseVal) : 
+                          showTrue ? trueVal : 
+                          showFalse ? falseVal : d.value || 0;
+                          
+        maxValue = Math.max(maxValue, pointValue);
+        itemTotal += pointValue;
       });
+      
+      // Store the calculated total in the item
+      item.calculatedTotal = itemTotal;
+      totalValue += itemTotal;
     });
     
     // Add 10% padding to the max value
     maxValue = maxValue * 1.1;
     
-    return { breakdowns: breakdownData, maxYValue: maxValue };
+    // Now calculate percentages
+    const itemPercentages = breakdownData.map(item => {
+      return totalValue > 0 ? (item.calculatedTotal / totalValue) * 100 : 0;
+    });
+    
+    return { 
+      breakdowns: breakdownData, 
+      maxYValue: maxValue,
+      percentages: itemPercentages
+    };
   }, [chartData, type, showTrue, showFalse]);
   
   return (
@@ -73,6 +93,7 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
           selectedTimestamps={selectedTimestamps}
           hoveredTimestamp={hoveredTimestamp}
           onHoverTimestamp={onHoverTimestamp}
+          percentage={percentages[index]}
         />
       ))}
     </div>

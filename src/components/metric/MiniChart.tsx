@@ -5,6 +5,7 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Toolti
 import CustomTooltip from '../chart/CustomTooltip';
 import { format } from 'date-fns';
 import { determineEventName } from '@/utils/eventUtils';
+import { Progress } from '@/components/ui/progress';
 
 interface MiniChartProps { 
   title: string; 
@@ -20,6 +21,7 @@ interface MiniChartProps {
   selectedTimestamps?: Date[] | null;
   hoveredTimestamp?: string | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
+  percentage?: number; // New prop for the percentage
 }
 
 const MiniChart: React.FC<MiniChartProps> = ({ 
@@ -35,7 +37,8 @@ const MiniChart: React.FC<MiniChartProps> = ({
   selectedTimestamp,
   selectedTimestamps,
   hoveredTimestamp,
-  onHoverTimestamp
+  onHoverTimestamp,
+  percentage = 0 // Default to 0 if not provided
 }) => {
   const localMaxValue = Math.max(...data.map(d => 
     Math.max(
@@ -117,9 +120,19 @@ const MiniChart: React.FC<MiniChartProps> = ({
     }
   };
 
+  const formattedPercentage = `${percentage.toFixed(1)}%`;
+
   return (
     <Card className="p-3 h-[116px] transition-all duration-300 hover:shadow-md chart-container">
-      <div className="text-xs font-semibold mb-1 truncate">{title}</div>
+      <div className="flex justify-between items-start mb-1">
+        <div className="text-xs font-semibold truncate">{title}</div>
+        <div className="flex items-center gap-1.5">
+          <span className="text-xs text-muted-foreground">{formattedPercentage}</span>
+          <div className="w-[40px]">
+            <Progress value={percentage} className="h-1.5" color="#C8C8C9" />
+          </div>
+        </div>
+      </div>
       <div className="text-xs text-muted-foreground mb-2">{version}</div>
       <ResponsiveContainer width="100%" height={70} className="mb-[-8px]">
         <BarChart 
