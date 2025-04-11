@@ -51,6 +51,13 @@ const FlagChangeImpact = ({
     return multiplier / (selectedImpactLevels.length ? selectedImpactLevels.length : 1);
   }, [selectedImpactLevels]);
 
+  // Format a 24-hour time to AM/PM format
+  const formatHourInAmPm = (hour: number): string => {
+    const period = hour >= 12 ? 'PM' : 'AM';
+    const formattedHour = hour % 12 || 12;
+    return `${formattedHour}:00`;
+  };
+
   // Process data to create the flag impact line with a distinct pattern
   // Using useMemo to ensure data doesn't change on hover
   const processedData = useMemo(() => {
@@ -69,8 +76,13 @@ const FlagChangeImpact = ({
         hasEventOnDate = [10, 25, 40, 55].includes(minute);
       } else if (timeframe === "1d") {
         // For 1d view, simulate events at specific hours
-        const hourStr = data.name?.split(":")[0] || "0";
-        const hour = parseInt(hourStr);
+        // Ensure we're working with hour numbers for the 1d view
+        let hour: number;
+        if (typeof data.name === 'string' && data.name.includes(':')) {
+          hour = parseInt(data.name.split(':')[0], 10);
+        } else {
+          hour = parseInt(data.name || "0", 10);
+        }
         // Add events at 8:00, 12:00 and 16:00
         hasEventOnDate = [8, 12, 16].includes(hour);
       } else {

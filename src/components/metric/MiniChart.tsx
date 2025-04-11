@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
@@ -50,9 +49,24 @@ const MiniChart: React.FC<MiniChartProps> = ({
   
   const yAxisMax = maxYValue !== undefined ? maxYValue : localMaxValue * 1.1;
   
+  const formatTimeLabel = (label: string) => {
+    if (/^\d{1,2}:\d{2}$/.test(label)) {
+      const hour = parseInt(label.split(':')[0], 10);
+      const period = hour >= 12 ? 'PM' : 'AM';
+      const formattedHour = hour % 12 || 12;
+      return `${formattedHour}${period}`;
+    }
+    
+    if (/^\d{1,2}m$/.test(label)) {
+      return label.replace('m', '');
+    }
+    
+    return label;
+  };
+  
   const tooltipLabelFormatter = (label: string) => {
     if (label.includes(":") || label.includes("m")) {
-      return label;
+      return formatTimeLabel(label);
     }
     
     const date = new Date(label);

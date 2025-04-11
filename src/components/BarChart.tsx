@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -149,6 +148,28 @@ const BarChart = ({
   const showReferenceArea = firstPoint && lastPoint;
 
   const getPointOpacity = () => 1;
+  
+  // Format time label to show in AM/PM format
+  const formatTimeLabel = (value: string) => {
+    // Check if value is in HH:00 format
+    if (/^\d{1,2}:\d{2}$/.test(value)) {
+      const hour = parseInt(value.split(':')[0], 10);
+      const period = hour >= 12 ? 'PM' : 'AM';
+      const formattedHour = hour % 12 || 12;
+      return `${formattedHour}${period}`;
+    }
+    
+    // If it's a minute format (e.g., "30m")
+    if (/^\d{1,2}m$/.test(value)) {
+      return value.replace('m', '');
+    }
+    
+    // For date values, just return them unchanged
+    const date = new Date(value);
+    return isNaN(date.getTime()) 
+      ? value
+      : `${date.getMonth() + 1}/${date.getDate()}`;
+  };
 
   const handleMouseMove = (e: any) => {
     if (e && e.activeLabel && onHoverTimestamp) {
@@ -183,12 +204,7 @@ const BarChart = ({
             fontSize={10}
             axisLine={false}
             tickLine={false}
-            tickFormatter={(value) => {
-              const date = new Date(value);
-              return isNaN(date.getTime()) 
-                ? value
-                : `${date.getMonth() + 1}/${date.getDate()}`;
-            }}
+            tickFormatter={formatTimeLabel}
             interval={interval}
             padding={{ left: 10, right: 10 }}
           />
@@ -204,7 +220,10 @@ const BarChart = ({
             content={
               <CustomTooltip 
                 tooltipValueFormatter={tooltipValueFormatter}
-                tooltipLabelFormatter={tooltipLabelFormatter}
+                tooltipLabelFormatter={(label) => {
+                  // Also apply the AM/PM format in the tooltip
+                  return formatTimeLabel(label);
+                }}
                 showTrue={showTrue}
                 showFalse={showFalse}
                 chartType={chartType}

@@ -73,7 +73,7 @@ const MetricCard = ({
   const showAverage = showTrue && showFalse && (metricType === 'conversion' || metricType === 'errorRate');
   const displayValue = calculateDisplayValue(value, chartData, showTrue, showFalse, metricType);
   const showBreakdownToggle = metricType === 'evaluations';
-  const showVariantFilters = metricType === 'evaluations' && onToggleTrue && onToggleFalse;
+  const showVariantFilters = metricType === 'evaluations' && !!onToggleTrue && !!onToggleFalse;
   
   const handleBreakdownToggle = (enabled: boolean) => {
     setBreakdownEnabled(enabled);

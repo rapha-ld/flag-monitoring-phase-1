@@ -61,13 +61,27 @@ const ChartArea: React.FC<ChartAreaProps> = ({
     });
   };
 
-  const tooltipLabelFormatter = (label: string) => {
+  // Format time label to use AM/PM format
+  const formatTimeLabel = (value: string) => {
     if (timeframe === "1h") {
-      return `${label}`;
+      // For 1-hour timeframe, show just the minute
+      return value.replace('m', '');
     } else if (timeframe === "1d") {
-      return `${label}`;
+      // For 1-day timeframe, format hour to AM/PM
+      if (/^\d{1,2}:\d{2}$/.test(value)) {
+        const hour = parseInt(value.split(':')[0], 10);
+        const period = hour >= 12 ? 'PM' : 'AM';
+        const formattedHour = hour % 12 || 12;
+        return `${formattedHour}${period}`;
+      }
+      return value;
     }
-    return label;
+    // For other timeframes, show just the date part
+    return value.split(" ")[0];
+  };
+
+  const tooltipLabelFormatter = (label: string) => {
+    return formatTimeLabel(label);
   };
 
   const tooltipValueFormatter = (value: number) => `${Math.round(value)}`;
@@ -107,18 +121,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({
           interval={xAxisInterval}
           tickMargin={10}
           minTickGap={10}
-          tickFormatter={(value) => {
-            if (timeframe === "1h") {
-              // For 1-hour timeframe, show just the minute
-              return value.replace('m', '');
-            } else if (timeframe === "1d") {
-              // For 1-day timeframe, show just the hour
-              const hourPart = value.split(":")[0];
-              return hourPart;
-            }
-            // For other timeframes, show just the date part
-            return value.split(" ")[0];
-          }}
+          tickFormatter={formatTimeLabel}
         />
         
         <YAxis
