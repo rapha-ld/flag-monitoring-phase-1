@@ -47,7 +47,8 @@ const EvaluationsCard: React.FC<EvaluationsCardProps> = ({
       info="Total evaluations for the selected time period"
       className={cn(
         "animate-slide-up [animation-delay:100ms]",
-        isBreakdownEnabled ? "col-span-2" : ""
+        isBreakdownEnabled ? "h-[522px]" : "",
+        "bg-white p-4 rounded-lg shadow-sm border border-gray-200"
       )}
       chartData={chartData}
       versionChanges={versionChanges.filter(change => 
