@@ -1,146 +1,129 @@
+
 import React, { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
-import { DataPoint, VersionChange } from '../BarChart';
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import MetricCardHeader from './MetricCardHeader';
-import { calculateDisplayValue } from '@/utils/metricValueCalculator';
 import MetricCardContent from './MetricCardContent';
 import MetricCardControls from './MetricCardControls';
-import BreakdownTypeSelector from './BreakdownTypeSelector';
 
-export interface MetricCardProps {
+interface MetricCardProps {
   title: string;
-  value: string | number;
-  change?: {
-    value: number;
-    trend: 'up' | 'down' | 'neutral';
-  };
-  info?: string;
-  className?: string;
-  children?: React.ReactNode;
-  chartData?: DataPoint[];
-  versionChanges?: VersionChange[];
+  description?: string;
+  value?: string | number;
+  trend?: string;
+  trendValue?: string;
+  chartData?: any[];
+  versionChanges?: any[];
   barColor?: string;
   valueFormatter?: (value: number) => string;
   tooltipValueFormatter?: (value: number) => string;
   tooltipLabelFormatter?: (label: string) => string;
-  timeframe?: string;
-  isTotal?: boolean;
-  showTrue?: boolean;
-  showFalse?: boolean;
+  trendDirection?: 'up' | 'down' | 'neutral';
   chartType?: 'stacked' | 'mixed';
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
-  onBreakdownToggle?: (enabled: boolean) => void;
   hoveredTimestamp?: string | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
-  onToggleTrue?: () => void;
-  onToggleFalse?: () => void;
 }
 
-const MetricCard = ({ 
-  title, 
-  value, 
-  change, 
-  info, 
-  className, 
-  children,
+const MetricCard: React.FC<MetricCardProps> = ({
+  title,
+  description,
+  value,
+  trend,
+  trendValue,
   chartData,
   versionChanges,
-  barColor = "#6E6F96",
+  barColor,
   valueFormatter,
   tooltipValueFormatter,
   tooltipLabelFormatter,
-  timeframe,
-  isTotal = false,
-  showTrue,
-  showFalse,
-  chartType = 'stacked',
+  trendDirection = 'up',
+  chartType,
   metricType,
   selectedTimestamp,
   selectedTimestamps,
-  onBreakdownToggle,
   hoveredTimestamp,
-  onHoverTimestamp,
-  onToggleTrue,
-  onToggleFalse
-}: MetricCardProps) => {
+  onHoverTimestamp
+}) => {
   const [breakdownEnabled, setBreakdownEnabled] = useState(false);
   const [breakdownType, setBreakdownType] = useState<'application' | 'sdk'>('application');
-  
-  const showAverage = showTrue && showFalse && (metricType === 'conversion' || metricType === 'errorRate');
-  const displayValue = calculateDisplayValue(value, chartData, showTrue, showFalse, metricType);
-  const showBreakdownToggle = metricType === 'evaluations';
-  const showVariantFilters = metricType === 'evaluations' && onToggleTrue && onToggleFalse;
-  
-  const handleBreakdownToggle = (enabled: boolean) => {
-    setBreakdownEnabled(enabled);
-    if (onBreakdownToggle) {
-      onBreakdownToggle(enabled);
-    }
+  const [showTrue, setShowTrue] = useState(true);
+  const [showFalse, setShowFalse] = useState(true);
+
+  const toggleBreakdown = () => {
+    setBreakdownEnabled(!breakdownEnabled);
   };
-  
+
   const handleBreakdownTypeChange = (type: 'application' | 'sdk') => {
     setBreakdownType(type);
   };
-  
+
+  const toggleTrue = () => {
+    setShowTrue(!showTrue);
+  };
+
+  const toggleFalse = () => {
+    setShowFalse(!showFalse);
+  };
+
+  const handleHoverTimestamp = (timestamp: string | null) => {
+    if (onHoverTimestamp) {
+      onHoverTimestamp(timestamp);
+    }
+  };
+
   return (
     <Card className={cn(
-      "overflow-hidden transition-all duration-300 hover:shadow-md animate-fade-in", 
-      className,
-      metricType === 'evaluations' && breakdownEnabled ? 'h-[522px]' : ''
+      "bg-white overflow-hidden transition-all duration-300 ease-in-out",
+      breakdownEnabled ? "h-[522px]" : "h-[350px]"
     )}>
-      <div className="flex justify-between items-center">
-        <MetricCardHeader 
+      <CardHeader className="p-4 pb-0">
+        <MetricCardHeader
           title={title}
-          value={displayValue}
-          change={change}
-          info={info}
-          timeframe={timeframe}
-        />
-        
-        <MetricCardControls
-          showBreakdownToggle={showBreakdownToggle}
+          description={description || ""}
+          value={value}
+          trend={trend}
+          trendValue={trendValue}
+          trendDirection={trendDirection}
           breakdownEnabled={breakdownEnabled}
-          onBreakdownToggle={handleBreakdownToggle}
-          breakdownType={breakdownType}
-          onBreakdownTypeChange={handleBreakdownTypeChange}
-          showVariantFilters={showVariantFilters}
-          showTrue={showTrue || false}
-          showFalse={showFalse || false}
-          onToggleTrue={onToggleTrue}
-          onToggleFalse={onToggleFalse}
+          toggleBreakdown={toggleBreakdown}
         />
-      </div>
+      </CardHeader>
       
-      {breakdownEnabled && showBreakdownToggle && (
-        <BreakdownTypeSelector
-          breakdownType={breakdownType}
-          onBreakdownTypeChange={handleBreakdownTypeChange}
-        />
-      )}
-
-      <CardContent className="p-0">
-        <MetricCardContent
+      <CardContent className="p-0 overflow-hidden">
+        <MetricCardControls
           breakdownEnabled={breakdownEnabled}
           breakdownType={breakdownType}
-          chartData={chartData}
-          versionChanges={versionChanges}
-          barColor={barColor}
-          valueFormatter={valueFormatter}
-          tooltipValueFormatter={tooltipValueFormatter}
-          tooltipLabelFormatter={tooltipLabelFormatter}
+          onBreakdownTypeChange={handleBreakdownTypeChange}
           showTrue={showTrue}
           showFalse={showFalse}
-          chartType={chartType}
+          toggleTrue={toggleTrue}
+          toggleFalse={toggleFalse}
           metricType={metricType}
-          selectedTimestamp={selectedTimestamp}
-          selectedTimestamps={selectedTimestamps}
-          hoveredTimestamp={hoveredTimestamp}
-          onHoverTimestamp={onHoverTimestamp}
-          children={children}
         />
+        
+        <div className="p-4 pt-0">
+          <MetricCardContent
+            breakdownEnabled={breakdownEnabled}
+            breakdownType={breakdownType}
+            chartData={chartData}
+            versionChanges={versionChanges}
+            barColor={barColor}
+            valueFormatter={valueFormatter}
+            tooltipValueFormatter={tooltipValueFormatter}
+            tooltipLabelFormatter={tooltipLabelFormatter}
+            showTrue={showTrue}
+            showFalse={showFalse}
+            chartType={chartType}
+            metricType={metricType}
+            selectedTimestamp={selectedTimestamp}
+            selectedTimestamps={selectedTimestamps}
+            hoveredTimestamp={hoveredTimestamp}
+            onHoverTimestamp={handleHoverTimestamp}
+          />
+        </div>
       </CardContent>
     </Card>
   );
