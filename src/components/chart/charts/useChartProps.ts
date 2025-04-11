@@ -5,6 +5,7 @@ export const useChartProps = (onHoverTimestamp?: (timestamp: string | null) => v
   // Handle mouse move to detect hovered data points
   const handleMouseMove = useCallback((e: any) => {
     if (e && e.activeLabel && onHoverTimestamp) {
+      console.log(`useChartProps handleMouseMove: ${e.activeLabel}`);
       onHoverTimestamp(e.activeLabel);
     }
   }, [onHoverTimestamp]);
@@ -12,6 +13,7 @@ export const useChartProps = (onHoverTimestamp?: (timestamp: string | null) => v
   // Handle mouse leave
   const handleMouseLeave = useCallback(() => {
     if (onHoverTimestamp) {
+      console.log('useChartProps handleMouseLeave: null');
       onHoverTimestamp(null);
     }
   }, [onHoverTimestamp]);

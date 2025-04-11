@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import TelemetryBarChart from './charts/TelemetryBarChart';
 import TelemetryLineChart from './charts/TelemetryLineChart';
@@ -24,6 +24,21 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   height = 160
 }) => {
   const { data, calculateTotal } = useTelemetryData(title, timeframe, environment);
+  
+  // Debug logging for hover events
+  useEffect(() => {
+    if (hoveredTimestamp) {
+      console.log(`TelemetryChart ${title} has hoveredTimestamp: ${hoveredTimestamp}`);
+    }
+  }, [hoveredTimestamp, title]);
+  
+  // Forward hover events to parent component
+  const handleHoverTimestamp = (timestamp: string | null) => {
+    if (onHoverTimestamp) {
+      console.log(`TelemetryChart ${title} forwarding hover: ${timestamp}`);
+      onHoverTimestamp(timestamp);
+    }
+  };
   
   const displayTitle = title === "Error Rate" ? "Errors" : title;
   const useBarChart = title === "Error Rate" || title === "Errors";
@@ -53,7 +68,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
               title={title}
               chartColor={chartColor}
               hoveredTimestamp={hoveredTimestamp}
-              onHoverTimestamp={onHoverTimestamp}
+              onHoverTimestamp={handleHoverTimestamp}
               timeframe={timeframe}
               height={height}
             />
@@ -63,7 +78,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
               title={title}
               chartColor={chartColor}
               hoveredTimestamp={hoveredTimestamp}
-              onHoverTimestamp={onHoverTimestamp}
+              onHoverTimestamp={handleHoverTimestamp}
               timeframe={timeframe}
               height={height}
             />
@@ -73,7 +88,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
               title={title}
               chartColor={chartColor}
               hoveredTimestamp={hoveredTimestamp}
-              onHoverTimestamp={onHoverTimestamp}
+              onHoverTimestamp={handleHoverTimestamp}
               timeframe={timeframe}
               height={height}
             />

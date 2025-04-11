@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Area, Line, XAxis, YAxis, ResponsiveContainer, ComposedChart, Tooltip, ReferenceLine } from 'recharts';
 import { DataPoint } from '@/components/BarChart';
@@ -85,7 +86,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({
 
   const tooltipValueFormatter = (value: number) => `${Math.round(value)}`;
 
-  // Updated hover event handlers that explicitly call parent handler with logging
+  // Updated hover event handlers that explicitly call parent handler
   const handleMouseMove = (e: any) => {
     if (e && e.activeLabel && onHoverTimestamp) {
       console.log(`ChartArea hover: ${e.activeLabel}`);
