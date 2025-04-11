@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -119,11 +120,11 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     const avg = sum / data.length;
     
     if (title === "Error Rate") {
-      return `${avg.toFixed(1)}%`;
+      return `${Math.round(avg)}%`;
     } else if (title === "Largest Contentful Paint") {
       return `${avg.toFixed(1)}s`;
     } else {
-      return avg.toFixed(1);
+      return Math.round(avg);
     }
   }, [data, title]);
 
@@ -137,7 +138,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     if (title === "Largest Contentful Paint") {
       return `${value.toFixed(1)}s`;
     }
-    return value.toFixed(2);
+    return Math.round(value).toString();
   };
   
   const handleMouseMove = (e: any) => {
@@ -154,7 +155,8 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
 
   const chartHeight = 78 * 1.3;
   
-  const useBarChart = title === "Errors";
+  // Changed logic to determine when to use bar chart
+  const useBarChart = title === "Error Rate" || title === "Errors";
   
   const goodZoneColor = "#F2FCE2";
   const needsImprovementZoneColor = "#FEF7CD";
@@ -202,6 +204,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   axisLine={{ stroke: '#eee' }} 
                   tickLine={{ stroke: '#eee' }}
                   width={20}
+                  tickFormatter={(value) => Math.round(value).toString()}
                 />
                 <Tooltip 
                   content={
@@ -328,6 +331,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   tickLine={{ stroke: '#eee' }}
                   width={20}
                   domain={title === "Largest Contentful Paint" ? [0, 6] : ['auto', 'auto']}
+                  tickFormatter={(value) => Math.round(value).toString()}
                 />
                 <Tooltip 
                   content={
