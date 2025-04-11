@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { cn } from "@/lib/utils";
 import Header from '@/components/Header';
@@ -44,7 +45,10 @@ const Index = () => {
   // Centralized handler for chart hover events
   const handleChartHover = (timestamp: string | null) => {
     setHoveredTimestamp(timestamp);
-    handleHoverTimestamp(timestamp);
+    // Only call the dashboard data handler if the timestamp is different
+    if (timestamp !== hoveredTimestamp) {
+      handleHoverTimestamp(timestamp);
+    }
   };
 
   return (

@@ -6,8 +6,6 @@ import ChartArea from './impact/ChartArea';
 import CustomLegend from './impact/CustomLegend';
 import { historyData } from '@/components/history/historyEventData';
 import ImpactLevelSelector, { ImpactLevel } from './impact/ImpactLevelSelector';
-import { Info } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface FlagChangeImpactProps {
   chartData: DataPoint[];
@@ -120,17 +118,7 @@ const FlagChangeImpact = ({
     <div className={cn("bg-white p-4 rounded-lg shadow-sm border border-gray-200", className)}>
       <div className="mb-2 flex justify-between items-center">
         <div className="flex items-center gap-1">
-          <h3 className="font-medium text-sm">Flag Change Impact</h3>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Info className="h-3.5 w-3.5 text-gray-400" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="text-xs">Number of flag changes</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <h3 className="font-medium text-sm">Flag Changes</h3>
         </div>
         <ImpactLevelSelector 
           selectedLevels={selectedImpactLevels} 
