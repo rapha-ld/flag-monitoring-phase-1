@@ -47,13 +47,18 @@ const EvaluationsCard: React.FC<EvaluationsCardProps> = ({
       info="Total evaluations for the selected time period"
       className={cn(
         "animate-slide-up [animation-delay:100ms]",
-        isBreakdownEnabled ? "h-[522px]" : "",
-        "bg-white p-4 rounded-lg shadow-sm border border-gray-200"
+        isBreakdownEnabled ? "col-span-2" : ""
       )}
       chartData={chartData}
       versionChanges={versionChanges.filter(change => 
         change.position < chartData.length
       )}
+      valueFormatter={(value) => `${value}`}
+      tooltipValueFormatter={(value) => `${value}`}
+      barColor="#6E6F96"
+      showTrue={showTrue}
+      showFalse={showFalse}
+      chartType="stacked"
       metricType="evaluations"
       timeframe={timeframe}
       selectedTimestamp={selectedTimestamp}
@@ -63,9 +68,6 @@ const EvaluationsCard: React.FC<EvaluationsCardProps> = ({
       onHoverTimestamp={onHoverTimestamp}
       onToggleTrue={onToggleTrue}
       onToggleFalse={onToggleFalse}
-      showTrue={showTrue}
-      showFalse={showFalse}
-      chartType="stacked"
     />
   );
 };
