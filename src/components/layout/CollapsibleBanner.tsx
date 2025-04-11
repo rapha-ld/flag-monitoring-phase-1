@@ -2,6 +2,8 @@
 import React, { useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import TelemetryChart from '@/components/chart/TelemetryChart';
+import { Info } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface CollapsibleBannerProps {
   className?: string;
@@ -35,7 +37,19 @@ const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({
 
   return (
     <div className={cn("w-full space-y-4", className)}>
-      <h2 className="text-base font-medium text-gray-800">System-wide telemetry</h2>
+      <div className="flex items-center gap-2">
+        <h2 className="text-base font-medium text-gray-800">System-wide telemetry</h2>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Info className="h-4 w-4 text-gray-500 hover:text-gray-700" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>These metrics are not scoped to the flag</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
       
       <div className="flex gap-4 mb-8">
         <TelemetryChart 
