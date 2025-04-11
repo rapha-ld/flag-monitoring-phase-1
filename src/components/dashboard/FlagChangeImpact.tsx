@@ -6,6 +6,14 @@ import ChartArea from './impact/ChartArea';
 import CustomLegend from './impact/CustomLegend';
 import { historyData } from '@/components/history/historyEventData';
 import ImpactLevelSelector, { ImpactLevel } from './impact/ImpactLevelSelector';
+import { MoreVertical, FilePdf, FileImage, Link } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { toast } from 'sonner';
 
 interface FlagChangeImpactProps {
   chartData: DataPoint[];
@@ -115,11 +123,48 @@ const FlagChangeImpact = ({
     }
   };
 
+  // Handle menu actions
+  const handleExportPDF = () => {
+    // Placeholder for actual PDF export functionality
+    toast.success('Exporting Flag Changes chart as PDF');
+  };
+
+  const handleExportJPEG = () => {
+    // Placeholder for actual JPEG export functionality
+    toast.success('Exporting Flag Changes chart as JPEG');
+  };
+
+  const handleCopyLink = () => {
+    // Placeholder for actual copy link functionality
+    navigator.clipboard.writeText(window.location.href)
+      .then(() => toast.success('Link copied to clipboard'))
+      .catch(() => toast.error('Failed to copy link'));
+  };
+
   return (
     <div className={cn("bg-white p-4 rounded-lg shadow-sm border border-gray-200", className)}>
       <div className="mb-2 flex justify-between items-center">
         <div className="flex items-center gap-1">
           <h3 className="font-medium text-sm">Flag Changes</h3>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center rounded-md hover:bg-slate-100">
+              <MoreVertical className="h-4 w-4 text-slate-500" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-white">
+              <DropdownMenuItem onClick={handleExportPDF} className="cursor-pointer">
+                <FilePdf className="mr-2 h-4 w-4" />
+                <span>Export as PDF</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleExportJPEG} className="cursor-pointer">
+                <FileImage className="mr-2 h-4 w-4" />
+                <span>Export as JPEG</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
+                <Link className="mr-2 h-4 w-4" />
+                <span>Copy Link</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         <ImpactLevelSelector 
           selectedLevels={selectedImpactLevels} 

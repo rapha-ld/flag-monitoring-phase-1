@@ -1,8 +1,17 @@
+
 import React from 'react';
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Info } from 'lucide-react';
+import { Info, MoreVertical, FilePdf, FileImage, Link } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { toast } from 'sonner';
+
 interface MetricCardHeaderProps {
   title: string;
   value: string | number;
@@ -13,6 +22,7 @@ interface MetricCardHeaderProps {
   info?: string;
   timeframe?: string;
 }
+
 const MetricCardHeader = ({
   title,
   value,
@@ -30,6 +40,25 @@ const MetricCardHeader = ({
       return parseInt(timeframe.replace('d', ''));
     }
   };
+
+  // Handle menu actions
+  const handleExportPDF = () => {
+    // Placeholder for actual PDF export functionality
+    toast.success(`Exporting ${title} chart as PDF`);
+  };
+
+  const handleExportJPEG = () => {
+    // Placeholder for actual JPEG export functionality
+    toast.success(`Exporting ${title} chart as JPEG`);
+  };
+
+  const handleCopyLink = () => {
+    // Placeholder for actual copy link functionality
+    navigator.clipboard.writeText(window.location.href)
+      .then(() => toast.success('Link copied to clipboard'))
+      .catch(() => toast.error('Failed to copy link'));
+  };
+
   return <CardHeader className="p-4 pb-0">
       <div className="flex items-center justify-between">
         <CardTitle className="text-sm font-medium flex items-center gap-1.5 text-inherit">
@@ -45,6 +74,26 @@ const MetricCardHeader = ({
               </Tooltip>
             </TooltipProvider>}
         </CardTitle>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center rounded-md hover:bg-slate-100">
+            <MoreVertical className="h-4 w-4 text-slate-500" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="bg-white">
+            <DropdownMenuItem onClick={handleExportPDF} className="cursor-pointer">
+              <FilePdf className="mr-2 h-4 w-4" />
+              <span>Export as PDF</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleExportJPEG} className="cursor-pointer">
+              <FileImage className="mr-2 h-4 w-4" />
+              <span>Export as JPEG</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
+              <Link className="mr-2 h-4 w-4" />
+              <span>Copy Link</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       <div className="flex items-center gap-2">
         <CardDescription className="text-2xl font-semibold text-foreground">
@@ -65,4 +114,5 @@ const MetricCardHeader = ({
       </div>
     </CardHeader>;
 };
+
 export default MetricCardHeader;
