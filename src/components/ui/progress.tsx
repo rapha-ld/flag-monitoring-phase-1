@@ -25,7 +25,7 @@ const Progress = React.forwardRef<
       )}
       style={{ 
         transform: `translateX(-${100 - (value || 0)}%)`,
-        backgroundColor: color ? color.replace('C8', 'A0') : undefined // Darken the color
+        backgroundColor: color || "#6C727A"
       }}
     />
   </ProgressPrimitive.Root>
@@ -33,3 +33,4 @@ const Progress = React.forwardRef<
 Progress.displayName = ProgressPrimitive.Root.displayName
 
 export { Progress }
+
