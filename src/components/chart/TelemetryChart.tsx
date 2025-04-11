@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,13 +28,11 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         
         let baseValue = Math.random() * 100;
         if (title === "Largest Contentful Paint") {
-          // Generate LCP values between 0.3 and 1.2 sec, with occasional spikes around 3sec
-          const isSpike = Math.random() < 0.1; // 10% chance of a spike
+          const isSpike = Math.random() < 0.1;
           baseValue = isSpike 
-            ? 2.5 + Math.random() * 0.8 // Spike between 2.5 and 3.3 sec
-            : 0.3 + Math.random() * 0.9; // Normal values between 0.3 and 1.2 sec
+            ? 2.5 + Math.random() * 0.8
+            : 0.3 + Math.random() * 0.9;
           
-          // Convert to milliseconds for display
           baseValue = baseValue * 1000;
         } else if (environment === "staging") {
           if (title === "Error Rate") {
@@ -56,13 +53,11 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         
         let baseValue = Math.random() * 100;
         if (title === "Largest Contentful Paint") {
-          // Generate LCP values between 0.3 and 1.2 sec, with occasional spikes around 3sec
-          const isSpike = Math.random() < 0.1; // 10% chance of a spike
+          const isSpike = Math.random() < 0.1;
           baseValue = isSpike 
-            ? 2.5 + Math.random() * 0.8 // Spike between 2.5 and 3.3 sec
-            : 0.3 + Math.random() * 0.9; // Normal values between 0.3 and 1.2 sec
+            ? 2.5 + Math.random() * 0.8
+            : 0.3 + Math.random() * 0.9;
           
-          // Convert to milliseconds for display
           baseValue = baseValue * 1000;
         } else if (environment === "staging") {
           if (title === "Error Rate") {
@@ -92,11 +87,10 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         
         let value;
         if (title === "Largest Contentful Paint") {
-          // Generate LCP values between 0.3 and 1.2 sec, with occasional spikes around 3sec
-          const isSpike = Math.random() < 0.1; // 10% chance of a spike
+          const isSpike = Math.random() < 0.1;
           value = isSpike 
-            ? 2500 + Math.random() * 800 // Spike between 2.5 and 3.3 sec (in ms)
-            : 300 + Math.random() * 900; // Normal values between 0.3 and 1.2 sec (in ms)
+            ? 2500 + Math.random() * 800
+            : 300 + Math.random() * 900;
         } else if (title === "Error Rate") {
           const isSpike = Math.random() < 0.15;
           
@@ -166,14 +160,14 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   
   const useBarChart = title === "Errors";
   
-  // Performance zone colors for LCP
-  const goodZoneColor = "#F2FCE2"; // Soft Green
-  const needsImprovementZoneColor = "#FEF7CD"; // Soft Yellow
-  const poorZoneColor = "#FEC6A1"; // Soft Orange
+  const goodZoneColor = "#F2FCE2";
+  const needsImprovementZoneColor = "#FEF7CD";
+  const poorZoneColor = "#FEC6A1";
   
-  // Performance thresholds for LCP (in milliseconds)
-  const goodThreshold = 2500;  // 2.5 seconds
-  const needsImprovementThreshold = 4000;  // 4 seconds
+  const dashedLineColor = "#8E9196";
+  
+  const goodThreshold = 2500;
+  const needsImprovementThreshold = 4000;
 
   return (
     <Card className="flex-1 bg-white">
@@ -238,7 +232,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   dataKey="value" 
                   fill={chartColor}
                   radius={[2, 2, 0, 0]}
-                  fillOpacity={0.3}  // Set opacity to 30%
+                  fillOpacity={0.3}
                   isAnimationActive={false}
                 />
               </BarChart>
@@ -256,13 +250,11 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   </linearGradient>
                 </defs>
                 
-                {/* Add performance zones for LCP */}
                 {title === "Largest Contentful Paint" && (
                   <>
-                    {/* Poor zone (above 4000ms) */}
                     <ReferenceArea 
                       y1={needsImprovementThreshold} 
-                      y2={6000} // Set a reasonable upper bound
+                      y2={6000}
                       fill={poorZoneColor} 
                       fillOpacity={0.5}
                       ifOverflow="extendDomain"
@@ -276,7 +268,14 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                       }}
                     />
                     
-                    {/* Needs improvement zone (2500-4000ms) */}
+                    <ReferenceLine
+                      y={needsImprovementThreshold}
+                      stroke={dashedLineColor}
+                      strokeWidth={1}
+                      strokeDasharray="3 3"
+                      opacity={0.5}
+                    />
+                    
                     <ReferenceArea 
                       y1={goodThreshold} 
                       y2={needsImprovementThreshold} 
@@ -293,7 +292,14 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                       }}
                     />
                     
-                    {/* Good zone (0-2500ms) */}
+                    <ReferenceLine
+                      y={goodThreshold}
+                      stroke={dashedLineColor}
+                      strokeWidth={1}
+                      strokeDasharray="3 3"
+                      opacity={0.5}
+                    />
+                    
                     <ReferenceArea 
                       y1={0} 
                       y2={goodThreshold} 
