@@ -41,7 +41,7 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
     let totalValue = 0;
     
     // First, calculate the total value across all charts and find the maximum value
-    breakdownData.forEach(item => {
+    const updatedBreakdowns = breakdownData.map(item => {
       let itemTotal = 0;
       
       item.data.forEach(d => {
@@ -55,21 +55,26 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
         itemTotal += pointValue;
       });
       
-      // Store the calculated total in the item
-      item.calculatedTotal = itemTotal;
-      totalValue += itemTotal;
+      // Return a new object with the calculated total
+      return {
+        ...item,
+        calculatedTotal: itemTotal
+      };
     });
+    
+    // Sum up all the calculated totals
+    totalValue = updatedBreakdowns.reduce((sum, item) => sum + item.calculatedTotal, 0);
     
     // Add 10% padding to the max value
     maxValue = maxValue * 1.1;
     
     // Now calculate percentages
-    const itemPercentages = breakdownData.map(item => {
+    const itemPercentages = updatedBreakdowns.map(item => {
       return totalValue > 0 ? (item.calculatedTotal / totalValue) * 100 : 0;
     });
     
     return { 
-      breakdowns: breakdownData, 
+      breakdowns: updatedBreakdowns, 
       maxYValue: maxValue,
       percentages: itemPercentages
     };

@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils';
 import NavTabs from './NavTabs';
 import Breadcrumb from './header/Breadcrumb';
 import EnvironmentSelector from './header/EnvironmentSelector';
-import DeviceSelector from './header/DeviceSelector';
 import TimeframeSelector from './header/TimeframeSelector';
 import MetricsSelector from './header/MetricsSelector';
 
@@ -62,10 +61,7 @@ const Header = ({
           onEnvironmentChange={onEnvironmentChange} 
         />
         
-        <DeviceSelector 
-          selectedDevice={selectedDevice} 
-          onDeviceChange={onDeviceChange} 
-        />
+        {/* Removed DeviceSelector component */}
         
         <TimeframeSelector 
           timeframe={timeframe} 

@@ -15,7 +15,7 @@ import { DataPoint } from '@/components/BarChart';
 
 export const useDashboardData = () => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [timeframe, setTimeframe] = useState("30d");
+  const [timeframe, setTimeframe] = useState("1d"); // Changed from "30d" to "1d"
   const [environment, setEnvironment] = useState("production");
   const [selectedDevice, setSelectedDevice] = useState("all");
   const [selectedMetrics, setSelectedMetrics] = useState(['evaluations', 'conversion']);

@@ -61,8 +61,7 @@ const Index = () => {
             onTimeframeChange={handleTimeframeChange}
             environment={environment}
             onEnvironmentChange={handleEnvironmentChange}
-            selectedDevice={selectedDevice}
-            onDeviceChange={handleDeviceChange}
+            // Removed selectedDevice and onDeviceChange props
             selectedMetrics={selectedMetrics}
             onMetricsChange={handleMetricsChange}
             hiddenMetrics={hiddenMetrics}
