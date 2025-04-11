@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea, Line, LineChart } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,6 +20,12 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
 }) => {
   const displayTitle = title === "Error Rate" ? "Errors" : title;
   
+  const formatHourInAmPm = (hour: number): string => {
+    const period = hour >= 12 ? 'PM' : 'AM';
+    const formattedHour = hour % 12 || 12;
+    return `${formattedHour}${period}`;
+  };
+
   const data = React.useMemo(() => {
     if (timeframe === "1h") {
       return Array.from({ length: 60 }, (_, i) => {
@@ -48,7 +53,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
       });
     } else if (timeframe === "1d") {
       return Array.from({ length: 24 }, (_, i) => {
-        const hour = i.toString().padStart(2, '0');
+        const hourInAmPm = formatHourInAmPm(i);
         
         let baseValue = Math.random() * 100;
         if (title === "Largest Contentful Paint") {
@@ -63,7 +68,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         }
         
         return {
-          time: `${hour}:00`,
+          time: hourInAmPm,
           value: baseValue,
           date: new Date().toISOString(),
           environment: environment
