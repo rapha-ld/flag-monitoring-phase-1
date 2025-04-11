@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import MetricCardHeader from './MetricCardHeader';
@@ -28,6 +27,11 @@ interface MetricCardProps {
   selectedTimestamps?: Date[] | null;
   hoveredTimestamp?: string | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
+  value?: number; // Added to fix TypeScript error
+  info?: string; // Added to match props passed from EvaluationsCard
+  timeframe?: string; // Added to match props passed from EvaluationsCard
+  onBreakdownToggle?: (enabled: boolean) => void; // Added to match props from EvaluationsCard
+  className?: string; // Added to match props passed from EvaluationsCard
 }
 
 const MetricCard: React.FC<MetricCardProps> = ({
@@ -50,18 +54,16 @@ const MetricCard: React.FC<MetricCardProps> = ({
   selectedTimestamp,
   selectedTimestamps,
   hoveredTimestamp,
-  onHoverTimestamp
+  onHoverTimestamp,
+  value, // Added to fix TypeScript error
+  info, // Added to match props passed from EvaluationsCard
+  timeframe, // Added to match props passed from EvaluationsCard
+  onBreakdownToggle, // Added to match props from EvaluationsCard
+  className, // Added to match props passed from EvaluationsCard
 }) => {
   // Local state to track if breakdown view is enabled and which type
   const [breakdownEnabled, setBreakdownEnabled] = useState(false);
   const [breakdownType, setBreakdownType] = useState<'application' | 'sdk'>('application');
-  
-  // Determine the chart color based on the metric type
-  const barColor = 
-    metricType === 'evaluations' ? '#6E6F96' : 
-    metricType === 'conversion' ? '#55B464' : 
-    metricType === 'errorRate' ? '#DB2251' : 
-    '#6E6F96';
   
   // Only show the card if it's visible
   if (!isVisible) return null;
@@ -71,17 +73,23 @@ const MetricCard: React.FC<MetricCardProps> = ({
   
   const handleToggleBreakdown = () => {
     setBreakdownEnabled(!breakdownEnabled);
+    if (onBreakdownToggle) {
+      onBreakdownToggle(!breakdownEnabled);
+    }
   };
 
+  // Use the value prop if provided, otherwise use metric
+  const displayValue = value !== undefined ? value : metric;
+
   return (
-    <Card className="shadow-sm hover:shadow-md transition-shadow">
+    <Card className={`shadow-sm hover:shadow-md transition-shadow ${className || ''}`}>
       <CardHeader className="pb-2">
         <MetricCardHeader 
           title={title} 
-          metric={metric} 
+          value={displayValue} 
           change={change} 
-          isLoading={isLoading} 
           valueFormatter={valueFormatter}
+          info={info}
         />
       </CardHeader>
       <CardContent className="p-0">
@@ -90,7 +98,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
           breakdownType={breakdownType}
           chartData={chartData}
           versionChanges={versionChanges}
-          barColor={barColor}
+          barColor="#6E6F96"
           valueFormatter={valueFormatter}
           tooltipValueFormatter={tooltipValueFormatter}
           tooltipLabelFormatter={tooltipLabelFormatter}
@@ -110,8 +118,12 @@ const MetricCard: React.FC<MetricCardProps> = ({
       </CardContent>
       <CardFooter className="flex justify-between items-center pt-2 pb-2">
         <MetricCardControls 
+          showBreakdownToggle={showBreakdownSelector}
           breakdownEnabled={breakdownEnabled} 
           onToggleBreakdown={handleToggleBreakdown}
+          breakdownType={breakdownType}
+          onBreakdownTypeChange={setBreakdownType}
+          showVariantFilters={!!metricType}
           showTrue={showTrue}
           showFalse={showFalse}
           onToggleTrue={onToggleTrue || (() => {})}
@@ -120,7 +132,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
         
         {showBreakdownSelector && breakdownEnabled && (
           <BreakdownTypeSelector 
-            value={breakdownType} 
+            type={breakdownType} 
             onChange={setBreakdownType} 
           />
         )}

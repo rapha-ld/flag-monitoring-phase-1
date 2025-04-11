@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,11 +26,20 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         const minutes = i;
         const minuteStr = minutes.toString().padStart(2, '0');
         
-        let baseValue = Math.random() * 100;
-        if (environment === "staging") {
-          if (title === "Error Rate") {
+        let baseValue;
+        if (title === "Largest Contentful Paint") {
+          const shouldSpike = Math.random() < 0.15;
+          baseValue = shouldSpike 
+            ? 3000 + Math.random() * 800
+            : 500 + Math.random() * 400;
+        } else if (title === "Error Rate") {
+          baseValue = Math.random() * 100;
+          if (environment === "staging") {
             baseValue = Math.random() * 100 + 20;
-          } else if (title === "Largest Contentful Paint") {
+          }
+        } else {
+          baseValue = Math.random() * 100;
+          if (environment === "staging") {
             baseValue = Math.random() * 100 + 30;
           }
         }
@@ -47,11 +55,20 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
       return Array.from({ length: 24 }, (_, i) => {
         const hour = i.toString().padStart(2, '0');
         
-        let baseValue = Math.random() * 100;
-        if (environment === "staging") {
-          if (title === "Error Rate") {
+        let baseValue;
+        if (title === "Largest Contentful Paint") {
+          const shouldSpike = Math.random() < 0.15;
+          baseValue = shouldSpike 
+            ? 3000 + Math.random() * 800
+            : 500 + Math.random() * 400;
+        } else if (title === "Error Rate") {
+          baseValue = Math.random() * 100;
+          if (environment === "staging") {
             baseValue = Math.random() * 100 + 20;
-          } else if (title === "Largest Contentful Paint") {
+          }
+        } else {
+          baseValue = Math.random() * 100;
+          if (environment === "staging") {
             baseValue = Math.random() * 100 + 30;
           }
         }
@@ -77,7 +94,12 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         const day = date.getDate();
         
         let value;
-        if (title === "Error Rate") {
+        if (title === "Largest Contentful Paint") {
+          const shouldSpike = Math.random() < 0.15;
+          value = shouldSpike 
+            ? 3000 + Math.random() * 800
+            : 500 + Math.random() * 400;
+        } else if (title === "Error Rate") {
           const isSpike = Math.random() < 0.15;
           
           if (environment === "staging") {
@@ -89,12 +111,6 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
             value = isSpike 
               ? 15 + Math.random() * 15
               : 5 + Math.random() * 10;
-          }
-        } else if (title === "Largest Contentful Paint") {
-          if (environment === "staging") {
-            value = 90 + Math.random() * 80;
-          } else {
-            value = 60 + Math.random() * 60;
           }
         } else {
           value = Math.random() * 100;
@@ -117,7 +133,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     if (title === "Error Rate") {
       return `${avg.toFixed(1)}%`;
     } else if (title === "Largest Contentful Paint") {
-      return `${avg.toFixed(0)}ms`;
+      return `${(avg / 1000).toFixed(2)}s`;
     } else {
       return avg.toFixed(1);
     }
@@ -154,18 +170,78 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     return (
       <>
         {/* Good zone: under 2.5s */}
-        <ReferenceArea y1={0} y2={2500} fill="#F2FCE2" fillOpacity={0.4} strokeOpacity={0} />
+        <ReferenceArea 
+          y1={0} 
+          y2={2500} 
+          fill="#F2FCE2" 
+          fillOpacity={0.6}
+          stroke="#96CF72"
+          strokeOpacity={0.5}
+          strokeWidth={1} 
+        />
         
         {/* Needs improvement zone: between 2.5s and 4s */}
-        <ReferenceArea y1={2500} y2={4000} fill="#FEF7CD" fillOpacity={0.4} strokeOpacity={0} />
+        <ReferenceArea 
+          y1={2500} 
+          y2={4000} 
+          fill="#FEF7CD" 
+          fillOpacity={0.6}
+          stroke="#E9B94B"
+          strokeOpacity={0.5}
+          strokeWidth={1}
+        />
         
         {/* Poor zone: above 4s */}
-        <ReferenceArea y1={4000} y2={Infinity} fill="#FFEBEC" fillOpacity={0.4} strokeOpacity={0} />
+        <ReferenceArea 
+          y1={4000} 
+          y2={6000} 
+          fill="#FFEBEC" 
+          fillOpacity={0.7}
+          stroke="#EA5555"
+          strokeOpacity={0.6}
+          strokeWidth={1}
+        />
         
-        {/* Zone dividers */}
-        <ReferenceLine y={2500} stroke="#96CF72" strokeDasharray="3 3" label={{ position: 'right', value: 'Good: < 2.5s', fontSize: 8, fill: '#4B9D38' }} />
-        <ReferenceLine y={4000} stroke="#E9B94B" strokeDasharray="3 3" label={{ position: 'right', value: 'Needs Improvement: < 4s', fontSize: 8, fill: '#C98515' }} />
-        <ReferenceLine y={4001} stroke="#EA5555" strokeWidth={0} label={{ position: 'right', value: 'Poor: > 4s', fontSize: 8, fill: '#D92C2C' }} />
+        {/* Zone dividers with more prominent labels */}
+        <ReferenceLine 
+          y={2500} 
+          stroke="#96CF72" 
+          strokeWidth={1.5}
+          label={{ 
+            position: 'right', 
+            value: 'Good: < 2.5s', 
+            fontSize: 9, 
+            fill: '#4B9D38',
+            offset: 5,
+            fontWeight: 'bold'
+          }} 
+        />
+        <ReferenceLine 
+          y={4000} 
+          stroke="#E9B94B" 
+          strokeWidth={1.5}
+          label={{ 
+            position: 'right', 
+            value: 'Needs Improvement: < 4s', 
+            fontSize: 9, 
+            fill: '#C98515',
+            offset: 5,
+            fontWeight: 'bold'
+          }} 
+        />
+        <ReferenceLine 
+          y={4001} 
+          stroke="#EA5555"
+          strokeWidth={0}
+          label={{ 
+            position: 'right', 
+            value: 'Poor: > 4s', 
+            fontSize: 9, 
+            fill: '#D92C2C',
+            offset: 5,
+            fontWeight: 'bold'
+          }} 
+        />
       </>
     );
   };
@@ -252,7 +328,6 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                 
-                {/* Add performance zones for LCP chart */}
                 {renderLCPZones()}
                 
                 <XAxis 
