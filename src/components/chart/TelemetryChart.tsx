@@ -32,8 +32,6 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
           baseValue = isSpike 
             ? 2.5 + Math.random() * 0.8
             : 0.3 + Math.random() * 0.9;
-          
-          baseValue = baseValue * 1000;
         } else if (environment === "staging") {
           if (title === "Error Rate") {
             baseValue = Math.random() * 100 + 20;
@@ -57,8 +55,6 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
           baseValue = isSpike 
             ? 2.5 + Math.random() * 0.8
             : 0.3 + Math.random() * 0.9;
-          
-          baseValue = baseValue * 1000;
         } else if (environment === "staging") {
           if (title === "Error Rate") {
             baseValue = Math.random() * 100 + 20;
@@ -89,8 +85,8 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         if (title === "Largest Contentful Paint") {
           const isSpike = Math.random() < 0.1;
           value = isSpike 
-            ? 2500 + Math.random() * 800
-            : 300 + Math.random() * 900;
+            ? 2.5 + Math.random() * 0.8
+            : 0.3 + Math.random() * 0.9;
         } else if (title === "Error Rate") {
           const isSpike = Math.random() < 0.15;
           
@@ -125,7 +121,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     if (title === "Error Rate") {
       return `${avg.toFixed(1)}%`;
     } else if (title === "Largest Contentful Paint") {
-      return `${avg.toFixed(0)}ms`;
+      return `${avg.toFixed(1)}s`;
     } else {
       return avg.toFixed(1);
     }
@@ -139,7 +135,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   const tooltipLabelFormatter = (label: string) => label;
   const tooltipValueFormatter = (value: number) => {
     if (title === "Largest Contentful Paint") {
-      return `${value.toFixed(0)}ms`;
+      return `${value.toFixed(1)}s`;
     }
     return value.toFixed(2);
   };
@@ -166,8 +162,8 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   
   const dashedLineColor = "#8E9196";
   
-  const goodThreshold = 2500;
-  const needsImprovementThreshold = 4000;
+  const goodThreshold = 2.5;
+  const needsImprovementThreshold = 4;
 
   return (
     <Card className="flex-1 bg-white">
@@ -254,7 +250,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   <>
                     <ReferenceArea 
                       y1={needsImprovementThreshold} 
-                      y2={6000}
+                      y2={6}
                       fill={poorZoneColor} 
                       fillOpacity={0.5}
                       ifOverflow="extendDomain"
@@ -331,7 +327,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   axisLine={{ stroke: '#eee' }} 
                   tickLine={{ stroke: '#eee' }}
                   width={20}
-                  domain={title === "Largest Contentful Paint" ? [0, 6000] : ['auto', 'auto']}
+                  domain={title === "Largest Contentful Paint" ? [0, 6] : ['auto', 'auto']}
                 />
                 <Tooltip 
                   content={
