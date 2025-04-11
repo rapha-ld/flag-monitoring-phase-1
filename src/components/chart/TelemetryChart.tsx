@@ -20,7 +20,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   environment = "production",
   hoveredTimestamp,
   onHoverTimestamp,
-  height = 160,
+  height = 264,
   className
 }) => {
   const displayTitle = title === "Error Rate" ? "Errors" : title;
