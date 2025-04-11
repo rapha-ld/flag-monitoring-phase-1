@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea, Line, LineChart } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,9 +25,6 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     if (timeframe === "1h") {
       return Array.from({ length: 60 }, (_, i) => {
         const minutes = i;
-        const hour = new Date().getHours();
-        const ampm = hour >= 12 ? 'PM' : 'AM';
-        const formattedHour = hour % 12 || 12; // convert to 12-hour format
         const minuteStr = minutes.toString().padStart(2, '0');
         
         let baseValue = Math.random() * 100;
@@ -42,7 +40,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         }
         
         return {
-          time: `${formattedHour}:${minuteStr} ${ampm}`,
+          time: `${minuteStr}m`,
           value: baseValue,
           date: new Date().toISOString(),
           environment: environment
@@ -50,9 +48,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
       });
     } else if (timeframe === "1d") {
       return Array.from({ length: 24 }, (_, i) => {
-        const hour = i;
-        const ampm = hour >= 12 ? 'PM' : 'AM';
-        const formattedHour = hour % 12 || 12; // convert to 12-hour format
+        const hour = i.toString().padStart(2, '0');
         
         let baseValue = Math.random() * 100;
         if (title === "Largest Contentful Paint") {
@@ -67,7 +63,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         }
         
         return {
-          time: `${formattedHour} ${ampm}`,
+          time: `${hour}:00`,
           value: baseValue,
           date: new Date().toISOString(),
           environment: environment
@@ -137,7 +133,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
 
   const chartColor = 
     title === "Error Rate" ? "#DB2251" : 
-    title === "Largest Contentful Paint" ? "#8E9196" : 
+    title === "Largest Contentful Paint" ? "#8E9196" :  // Changed to a lighter gray
     "#7861C6";
 
   const tooltipLabelFormatter = (label: string) => label;
