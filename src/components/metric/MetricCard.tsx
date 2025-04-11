@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -121,7 +122,7 @@ const MetricCard = ({
         />
       )}
 
-      <CardContent className="p-0">
+      <CardContent className="p-4 pt-2">
         <MetricCardContent
           breakdownEnabled={breakdownEnabled}
           breakdownType={breakdownType}
@@ -147,3 +148,4 @@ const MetricCard = ({
 };
 
 export default MetricCard;
+
