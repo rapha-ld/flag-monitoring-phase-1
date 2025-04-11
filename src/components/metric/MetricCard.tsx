@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -107,8 +108,8 @@ const MetricCard = ({
           breakdownType={breakdownType}
           onBreakdownTypeChange={handleBreakdownTypeChange}
           showVariantFilters={showVariantFilters}
-          showTrue={!!showTrue}
-          showFalse={!!showFalse}
+          showTrue={showTrue ?? false}
+          showFalse={showFalse ?? false}
           onToggleTrue={onToggleTrue}
           onToggleFalse={onToggleFalse}
         />
