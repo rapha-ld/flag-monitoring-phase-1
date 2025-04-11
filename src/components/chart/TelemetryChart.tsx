@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import TelemetryBarChart from './charts/TelemetryBarChart';
@@ -28,16 +29,18 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   environment = "production",
   hoveredTimestamp,
   onHoverTimestamp,
-  height = 228
+  height = 160
 }) => {
   const { data, calculateTotal } = useTelemetryData(title, timeframe, environment);
   
+  // Debug logging for hover events
   useEffect(() => {
     if (hoveredTimestamp) {
       console.log(`TelemetryChart ${title} has hoveredTimestamp: ${hoveredTimestamp}`);
     }
   }, [hoveredTimestamp, title]);
   
+  // Forward hover events to parent component
   const handleHoverTimestamp = (timestamp: string | null) => {
     if (onHoverTimestamp) {
       console.log(`TelemetryChart ${title} forwarding hover: ${timestamp}`);
@@ -53,6 +56,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     title === "Largest Contentful Paint" ? "#8E9196" : 
     "#7861C6";
 
+  // Handle menu actions
   const handleExportPDF = () => {
     toast.success(`Exporting ${displayTitle} chart as PDF`);
   };
@@ -105,7 +109,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-4 pt-2" style={{ height: `${height}px` }}>
+      <CardContent className="p-4 pt-2">
         <div style={{ height: `${height}px` }}>
           {useBarChart ? (
             <TelemetryBarChart 
