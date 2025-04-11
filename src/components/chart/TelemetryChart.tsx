@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import TelemetryBarChart from './charts/TelemetryBarChart';
@@ -32,12 +33,14 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
 }) => {
   const { data, calculateTotal } = useTelemetryData(title, timeframe, environment);
   
+  // Debug logging for hover events
   useEffect(() => {
     if (hoveredTimestamp) {
       console.log(`TelemetryChart ${title} has hoveredTimestamp: ${hoveredTimestamp}`);
     }
   }, [hoveredTimestamp, title]);
   
+  // Forward hover events to parent component
   const handleHoverTimestamp = (timestamp: string | null) => {
     if (onHoverTimestamp) {
       console.log(`TelemetryChart ${title} forwarding hover: ${timestamp}`);
@@ -53,6 +56,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     title === "Largest Contentful Paint" ? "#8E9196" : 
     "#7861C6";
 
+  // Handle menu actions
   const handleExportPDF = () => {
     toast.success(`Exporting ${displayTitle} chart as PDF`);
   };
@@ -100,11 +104,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
             {title === "Error Rate" ? (
               <span className="text-xs text-muted-foreground">{`Total: ${calculateTotal}`}</span>
             ) : (
-              <span className="text-xs text-muted-foreground">
-                {title === "Largest Contentful Paint" 
-                  ? `Avg. ${calculateTotal}` 
-                  : `Avg. ${calculateTotal}`}
-              </span>
+              <span className="text-xs text-muted-foreground">{`Avg. ${calculateTotal}`}</span>
             )}
           </div>
         </div>
