@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -152,7 +153,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     }
   };
 
-  const chartHeight = 160; // Match flag-specific metrics chart height
+  const chartHeight = 160;
   
   const useBarChart = title === "Error Rate" || title === "Errors";
   
@@ -170,10 +171,10 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
       <CardHeader className="p-4 pb-0">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium">{displayTitle}</CardTitle>
-          <span className="text-xs text-textSecondary">{`Avg. ${average}`}</span>
+          <span className="text-xs text-muted-foreground">{`Avg. ${average}`}</span>
         </div>
       </CardHeader>
-      <CardContent className="p-4 pt-0">
+      <CardContent className="p-4 pt-2">
         <div className="h-[160px]">
           <ResponsiveContainer width="100%" height={chartHeight}>
             {useBarChart ? (
@@ -189,7 +190,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                     <stop offset="100%" stopColor={chartColor} stopOpacity={0.2} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
+                <CartesianGrid strokeDasharray="3 3" opacity={0.1} vertical={false} />
                 <XAxis 
                   dataKey="time" 
                   tick={{ fontSize: 10, fill: '#9CA3AF' }}
@@ -198,6 +199,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   interval={timeframe === "1h" ? 4 : timeframe === "1d" ? 3 : "preserveEnd"}
                   tickMargin={10}
                   minTickGap={10}
+                  padding={{ left: 10, right: 10 }}
                 />
                 <YAxis 
                   tick={{ fontSize: 10, fill: '#9CA3AF' }}
@@ -234,6 +236,9 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   radius={[2, 2, 0, 0]}
                   fillOpacity={0.3}
                   isAnimationActive={false}
+                  barSize={getBarSize(data.length)}
+                  stroke="#FFFFFF"
+                  strokeWidth={1}
                 />
               </BarChart>
             ) : (
@@ -318,7 +323,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   </>
                 )}
                 
-                <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
+                <CartesianGrid strokeDasharray="3 3" opacity={0.1} vertical={false} />
                 <XAxis 
                   dataKey="time" 
                   tick={{ fontSize: 10, fill: '#9CA3AF' }}
@@ -327,6 +332,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   interval={timeframe === "1h" ? 4 : timeframe === "1d" ? 3 : "preserveEnd"}
                   tickMargin={10}
                   minTickGap={10}
+                  padding={{ left: 10, right: 10 }}
                 />
                 <YAxis 
                   tick={{ fontSize: 10, fill: '#9CA3AF' }}
@@ -362,7 +368,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   type="monotone" 
                   dataKey="value" 
                   stroke={chartColor} 
-                  strokeWidth={1}
+                  strokeWidth={2}
                   fill={`url(#colorGradient-${title.replace(/\s+/g, '')})`}
                   isAnimationActive={false}
                 />
@@ -374,5 +380,15 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     </Card>
   );
 };
+
+// Helper function to calculate bar size based on data length
+function getBarSize(dataLength: number): number {
+  if (dataLength <= 5) return 30;
+  if (dataLength <= 10) return 20;
+  if (dataLength <= 20) return 12;
+  if (dataLength <= 30) return 8;
+  if (dataLength <= 60) return 6;
+  return 4;
+}
 
 export default TelemetryChart;
