@@ -58,7 +58,7 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
           label={{ 
             value: "Poor", 
             position: "insideTopRight",
-            fontSize: 8,
+            fontSize: 10,  // Increased from 8 to 10
             fill: "#B45309",
             dy: 5,
             dx: -5
@@ -82,7 +82,7 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
           label={{ 
             value: "Needs improvement", 
             position: "insideTopRight",
-            fontSize: 8,
+            fontSize: 10,  // Increased from 8 to 10
             fill: "#854D0E",
             dy: 5,
             dx: -5
@@ -106,7 +106,7 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
           label={{ 
             value: "Good", 
             position: "insideTopRight",
-            fontSize: 8,
+            fontSize: 10,  // Increased from 8 to 10
             fill: "#3F6212",
             dy: 5,
             dx: -5
@@ -169,3 +169,4 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
 };
 
 export default TelemetryLineChart;
+
