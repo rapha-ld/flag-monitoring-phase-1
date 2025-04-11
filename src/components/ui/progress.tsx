@@ -25,7 +25,7 @@ const Progress = React.forwardRef<
       )}
       style={{ 
         transform: `translateX(-${100 - (value || 0)}%)`,
-        backgroundColor: color ? color : undefined
+        backgroundColor: color ? color.replace('C8', 'A0') : undefined // Darken the color
       }}
     />
   </ProgressPrimitive.Root>
