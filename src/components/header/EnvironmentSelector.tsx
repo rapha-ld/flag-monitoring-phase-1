@@ -11,6 +11,7 @@ const EnvironmentSelector = ({ environment, onEnvironmentChange }: EnvironmentSe
   // Define environment colors
   const prodColor = "#65A30D"; // Green color for production
   const stagingColor = "#CBD637"; // Yellow color for staging
+  const circleBorderColor = "#07080C"; // Border color for the circles
   
   return (
     <div className="flex space-x-2">
@@ -18,36 +19,40 @@ const EnvironmentSelector = ({ environment, onEnvironmentChange }: EnvironmentSe
         type="button"
         onClick={() => onEnvironmentChange('production')}
         className={cn(
-          "flex items-center px-4 py-2 rounded-md bg-white text-sm",
-          "hover:bg-gray-50 transition-colors h-9",
+          "flex items-center justify-center w-[240px] h-[32px] rounded-md bg-white",
+          "hover:bg-gray-50 transition-colors text-[11px]",
           environment === 'production' 
             ? `border-2 border-[${prodColor}]` 
             : "border border-gray-200"
         )}
       >
-        <span 
-          className="w-4 h-4 rounded-full mr-2" 
-          style={{ backgroundColor: prodColor }}
-        ></span>
-        Production
+        <div className="flex items-center">
+          <div 
+            className="w-[12px] h-[12px] rounded-full mr-2 border border-[#07080C]" 
+            style={{ backgroundColor: prodColor }}
+          ></div>
+          <span>Production</span>
+        </div>
       </button>
       
       <button
         type="button"
         onClick={() => onEnvironmentChange('staging')}
         className={cn(
-          "flex items-center px-4 py-2 rounded-md bg-white text-sm",
-          "hover:bg-gray-50 transition-colors h-9",
+          "flex items-center justify-center w-[240px] h-[32px] rounded-md bg-white",
+          "hover:bg-gray-50 transition-colors text-[11px]",
           environment === 'staging' 
             ? `border-2 border-[${stagingColor}]` 
             : "border border-gray-200"
         )}
       >
-        <span 
-          className="w-4 h-4 rounded-full mr-2" 
-          style={{ backgroundColor: stagingColor }}
-        ></span>
-        Staging
+        <div className="flex items-center">
+          <div 
+            className="w-[12px] h-[12px] rounded-full mr-2 border border-[#07080C]" 
+            style={{ backgroundColor: stagingColor }}
+          ></div>
+          <span>Staging</span>
+        </div>
       </button>
     </div>
   );
