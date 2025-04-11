@@ -1,9 +1,7 @@
 
 import React from 'react';
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Info, MoreVertical, FileDown, Download, LinkIcon } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
+import { MoreVertical } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +17,6 @@ interface MetricCardHeaderProps {
     value: number;
     trend: 'up' | 'down' | 'neutral';
   };
-  info?: string;
   timeframe?: string;
 }
 
@@ -27,7 +24,6 @@ const MetricCardHeader = ({
   title,
   value,
   change,
-  info,
   timeframe
 }: MetricCardHeaderProps) => {
   // Extract the number of days from the timeframe
@@ -43,17 +39,14 @@ const MetricCardHeader = ({
 
   // Handle menu actions
   const handleExportPDF = () => {
-    // Placeholder for actual PDF export functionality
     toast.success(`Exporting ${title} chart as PDF`);
   };
 
   const handleExportJPEG = () => {
-    // Placeholder for actual JPEG export functionality
     toast.success(`Exporting ${title} chart as JPEG`);
   };
 
   const handleCopyLink = () => {
-    // Placeholder for actual copy link functionality
     navigator.clipboard.writeText(window.location.href)
       .then(() => toast.success('Link copied to clipboard'))
       .catch(() => toast.error('Failed to copy link'));
@@ -63,16 +56,6 @@ const MetricCardHeader = ({
       <div className="flex items-center justify-between">
         <CardTitle className="text-sm font-medium flex items-center gap-1.5 text-inherit">
           {title}
-          {info && <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-3.5 w-3.5 text-muted-foreground/70" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="max-w-xs text-xs">{info}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>}
         </CardTitle>
         
         <DropdownMenu>
@@ -99,18 +82,11 @@ const MetricCardHeader = ({
         <CardDescription className="text-2xl font-semibold text-foreground">
           {value}
         </CardDescription>
-        {change && <TooltipProvider delayDuration={200}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className={cn("text-xs font-medium rounded-full px-1.5 py-0.5 flex items-center cursor-help", change.trend === 'up' ? 'text-green-600 bg-green-100' : change.trend === 'down' ? 'text-red-600 bg-red-100' : 'text-gray-600 bg-gray-100')}>
-                  {change.value > 0 ? '+' : ''}{change.value}%
-                </span>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <p className="text-xs">Change from previous {getDaysFromTimeframe()} days</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>}
+        {change && (
+          <span className={cn("text-xs font-medium rounded-full px-1.5 py-0.5 flex items-center cursor-help", change.trend === 'up' ? 'text-green-600 bg-green-100' : change.trend === 'down' ? 'text-red-600 bg-red-100' : 'text-gray-600 bg-gray-100')}>
+            {change.value > 0 ? '+' : ''}{change.value}%
+          </span>
+        )}
       </div>
     </CardHeader>;
 };

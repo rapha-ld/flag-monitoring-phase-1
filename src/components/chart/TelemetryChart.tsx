@@ -58,17 +58,14 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
 
   // Handle menu actions
   const handleExportPDF = () => {
-    // Placeholder for actual PDF export functionality
     toast.success(`Exporting ${displayTitle} chart as PDF`);
   };
 
   const handleExportJPEG = () => {
-    // Placeholder for actual JPEG export functionality
     toast.success(`Exporting ${displayTitle} chart as JPEG`);
   };
 
   const handleCopyLink = () => {
-    // Placeholder for actual copy link functionality
     navigator.clipboard.writeText(window.location.href)
       .then(() => toast.success('Link copied to clipboard'))
       .catch(() => toast.error('Failed to copy link'));
@@ -78,33 +75,37 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     <Card className="flex-1 bg-white">
       <CardHeader className="p-4 pb-0">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium">{displayTitle}</CardTitle>
+          <div className="flex items-center gap-2">
+            <CardTitle className="text-sm font-medium">{displayTitle}</CardTitle>
+            {(title === "Errors" || title === "Largest Contentful Paint") && (
+              <DropdownMenu>
+                <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center rounded-md hover:bg-slate-100">
+                  <MoreVertical className="h-4 w-4 text-slate-500" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-white">
+                  <DropdownMenuItem onClick={handleExportPDF} className="cursor-pointer">
+                    <FileDown className="mr-2 h-4 w-4" />
+                    <span>Export as PDF</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleExportJPEG} className="cursor-pointer">
+                    <Download className="mr-2 h-4 w-4" />
+                    <span>Export as JPEG</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
+                    <LinkIcon className="mr-2 h-4 w-4" />
+                    <span>Copy Link</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
+          
           <div className="flex items-center space-x-2">
             {title === "Error Rate" ? (
               <span className="text-xs text-muted-foreground">{`Total: ${calculateTotal}`}</span>
             ) : (
               <span className="text-xs text-muted-foreground">{`Avg. ${calculateTotal}`}</span>
             )}
-            
-            <DropdownMenu>
-              <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center rounded-md hover:bg-slate-100">
-                <MoreVertical className="h-4 w-4 text-slate-500" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-white">
-                <DropdownMenuItem onClick={handleExportPDF} className="cursor-pointer">
-                  <FileDown className="mr-2 h-4 w-4" />
-                  <span>Export as PDF</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleExportJPEG} className="cursor-pointer">
-                  <Download className="mr-2 h-4 w-4" />
-                  <span>Export as JPEG</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
-                  <LinkIcon className="mr-2 h-4 w-4" />
-                  <span>Copy Link</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </div>
       </CardHeader>
