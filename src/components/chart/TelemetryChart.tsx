@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -153,9 +152,8 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     }
   };
 
-  const chartHeight = 78 * 1.3;
+  const chartHeight = 160; // Increased from 78 * 1.3 to match flag-specific metrics charts
   
-  // Changed logic to determine when to use bar chart
   const useBarChart = title === "Error Rate" || title === "Errors";
   
   const goodZoneColor = "#F2FCE2";
