@@ -105,7 +105,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-4 pt-2">
+      <CardContent className="p-4 pt-2" style={{ height: `${height}px` }}>
         <div style={{ height: `${height}px` }}>
           {useBarChart ? (
             <TelemetryBarChart 
