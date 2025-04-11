@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { MoreVertical } from 'lucide-react';
+import { MoreVertical, FileDown, Download, Link as LinkIcon } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 interface MetricCardHeaderProps {
   title: string;
@@ -18,13 +19,15 @@ interface MetricCardHeaderProps {
     trend: 'up' | 'down' | 'neutral';
   };
   timeframe?: string;
+  info?: string; // Add the info property to fix the type error
 }
 
 const MetricCardHeader = ({
   title,
   value,
   change,
-  timeframe
+  timeframe,
+  info
 }: MetricCardHeaderProps) => {
   // Extract the number of days from the timeframe
   const getDaysFromTimeframe = () => {

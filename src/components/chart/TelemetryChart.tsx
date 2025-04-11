@@ -5,7 +5,7 @@ import TelemetryBarChart from './charts/TelemetryBarChart';
 import TelemetryLineChart from './charts/TelemetryLineChart';
 import TelemetryAreaChart from './charts/TelemetryAreaChart';
 import { useTelemetryData } from '@/hooks/useTelemetryData';
-import { MoreVertical, FileDown, Download, LinkIcon } from 'lucide-react';
+import { MoreVertical, FileDown, Download, Link as LinkIcon } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
