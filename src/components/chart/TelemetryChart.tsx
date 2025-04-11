@@ -5,7 +5,7 @@ import TelemetryBarChart from './charts/TelemetryBarChart';
 import TelemetryLineChart from './charts/TelemetryLineChart';
 import TelemetryAreaChart from './charts/TelemetryAreaChart';
 import { useTelemetryData } from '@/hooks/useTelemetryData';
-import { MoreVertical, FilePdf, FileImage, Copy, Link } from 'lucide-react';
+import { MoreVertical, FileDown, Download, LinkIcon } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -92,15 +92,15 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-white">
                 <DropdownMenuItem onClick={handleExportPDF} className="cursor-pointer">
-                  <FilePdf className="mr-2 h-4 w-4" />
+                  <FileDown className="mr-2 h-4 w-4" />
                   <span>Export as PDF</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleExportJPEG} className="cursor-pointer">
-                  <FileImage className="mr-2 h-4 w-4" />
+                  <Download className="mr-2 h-4 w-4" />
                   <span>Export as JPEG</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
-                  <Link className="mr-2 h-4 w-4" />
+                  <LinkIcon className="mr-2 h-4 w-4" />
                   <span>Copy Link</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>

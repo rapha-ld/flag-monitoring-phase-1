@@ -6,7 +6,7 @@ import ChartArea from './impact/ChartArea';
 import CustomLegend from './impact/CustomLegend';
 import { historyData } from '@/components/history/historyEventData';
 import ImpactLevelSelector, { ImpactLevel } from './impact/ImpactLevelSelector';
-import { MoreVertical, FilePdf, FileImage, Link } from 'lucide-react';
+import { MoreVertical, FileDown, Download, LinkIcon } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -152,15 +152,15 @@ const FlagChangeImpact = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-white">
               <DropdownMenuItem onClick={handleExportPDF} className="cursor-pointer">
-                <FilePdf className="mr-2 h-4 w-4" />
+                <FileDown className="mr-2 h-4 w-4" />
                 <span>Export as PDF</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleExportJPEG} className="cursor-pointer">
-                <FileImage className="mr-2 h-4 w-4" />
+                <Download className="mr-2 h-4 w-4" />
                 <span>Export as JPEG</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
-                <Link className="mr-2 h-4 w-4" />
+                <LinkIcon className="mr-2 h-4 w-4" />
                 <span>Copy Link</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
