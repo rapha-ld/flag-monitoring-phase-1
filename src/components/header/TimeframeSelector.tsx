@@ -15,13 +15,13 @@ const TimeframeSelector = ({ timeframe, onTimeframeChange }: TimeframeSelectorPr
 
   const getButtonClassName = (currentTimeframe: string) => {
     return cn(
-      "h-9",
+      "h-8", // Changed from h-9 to h-8 to match 32px height
       timeframe === currentTimeframe && "bg-[#F6F8FF] border-[#425EFF]"
     );
   };
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center space-x-2 ml-auto"> {/* Added ml-auto to align right */}
       <Button 
         variant={getButtonVariant("1h")} 
         size="sm" 
