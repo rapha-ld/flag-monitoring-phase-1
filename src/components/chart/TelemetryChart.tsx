@@ -152,7 +152,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     }
   };
 
-  const chartHeight = 160; // Increased from 78 * 1.3 to match flag-specific metrics charts
+  const chartHeight = 160; // Match flag-specific metrics chart height
   
   const useBarChart = title === "Error Rate" || title === "Errors";
   
@@ -167,19 +167,19 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
 
   return (
     <Card className="flex-1 bg-white">
-      <CardHeader className="p-3 pb-0">
+      <CardHeader className="p-4 pb-0">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium">{displayTitle}</CardTitle>
           <span className="text-xs text-textSecondary">{`Avg. ${average}`}</span>
         </div>
       </CardHeader>
-      <CardContent className="p-3 pt-0 pb-1">
-        <div className={`h-[${chartHeight}px]`}>
+      <CardContent className="p-4 pt-0">
+        <div className="h-[160px]">
           <ResponsiveContainer width="100%" height={chartHeight}>
             {useBarChart ? (
               <BarChart 
                 data={data} 
-                margin={{ top: 5, right: 5, left: 5, bottom: 0 }}
+                margin={{ top: 10, right: 5, left: 5, bottom: 5 }}
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
               >
@@ -192,13 +192,13 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                 <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                 <XAxis 
                   dataKey="time" 
-                  tick={{ fontSize: 8 }}
+                  tick={{ fontSize: 10 }}
                   axisLine={{ stroke: '#eee' }} 
                   tickLine={{ stroke: '#eee' }} 
                   interval={timeframe === "1h" ? 4 : timeframe === "1d" ? 3 : "preserveEnd"}
                 />
                 <YAxis 
-                  tick={{ fontSize: 8 }}
+                  tick={{ fontSize: 10 }}
                   axisLine={{ stroke: '#eee' }} 
                   tickLine={{ stroke: '#eee' }}
                   width={20}
@@ -236,7 +236,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
             ) : (
               <AreaChart 
                 data={data} 
-                margin={{ top: 5, right: 5, left: 5, bottom: 0 }}
+                margin={{ top: 10, right: 5, left: 5, bottom: 5 }}
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
               >
@@ -318,13 +318,13 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                 <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                 <XAxis 
                   dataKey="time" 
-                  tick={{ fontSize: 8 }}
+                  tick={{ fontSize: 10 }}
                   axisLine={{ stroke: '#eee' }} 
                   tickLine={{ stroke: '#eee' }} 
                   interval={timeframe === "1h" ? 4 : timeframe === "1d" ? 3 : "preserveEnd"}
                 />
                 <YAxis 
-                  tick={{ fontSize: 8 }}
+                  tick={{ fontSize: 10 }}
                   axisLine={{ stroke: '#eee' }} 
                   tickLine={{ stroke: '#eee' }}
                   width={20}
