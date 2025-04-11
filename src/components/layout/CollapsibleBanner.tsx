@@ -19,15 +19,10 @@ const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({
   onHoverTimestamp
 }) => {
   return (
-    <div 
-      className={cn("w-full border-b border-border relative", className)}
-      style={{ backgroundColor: '#F7F9FB' }}
-    >
-      <div className="px-4 py-3 flex items-center">
-        <h2 className="text-base font-medium text-gray-800">System-wide Telemetry</h2>
-      </div>
+    <div className={cn("w-full space-y-4", className)}>
+      <h2 className="text-base font-medium text-gray-800">System-wide Telemetry</h2>
       
-      <div className="flex gap-4 px-4 pb-5">
+      <div className="flex gap-4">
         <TelemetryChart 
           title="Error Rate" 
           timeframe={timeframe} 
