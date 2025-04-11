@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
@@ -135,6 +136,9 @@ const MiniChart: React.FC<MiniChartProps> = ({
   };
 
   const formattedPercentage = `${percentage.toFixed(1)}%`;
+  
+  // Standardize axis label colors - same as Evaluations chart
+  const axisLabelColor = '#9CA3AF';
 
   return (
     <Card className="p-3 h-[116px] transition-all duration-300 hover:shadow-md chart-container">

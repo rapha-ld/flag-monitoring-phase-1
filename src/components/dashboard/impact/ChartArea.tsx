@@ -97,6 +97,9 @@ const ChartArea: React.FC<ChartAreaProps> = ({
       onHoverTimestamp(null);
     }
   };
+  
+  // Standardize axis label colors - same as Evaluations chart
+  const axisLabelColor = '#9CA3AF';
 
   return (
     <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
@@ -117,7 +120,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({
           dataKey="name"
           axisLine={false}
           tickLine={false}
-          tick={{ fontSize: 10, fill: '#9CA3AF' }}
+          tick={{ fontSize: 10, fill: axisLabelColor }}
           interval={xAxisInterval}
           tickMargin={10}
           minTickGap={10}
@@ -126,7 +129,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({
         
         <YAxis
           domain={[0, 80]}
-          tick={{ fontSize: 10, fill: '#9CA3AF' }}
+          tick={{ fontSize: 10, fill: axisLabelColor }}
           tickLine={false}
           axisLine={false}
           tickFormatter={(value) => `${Math.round(value)}`}

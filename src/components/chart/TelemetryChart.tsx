@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea, Line, LineChart } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +10,7 @@ interface TelemetryChartProps {
   environment?: string;
   hoveredTimestamp?: string | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
+  height?: number;
 }
 
 const TelemetryChart: React.FC<TelemetryChartProps> = ({ 
@@ -16,7 +18,8 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   timeframe = "7d",
   environment = "production",
   hoveredTimestamp,
-  onHoverTimestamp
+  onHoverTimestamp,
+  height = 160
 }) => {
   const displayTitle = title === "Error Rate" ? "Errors" : title;
   
@@ -160,8 +163,6 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
       onHoverTimestamp(null);
     }
   };
-
-  const chartHeight = 160;
   
   const useBarChart = title === "Error Rate" || title === "Errors";
   
@@ -173,6 +174,9 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   
   const goodThreshold = 2.5;
   const needsImprovementThreshold = 4;
+
+  // Standardize axis label colors - same as Evaluations chart
+  const axisLabelColor = '#9CA3AF';
 
   return (
     <Card className="flex-1 bg-white">
@@ -187,8 +191,8 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         </div>
       </CardHeader>
       <CardContent className="p-4 pt-2">
-        <div className="h-[160px]">
-          <ResponsiveContainer width="100%" height={chartHeight}>
+        <div className={`h-[${height}px]`}>
+          <ResponsiveContainer width="100%" height={height}>
             {useBarChart ? (
               <BarChart 
                 data={data} 
@@ -205,7 +209,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                 <CartesianGrid strokeDasharray="3 3" opacity={0.1} vertical={false} />
                 <XAxis 
                   dataKey="time" 
-                  tick={{ fontSize: 10, fill: '#9CA3AF' }}
+                  tick={{ fontSize: 10, fill: axisLabelColor }}
                   axisLine={{ stroke: '#eee' }} 
                   tickLine={false}
                   interval={timeframe === "1h" ? 4 : timeframe === "1d" ? 3 : "preserveEnd"}
@@ -214,7 +218,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   padding={{ left: 10, right: 10 }}
                 />
                 <YAxis 
-                  tick={{ fontSize: 10, fill: '#9CA3AF' }}
+                  tick={{ fontSize: 10, fill: axisLabelColor }}
                   axisLine={false}
                   tickLine={false}
                   width={20}
@@ -328,7 +332,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                 
                 <XAxis 
                   dataKey="time" 
-                  tick={{ fontSize: 10, fill: '#9CA3AF' }}
+                  tick={{ fontSize: 10, fill: axisLabelColor }}
                   axisLine={{ stroke: '#eee' }} 
                   tickLine={false}
                   interval={timeframe === "1h" ? 4 : timeframe === "1d" ? 3 : "preserveEnd"}
@@ -337,7 +341,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   padding={{ left: 10, right: 10 }}
                 />
                 <YAxis 
-                  tick={{ fontSize: 10, fill: '#9CA3AF' }}
+                  tick={{ fontSize: 10, fill: axisLabelColor }}
                   axisLine={false}
                   tickLine={false}
                   width={20}
@@ -394,7 +398,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                 <CartesianGrid strokeDasharray="3 3" opacity={0.1} vertical={false} />
                 <XAxis 
                   dataKey="time" 
-                  tick={{ fontSize: 10, fill: '#9CA3AF' }}
+                  tick={{ fontSize: 10, fill: axisLabelColor }}
                   axisLine={{ stroke: '#eee' }} 
                   tickLine={false}
                   interval={timeframe === "1h" ? 4 : timeframe === "1d" ? 3 : "preserveEnd"}
@@ -403,7 +407,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
                   padding={{ left: 10, right: 10 }}
                 />
                 <YAxis 
-                  tick={{ fontSize: 10, fill: '#9CA3AF' }}
+                  tick={{ fontSize: 10, fill: axisLabelColor }}
                   axisLine={false}
                   tickLine={false}
                   width={20}

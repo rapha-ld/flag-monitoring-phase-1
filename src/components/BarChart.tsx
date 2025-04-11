@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -182,6 +183,9 @@ const BarChart = ({
       onHoverTimestamp(null);
     }
   };
+  
+  // Standardize axis label colors - same as Evaluations chart
+  const axisLabelColor = '#9CA3AF';
 
   return (
     <div className="w-full h-full">
@@ -204,6 +208,7 @@ const BarChart = ({
             fontSize={10}
             axisLine={false}
             tickLine={false}
+            tick={{ fontSize: 10, fill: axisLabelColor }}
             tickFormatter={formatTimeLabel}
             interval={interval}
             padding={{ left: 10, right: 10 }}
@@ -212,6 +217,7 @@ const BarChart = ({
             fontSize={10}
             axisLine={false}
             tickLine={false}
+            tick={{ fontSize: 10, fill: axisLabelColor }}
             domain={yAxisDomain}
             allowDataOverflow={true}
             tickFormatter={valueFormatter}
