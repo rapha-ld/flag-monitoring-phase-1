@@ -1,7 +1,7 @@
+
 import React, { useMemo } from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea, Line, LineChart } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 import CustomTooltip from './CustomTooltip';
 
 interface TelemetryChartProps {
@@ -11,7 +11,6 @@ interface TelemetryChartProps {
   hoveredTimestamp?: string | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
   height?: number;
-  className?: string;
 }
 
 const TelemetryChart: React.FC<TelemetryChartProps> = ({ 
@@ -20,8 +19,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   environment = "production",
   hoveredTimestamp,
   onHoverTimestamp,
-  height = 264,
-  className
+  height = 160
 }) => {
   const displayTitle = title === "Error Rate" ? "Errors" : title;
   
@@ -143,7 +141,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
 
   const chartColor = 
     title === "Error Rate" ? "#DB2251" : 
-    title === "Largest Contentful Paint" ? "#8E9196" : 
+    title === "Largest Contentful Paint" ? "#8E9196" :  // Changed to a lighter gray
     "#7861C6";
 
   const tooltipLabelFormatter = (label: string) => label;
@@ -177,10 +175,11 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   const goodThreshold = 2.5;
   const needsImprovementThreshold = 4;
 
+  // Standardize axis label colors - same as Evaluations chart
   const axisLabelColor = '#9CA3AF';
 
   return (
-    <Card className={cn("flex-1 bg-white", className)}>
+    <Card className="flex-1 bg-white">
       <CardHeader className="p-4 pb-0">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium">{displayTitle}</CardTitle>
