@@ -55,7 +55,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   };
   
   return (
-    <div className="space-y-8"> {/* Increased vertical spacing from space-y-4 to space-y-8 */}
+    <div className="space-y-4">
       <h2 className="text-base font-medium text-gray-800 px-1">Flag-specific Metrics</h2>
       <div className={cn(
         "grid gap-4",
