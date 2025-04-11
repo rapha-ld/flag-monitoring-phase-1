@@ -45,6 +45,11 @@ const Index = () => {
     handleHoverTimestamp(timestamp);
   };
 
+  // Debug log to see if hoveredTimestamp is being updated
+  useEffect(() => {
+    console.log(`Index component detected hoveredTimestamp: ${hoveredTimestamp}`);
+  }, [hoveredTimestamp]);
+
   return (
     <DashboardLayout>
       <div className={cn(

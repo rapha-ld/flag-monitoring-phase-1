@@ -79,6 +79,13 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
       percentages: itemPercentages
     };
   }, [chartData, type, showTrue, showFalse]);
+
+  // Handler to forward hover events from MiniCharts to parent
+  const handleHoverTimestamp = (timestamp: string | null) => {
+    if (onHoverTimestamp) {
+      onHoverTimestamp(timestamp);
+    }
+  };
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3 h-full">
@@ -97,7 +104,7 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
           selectedTimestamp={selectedTimestamp}
           selectedTimestamps={selectedTimestamps}
           hoveredTimestamp={hoveredTimestamp}
-          onHoverTimestamp={onHoverTimestamp}
+          onHoverTimestamp={handleHoverTimestamp}
           percentage={percentages[index]}
         />
       ))}
