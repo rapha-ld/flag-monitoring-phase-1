@@ -28,6 +28,11 @@ interface MetricCardProps {
   selectedTimestamps?: Date[] | null;
   hoveredTimestamp?: string | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
+  value?: number; // Added to fix TypeScript error
+  info?: string; // Added to match props passed from EvaluationsCard
+  timeframe?: string; // Added to match props passed from EvaluationsCard
+  onBreakdownToggle?: (enabled: boolean) => void; // Added to match props from EvaluationsCard
+  className?: string; // Added to match props passed from EvaluationsCard
 }
 
 const MetricCard: React.FC<MetricCardProps> = ({
@@ -50,7 +55,12 @@ const MetricCard: React.FC<MetricCardProps> = ({
   selectedTimestamp,
   selectedTimestamps,
   hoveredTimestamp,
-  onHoverTimestamp
+  onHoverTimestamp,
+  value, // Added to fix TypeScript error
+  info, // Added to match props passed from EvaluationsCard
+  timeframe, // Added to match props passed from EvaluationsCard
+  onBreakdownToggle, // Added to match props from EvaluationsCard
+  className, // Added to match props passed from EvaluationsCard
 }) => {
   // Local state to track if breakdown view is enabled and which type
   const [breakdownEnabled, setBreakdownEnabled] = useState(false);
@@ -71,17 +81,24 @@ const MetricCard: React.FC<MetricCardProps> = ({
   
   const handleToggleBreakdown = () => {
     setBreakdownEnabled(!breakdownEnabled);
+    if (onBreakdownToggle) {
+      onBreakdownToggle(!breakdownEnabled);
+    }
   };
 
+  // Use the value prop if provided, otherwise use metric
+  const displayValue = value !== undefined ? value : metric;
+
   return (
-    <Card className="shadow-sm hover:shadow-md transition-shadow">
+    <Card className={`shadow-sm hover:shadow-md transition-shadow ${className || ''}`}>
       <CardHeader className="pb-2">
         <MetricCardHeader 
           title={title} 
-          metric={metric} 
+          value={displayValue} // Changed from metric to displayValue 
           change={change} 
           isLoading={isLoading} 
           valueFormatter={valueFormatter}
+          info={info}
         />
       </CardHeader>
       <CardContent className="p-0">
@@ -120,7 +137,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
         
         {showBreakdownSelector && breakdownEnabled && (
           <BreakdownTypeSelector 
-            value={breakdownType} 
+            type={breakdownType} 
             onChange={setBreakdownType} 
           />
         )}
