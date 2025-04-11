@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea, Line, LineChart } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -132,7 +133,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
 
   const chartColor = 
     title === "Error Rate" ? "#DB2251" : 
-    title === "Largest Contentful Paint" ? "#222222" : 
+    title === "Largest Contentful Paint" ? "#8E9196" :  // Changed to a lighter gray
     "#7861C6";
 
   const tooltipLabelFormatter = (label: string) => label;
