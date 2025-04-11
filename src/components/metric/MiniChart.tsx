@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
@@ -123,7 +122,6 @@ const MiniChart: React.FC<MiniChartProps> = ({
   const hasSelectedPoints = selectedPoints && selectedPoints.length > 0;
   const textGray = '#545A62';
 
-  // Update hover handlers to properly propagate events to parent
   const handleMouseMove = (e: any) => {
     if (e && e.activeLabel && onHoverTimestamp) {
       onHoverTimestamp(e.activeLabel);
@@ -138,7 +136,6 @@ const MiniChart: React.FC<MiniChartProps> = ({
 
   const formattedPercentage = `${percentage.toFixed(1)}%`;
   
-  // Standardize axis label colors - same as Evaluations chart
   const axisLabelColor = '#9CA3AF';
 
   return (

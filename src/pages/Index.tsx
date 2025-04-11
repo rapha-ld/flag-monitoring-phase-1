@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { cn } from "@/lib/utils";
 import Header from '@/components/Header';
 import DashboardLayout from '@/components/layout/DashboardLayout';
@@ -40,19 +40,8 @@ const Index = () => {
     handleHoverTimestamp
   } = useDashboardData();
 
-  // State to track hovered timestamp across all charts
-  const [hoveredChartTimestamp, setHoveredChartTimestamp] = useState<string | null>(null);
-
-  // Ensure hoveredTimestamp from useDashboardData and local state are in sync
-  useEffect(() => {
-    if (hoveredTimestamp !== hoveredChartTimestamp) {
-      setHoveredChartTimestamp(hoveredTimestamp);
-    }
-  }, [hoveredTimestamp]);
-
   // Centralized handler for chart hover events from any chart
   const handleChartHover = (timestamp: string | null) => {
-    setHoveredChartTimestamp(timestamp);
     handleHoverTimestamp(timestamp);
   };
 
@@ -96,13 +85,13 @@ const Index = () => {
             onHoverTimestamp={handleChartHover}
             onToggleTrue={handleToggleTrue}
             onToggleFalse={handleToggleFalse}
-            hoveredTimestamp={hoveredChartTimestamp}
+            hoveredTimestamp={hoveredTimestamp}
           />
           
           <CollapsibleBanner 
             timeframe={timeframe} 
             environment={environment}
-            hoveredTimestamp={hoveredChartTimestamp}
+            hoveredTimestamp={hoveredTimestamp}
             onHoverTimestamp={handleChartHover}
           />
           

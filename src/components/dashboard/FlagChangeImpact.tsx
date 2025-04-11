@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { DataPoint } from '@/components/BarChart';
@@ -107,9 +106,10 @@ const FlagChangeImpact = ({
     });
   }, [chartData, eventDates, getImpactMultiplier, timeframe]);
 
-  // Forward hover events to parent component
+  // Forward hover events to parent component with improved logging
   const handleChartHover = (timestamp: string | null) => {
     if (onHoverTimestamp) {
+      console.log(`FlagChangeImpact forwarding hover: ${timestamp}`);
       onHoverTimestamp(timestamp);
     }
   };

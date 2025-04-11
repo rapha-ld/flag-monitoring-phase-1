@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea, Line, LineChart } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -141,7 +140,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
 
   const chartColor = 
     title === "Error Rate" ? "#DB2251" : 
-    title === "Largest Contentful Paint" ? "#8E9196" :  // Changed to a lighter gray
+    title === "Largest Contentful Paint" ? "#8E9196" : 
     "#7861C6";
 
   const tooltipLabelFormatter = (label: string) => label;
@@ -175,7 +174,6 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   const goodThreshold = 2.5;
   const needsImprovementThreshold = 4;
 
-  // Standardize axis label colors - same as Evaluations chart
   const axisLabelColor = '#9CA3AF';
 
   return (
