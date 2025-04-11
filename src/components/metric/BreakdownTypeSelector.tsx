@@ -12,7 +12,7 @@ const BreakdownTypeSelector: React.FC<BreakdownTypeSelectorProps> = ({
   onBreakdownTypeChange
 }) => {
   return (
-    <div className="px-4 pb-2">
+    <div className="px-4 pb-2 mt-4"> {/* Added mt-4 for extra top margin */}
       <Select
         value={breakdownType}
         onValueChange={(value) => onBreakdownTypeChange(value as 'application' | 'sdk')}
