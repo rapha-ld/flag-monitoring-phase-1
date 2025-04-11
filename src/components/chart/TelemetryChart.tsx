@@ -77,7 +77,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <CardTitle className="text-sm font-medium">{displayTitle}</CardTitle>
-            {(title === "Errors" || title === "Largest Contentful Paint") && (
+            {(title === "Error Rate" || title === "Errors" || title === "Largest Contentful Paint") && (
               <DropdownMenu>
                 <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center rounded-md hover:bg-slate-100">
                   <MoreVertical className="h-4 w-4 text-slate-500" />
