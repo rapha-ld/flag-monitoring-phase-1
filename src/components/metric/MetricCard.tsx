@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import MetricCardHeader from './MetricCardHeader';
@@ -66,13 +65,6 @@ const MetricCard: React.FC<MetricCardProps> = ({
   const [breakdownEnabled, setBreakdownEnabled] = useState(false);
   const [breakdownType, setBreakdownType] = useState<'application' | 'sdk'>('application');
   
-  // Determine the chart color based on the metric type
-  const barColor = 
-    metricType === 'evaluations' ? '#6E6F96' : 
-    metricType === 'conversion' ? '#55B464' : 
-    metricType === 'errorRate' ? '#DB2251' : 
-    '#6E6F96';
-  
   // Only show the card if it's visible
   if (!isVisible) return null;
   
@@ -94,9 +86,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
       <CardHeader className="pb-2">
         <MetricCardHeader 
           title={title} 
-          value={displayValue} // Changed from metric to displayValue 
+          value={displayValue} 
           change={change} 
-          isLoading={isLoading} 
           valueFormatter={valueFormatter}
           info={info}
         />
@@ -107,7 +98,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
           breakdownType={breakdownType}
           chartData={chartData}
           versionChanges={versionChanges}
-          barColor={barColor}
+          barColor="#6E6F96"
           valueFormatter={valueFormatter}
           tooltipValueFormatter={tooltipValueFormatter}
           tooltipLabelFormatter={tooltipLabelFormatter}
@@ -127,8 +118,12 @@ const MetricCard: React.FC<MetricCardProps> = ({
       </CardContent>
       <CardFooter className="flex justify-between items-center pt-2 pb-2">
         <MetricCardControls 
+          showBreakdownToggle={showBreakdownSelector}
           breakdownEnabled={breakdownEnabled} 
           onToggleBreakdown={handleToggleBreakdown}
+          breakdownType={breakdownType}
+          onBreakdownTypeChange={setBreakdownType}
+          showVariantFilters={!!metricType}
           showTrue={showTrue}
           showFalse={showFalse}
           onToggleTrue={onToggleTrue || (() => {})}
