@@ -86,6 +86,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({
 
   const tooltipValueFormatter = (value: number) => `${Math.round(value)}`;
 
+  // Updated hover event handlers that explicitly call parent handler
   const handleMouseMove = (e: any) => {
     if (e && e.activeLabel && onHoverTimestamp) {
       onHoverTimestamp(e.activeLabel);

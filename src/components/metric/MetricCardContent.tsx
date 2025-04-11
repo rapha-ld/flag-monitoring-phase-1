@@ -46,6 +46,7 @@ const MetricCardContent: React.FC<MetricCardContentProps> = ({
   children,
   containerClassName
 }) => {
+  // Make sure to properly relay the hover timestamp event to parent components
   const handleHoverTimestamp = (timestamp: string | null) => {
     if (onHoverTimestamp) {
       onHoverTimestamp(timestamp);

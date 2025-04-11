@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { cn } from "@/lib/utils";
 import Header from '@/components/Header';
 import DashboardLayout from '@/components/layout/DashboardLayout';
@@ -28,6 +28,7 @@ const Index = () => {
     errorRateVersionChanges,
     selectedTimestamp,
     selectedTimestamps,
+    hoveredTimestamp,
     handleTimeframeChange,
     handleEnvironmentChange,
     handleDeviceChange,
@@ -40,15 +41,19 @@ const Index = () => {
   } = useDashboardData();
 
   // State to track hovered timestamp across all charts
-  const [hoveredTimestamp, setHoveredTimestamp] = React.useState<string | null>(null);
+  const [hoveredChartTimestamp, setHoveredChartTimestamp] = useState<string | null>(null);
 
-  // Centralized handler for chart hover events
-  const handleChartHover = (timestamp: string | null) => {
-    setHoveredTimestamp(timestamp);
-    // Only call the dashboard data handler if the timestamp is different
-    if (timestamp !== hoveredTimestamp) {
-      handleHoverTimestamp(timestamp);
+  // Ensure hoveredTimestamp from useDashboardData and local state are in sync
+  useEffect(() => {
+    if (hoveredTimestamp !== hoveredChartTimestamp) {
+      setHoveredChartTimestamp(hoveredTimestamp);
     }
+  }, [hoveredTimestamp]);
+
+  // Centralized handler for chart hover events from any chart
+  const handleChartHover = (timestamp: string | null) => {
+    setHoveredChartTimestamp(timestamp);
+    handleHoverTimestamp(timestamp);
   };
 
   return (
@@ -91,13 +96,13 @@ const Index = () => {
             onHoverTimestamp={handleChartHover}
             onToggleTrue={handleToggleTrue}
             onToggleFalse={handleToggleFalse}
-            hoveredTimestamp={hoveredTimestamp}
+            hoveredTimestamp={hoveredChartTimestamp}
           />
           
           <CollapsibleBanner 
             timeframe={timeframe} 
             environment={environment}
-            hoveredTimestamp={hoveredTimestamp}
+            hoveredTimestamp={hoveredChartTimestamp}
             onHoverTimestamp={handleChartHover}
           />
           

@@ -123,6 +123,7 @@ const MiniChart: React.FC<MiniChartProps> = ({
   const hasSelectedPoints = selectedPoints && selectedPoints.length > 0;
   const textGray = '#545A62';
 
+  // Update hover handlers to properly propagate events to parent
   const handleMouseMove = (e: any) => {
     if (e && e.activeLabel && onHoverTimestamp) {
       onHoverTimestamp(e.activeLabel);

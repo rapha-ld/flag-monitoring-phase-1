@@ -107,7 +107,7 @@ const FlagChangeImpact = ({
     });
   }, [chartData, eventDates, getImpactMultiplier, timeframe]);
 
-  // Handle hover events from the chart
+  // Forward hover events to parent component
   const handleChartHover = (timestamp: string | null) => {
     if (onHoverTimestamp) {
       onHoverTimestamp(timestamp);
