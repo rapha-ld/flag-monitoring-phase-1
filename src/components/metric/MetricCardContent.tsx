@@ -1,3 +1,4 @@
+
 import React from 'react';
 import BarChart from '../BarChart';
 import { DataPoint, VersionChange } from '../BarChart';
@@ -68,7 +69,7 @@ const MetricCardContent: React.FC<MetricCardContentProps> = ({
   
   if (chartData && chartData.length > 0) {
     return (
-      <div className={cn("w-full", containerClassName)}>
+      <div className={cn("w-full", containerClassName || "px-0")}>
         <BarChart
           data={chartData}
           versionChanges={versionChanges}
@@ -94,3 +95,4 @@ const MetricCardContent: React.FC<MetricCardContentProps> = ({
 };
 
 export default MetricCardContent;
+
