@@ -1,8 +1,8 @@
-
 import React from 'react';
 import BarChart from '../BarChart';
 import { DataPoint, VersionChange } from '../BarChart';
 import ChartBreakdown from './ChartBreakdown';
+import { cn } from '@/lib/utils';
 
 interface MetricCardContentProps {
   breakdownEnabled: boolean;
@@ -22,6 +22,7 @@ interface MetricCardContentProps {
   hoveredTimestamp?: string | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
   children?: React.ReactNode;
+  containerClassName?: string;
 }
 
 const MetricCardContent: React.FC<MetricCardContentProps> = ({
@@ -41,7 +42,8 @@ const MetricCardContent: React.FC<MetricCardContentProps> = ({
   selectedTimestamps,
   hoveredTimestamp,
   onHoverTimestamp,
-  children
+  children,
+  containerClassName
 }) => {
   const handleHoverTimestamp = (timestamp: string | null) => {
     if (onHoverTimestamp) {
@@ -66,23 +68,25 @@ const MetricCardContent: React.FC<MetricCardContentProps> = ({
   
   if (chartData && chartData.length > 0) {
     return (
-      <BarChart
-        data={chartData}
-        versionChanges={versionChanges}
-        barColor={barColor}
-        height={160}
-        valueFormatter={valueFormatter}
-        tooltipValueFormatter={tooltipValueFormatter}
-        tooltipLabelFormatter={tooltipLabelFormatter}
-        showTrue={showTrue}
-        showFalse={showFalse}
-        chartType={chartType}
-        metricType={metricType}
-        selectedTimestamp={selectedTimestamp}
-        selectedTimestamps={selectedTimestamps}
-        hoveredTimestamp={hoveredTimestamp}
-        onHoverTimestamp={handleHoverTimestamp}
-      />
+      <div className={cn("w-full", containerClassName)}>
+        <BarChart
+          data={chartData}
+          versionChanges={versionChanges}
+          barColor={barColor}
+          height={160}
+          valueFormatter={valueFormatter}
+          tooltipValueFormatter={tooltipValueFormatter}
+          tooltipLabelFormatter={tooltipLabelFormatter}
+          showTrue={showTrue}
+          showFalse={showFalse}
+          chartType={chartType}
+          metricType={metricType}
+          selectedTimestamp={selectedTimestamp}
+          selectedTimestamps={selectedTimestamps}
+          hoveredTimestamp={hoveredTimestamp}
+          onHoverTimestamp={handleHoverTimestamp}
+        />
+      </div>
     );
   }
   

@@ -140,6 +140,7 @@ const MetricCard = ({
           hoveredTimestamp={hoveredTimestamp}
           onHoverTimestamp={onHoverTimestamp}
           children={children}
+          containerClassName="pl-0"
         />
       </CardContent>
     </Card>
