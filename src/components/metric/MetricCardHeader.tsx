@@ -30,7 +30,7 @@ const MetricCardHeader = ({
       return parseInt(timeframe.replace('d', ''));
     }
   };
-  return <CardHeader className="pb-2">
+  return <CardHeader className="pb-1">
       <div className="flex items-center justify-between">
         <CardTitle className="text-sm font-medium flex items-center gap-1.5 text-inherit">
           {title}
