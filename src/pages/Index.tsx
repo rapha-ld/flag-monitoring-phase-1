@@ -107,7 +107,6 @@ const Index = () => {
             selectedTimestamp={selectedTimestamp}
             selectedTimestamps={selectedTimestamps}
             onHoverTimestamp={handleHoverTimestamp}
-            defaultCollapsed={true}
           />
         </div>
       </div>
