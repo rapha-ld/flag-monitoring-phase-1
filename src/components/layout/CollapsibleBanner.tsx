@@ -35,7 +35,7 @@ const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({
     }
   };
 
-  return <div className={cn("w-full space-y-3", className)}>
+  return <div className={cn("w-full space-y-3 mt-6", className)}>
       <div className="flex items-center gap-2">
         <h2 className="text-base font-medium text-gray-800">System-wide</h2>
         <TooltipProvider>
