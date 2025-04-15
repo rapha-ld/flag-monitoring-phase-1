@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import NavTabs from './NavTabs';
@@ -6,6 +5,8 @@ import Breadcrumb from './header/Breadcrumb';
 import EnvironmentSelector from './header/EnvironmentSelector';
 import TimeframeSelector from './header/TimeframeSelector';
 import MetricsSelector from './header/MetricsSelector';
+import { Button } from '@/components/ui/button';
+import { FileDown } from 'lucide-react';
 
 interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   timeframe: string;
@@ -48,13 +49,10 @@ const Header = ({
 
   return (
     <header className={cn("pb-2 animate-slide-down space-y-4", className)} {...props}>
-      {/* Breadcrumb */}
       <Breadcrumb />
       
-      {/* Tab Navigation */}
       <NavTabs activeTab={activeTab} onChange={setActiveTab} />
       
-      {/* Controls with improved spacing */}
       <div className="flex flex-col gap-4">
         <EnvironmentSelector 
           environment={environment} 
@@ -67,13 +65,19 @@ const Header = ({
             onTimeframeChange={onTimeframeChange} 
           />
           
-          <MetricsSelector 
-            selectedMetrics={selectedMetrics}
-            onMetricsChange={onMetricsChange}
-            hiddenMetrics={hiddenMetrics}
-            onMetricVisibilityChange={onMetricVisibilityChange}
-            isVisible={metricsButtonVisible}
-          />
+          <div className="flex items-center space-x-2">
+            <Button variant="outline" size="sm" className="h-9">
+              <FileDown className="mr-2 h-4 w-4" />Export
+            </Button>
+
+            <MetricsSelector 
+              selectedMetrics={selectedMetrics}
+              onMetricsChange={onMetricsChange}
+              hiddenMetrics={hiddenMetrics}
+              onMetricVisibilityChange={onMetricVisibilityChange}
+              isVisible={metricsButtonVisible}
+            />
+          </div>
         </div>
       </div>
     </header>
