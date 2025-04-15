@@ -21,7 +21,7 @@ const TimeframeSelector = ({ timeframe, onTimeframeChange }: TimeframeSelectorPr
   };
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center space-x-2 ml-auto">
       <Button 
         variant={getButtonVariant("1h")} 
         size="sm" 
