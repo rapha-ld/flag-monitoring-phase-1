@@ -35,13 +35,19 @@ export const useChartProps = (onHoverTimestamp?: (timestamp: string | null) => v
   
   const tooltipValueFormatter = (value: number, title?: string) => {
     // For INP, return value in milliseconds
-    // For LCP, return value in seconds
     if (title === "Interaction to Next Paint") {
       return `${value.toFixed(1)}ms`;
-    } else if (title === "Largest Contentful Paint") {
+    } 
+    // For LCP, return value in seconds
+    else if (title === "Largest Contentful Paint") {
       return `${value.toFixed(1)}s`;
     }
-    return `${value}`;
+    // For Error Rate or other percentage-based metrics
+    else if (title === "Error Rate" || title?.includes("Rate")) {
+      return `${value.toFixed(1)}%`;
+    }
+    // For all other values, just return with one decimal place
+    return `${value.toFixed(1)}`;
   };
   
   const axisLabelColor = '#9CA3AF';

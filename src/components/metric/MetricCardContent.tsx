@@ -24,6 +24,7 @@ interface MetricCardContentProps {
   onHoverTimestamp?: (timestamp: string | null) => void;
   children?: React.ReactNode;
   containerClassName?: string;
+  title?: string;
 }
 
 const MetricCardContent: React.FC<MetricCardContentProps> = ({
@@ -44,7 +45,8 @@ const MetricCardContent: React.FC<MetricCardContentProps> = ({
   hoveredTimestamp,
   onHoverTimestamp,
   children,
-  containerClassName
+  containerClassName,
+  title
 }) => {
   // Debug logging for hover events
   useEffect(() => {

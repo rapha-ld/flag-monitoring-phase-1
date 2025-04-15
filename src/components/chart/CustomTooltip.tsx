@@ -8,13 +8,14 @@ interface CustomTooltipProps {
   payload?: Array<any>;
   label?: string;
   tooltipLabelFormatter: (label: string) => string;
-  tooltipValueFormatter: (value: number) => string;
+  tooltipValueFormatter: (value: number, title?: string) => string;
   showTrue?: boolean;
   showFalse?: boolean;
   chartType?: 'stacked' | 'mixed';
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
   showAverage?: boolean;
   isImpactChart?: boolean;
+  title?: string;
 }
 
 const CustomTooltip = ({ 
@@ -28,7 +29,8 @@ const CustomTooltip = ({
   chartType = 'stacked',
   metricType,
   showAverage,
-  isImpactChart = false
+  isImpactChart = false,
+  title
 }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     // For the flag impact chart
@@ -47,7 +49,7 @@ const CustomTooltip = ({
                 <span className="text-gray-700">This flag:</span>
               </div>
               <span className="text-gray-900 font-medium">
-                {tooltipValueFormatter(thisFlagValue)}
+                {tooltipValueFormatter(thisFlagValue, title)}
               </span>
             </div>
             
@@ -58,7 +60,7 @@ const CustomTooltip = ({
                 <span className="text-gray-700">All flags:</span>
               </div>
               <span className="text-gray-900 font-medium">
-                {tooltipValueFormatter(allFlagsValue)}
+                {tooltipValueFormatter(allFlagsValue, title)}
               </span>
             </div>
           </div>
@@ -84,7 +86,7 @@ const CustomTooltip = ({
                   <span className="text-gray-700">{entry.name}:</span>
                 </div>
                 <span className="text-gray-900 font-medium">
-                  {tooltipValueFormatter(entry.value)}
+                  {tooltipValueFormatter(entry.value, title)}
                 </span>
               </div>
             ))}
@@ -101,7 +103,7 @@ const CustomTooltip = ({
                 <span className="text-gray-700">True:</span>
               </div>
               <span className="text-gray-900 font-medium">
-                {tooltipValueFormatter(payload[0].payload.valueTrue || 0)}
+                {tooltipValueFormatter(payload[0].payload.valueTrue || 0, title)}
               </span>
             </div>
             
@@ -112,7 +114,7 @@ const CustomTooltip = ({
                 <span className="text-gray-700">False:</span>
               </div>
               <span className="text-gray-900 font-medium">
-                {tooltipValueFormatter(payload.find(p => p.dataKey === 'valueFalse')?.value || 0)}
+                {tooltipValueFormatter(payload.find(p => p.dataKey === 'valueFalse')?.value || 0, title)}
               </span>
             </div>
           </div>
@@ -123,7 +125,7 @@ const CustomTooltip = ({
           <div className="mt-1">
             {isImpactChart ? (
               <p className="text-gray-900 font-medium text-center">
-                {tooltipValueFormatter(payload[0].value)}
+                {tooltipValueFormatter(payload[0].value, title)}
               </p>
             ) : (
               <div className="flex justify-between gap-2 items-center">
@@ -135,7 +137,7 @@ const CustomTooltip = ({
                   <span className="text-gray-700">Value:</span>
                 </div>
                 <p className="text-gray-900 font-medium">
-                  {tooltipValueFormatter(payload[0].value)}
+                  {tooltipValueFormatter(payload[0].value, title)}
                 </p>
               </div>
             )}

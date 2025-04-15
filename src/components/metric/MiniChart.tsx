@@ -83,7 +83,7 @@ const MiniChart: React.FC<MiniChartProps> = ({
       : `${date.getMonth() + 1}/${date.getDate()}`;
   };
   
-  const tooltipValueFormatter = (value: number) => `${value}`;
+  const tooltipValueFormatter = (value: number) => `${value.toFixed(1)}`;
   
   const findSelectedDataPoints = () => {
     if ((!selectedTimestamp && !selectedTimestamps) || data.length === 0) return null;
@@ -193,6 +193,7 @@ const MiniChart: React.FC<MiniChartProps> = ({
                 showFalse={showFalse}
                 chartType="stacked"
                 metricType="evaluations"
+                title={title}
               />
             }
             isAnimationActive={false}

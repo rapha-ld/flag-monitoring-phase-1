@@ -1,3 +1,4 @@
+
 import React, { useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { DataPoint } from '@/components/BarChart';
@@ -181,6 +182,7 @@ const FlagChangeImpact = ({
           timeframe={timeframe} 
           hoveredTimestamp={hoveredTimestamp}
           onHoverTimestamp={handleChartHover} 
+          title="Flag Changes"
         />
       </div>
     </div>

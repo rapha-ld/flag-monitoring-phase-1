@@ -1,8 +1,10 @@
+
 import React, { useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import TelemetryChart from '@/components/chart/TelemetryChart';
 import { Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
 interface CollapsibleBannerProps {
   className?: string;
   timeframe?: string;
@@ -10,6 +12,7 @@ interface CollapsibleBannerProps {
   hoveredTimestamp?: string | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
 }
+
 const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({
   className,
   timeframe = "7d",
@@ -31,6 +34,7 @@ const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({
       onHoverTimestamp(timestamp);
     }
   };
+
   return <div className={cn("w-full space-y-3", className)}>
       <div className="flex items-center gap-2">
         <h2 className="text-base font-medium text-gray-800">System-wide</h2>
@@ -47,10 +51,32 @@ const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({
       </div>
       
       <div className="grid grid-cols-3 gap-4 mb-4">
-        <TelemetryChart title="Error Rate" timeframe={timeframe} environment={environment} hoveredTimestamp={hoveredTimestamp} onHoverTimestamp={handleHoverEvent} height={198} />
-        <TelemetryChart title="Largest Contentful Paint" timeframe={timeframe} environment={environment} hoveredTimestamp={hoveredTimestamp} onHoverTimestamp={handleHoverEvent} height={198} />
-        <TelemetryChart title="Interaction to Next Paint" timeframe={timeframe} environment={environment} hoveredTimestamp={hoveredTimestamp} onHoverTimestamp={handleHoverEvent} height={198} />
+        <TelemetryChart 
+          title="Error Rate" 
+          timeframe={timeframe} 
+          environment={environment} 
+          hoveredTimestamp={hoveredTimestamp} 
+          onHoverTimestamp={handleHoverEvent} 
+          height={198} 
+        />
+        <TelemetryChart 
+          title="Largest Contentful Paint" 
+          timeframe={timeframe} 
+          environment={environment} 
+          hoveredTimestamp={hoveredTimestamp} 
+          onHoverTimestamp={handleHoverEvent} 
+          height={198} 
+        />
+        <TelemetryChart 
+          title="Interaction to Next Paint" 
+          timeframe={timeframe} 
+          environment={environment} 
+          hoveredTimestamp={hoveredTimestamp} 
+          onHoverTimestamp={handleHoverEvent} 
+          height={198} 
+        />
       </div>
     </div>;
 };
+
 export default CollapsibleBanner;

@@ -15,6 +15,7 @@ interface ChartAreaProps {
   timeframe: string;
   hoveredTimestamp?: string | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
+  title?: string;
 }
 
 const ChartArea: React.FC<ChartAreaProps> = ({
@@ -23,7 +24,8 @@ const ChartArea: React.FC<ChartAreaProps> = ({
   selectedTimestamps,
   timeframe,
   hoveredTimestamp,
-  onHoverTimestamp
+  onHoverTimestamp,
+  title = "Flag Changes"
 }) => {
   // Adjust interval based on timeframe
   let xAxisInterval;
@@ -78,7 +80,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({
     return formatTimeLabel(label);
   };
 
-  const tooltipValueFormatter = (value: number) => `${Math.round(value)}`;
+  const tooltipValueFormatter = (value: number) => `${value.toFixed(1)}%`;
 
   // Updated hover event handlers with improved timestamp handling
   const handleMouseMove = (e: any) => {
@@ -145,6 +147,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({
               showTrue={false}
               showFalse={false}
               isImpactChart={true}
+              title={title}
             />
           }
           cursor={{ stroke: '#E5E7EB', strokeWidth: 1 }}
