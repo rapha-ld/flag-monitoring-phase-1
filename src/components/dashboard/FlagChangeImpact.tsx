@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { DataPoint } from '@/components/BarChart';
@@ -172,6 +171,8 @@ const FlagChangeImpact = ({
         />
       </div>
       
+      <CustomLegend />
+      
       <ChartArea 
         chartData={processedData} 
         selectedTimestamp={selectedTimestamp} 
@@ -180,8 +181,6 @@ const FlagChangeImpact = ({
         hoveredTimestamp={hoveredTimestamp}
         onHoverTimestamp={handleChartHover} 
       />
-      
-      <CustomLegend />
     </div>
   );
 };
