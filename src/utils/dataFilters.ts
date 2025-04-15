@@ -57,6 +57,46 @@ export const getFilteredData = (
     });
     
     return minuteData;
+  } else if (days === 1) { // 1-day timeframe, generate hourly data
+    // Generate 24 hours of data
+    const hourlyData = Array.from({ length: 24 }, (_, i) => {
+      const hour = i;
+      const hourLabel = hour >= 12 
+        ? `${hour % 12 || 12}PM` 
+        : `${hour % 12 || 12}AM`;
+      
+      // Apply different base values based on metric type
+      let baseValue = 0;
+      if (metricType === 'evaluations') {
+        baseValue = 15 + Math.floor(Math.random() * 30);
+      } else if (metricType === 'conversion') {
+        baseValue = 5 + Math.floor(Math.random() * 10);
+      } else if (metricType === 'errorRate') {
+        baseValue = 1 + Math.floor(Math.random() * 5);
+      } else {
+        baseValue = 10 + Math.floor(Math.random() * 20);
+      }
+      
+      // Add some spikes for visual interest
+      if (i % 6 === 0) {
+        baseValue += Math.floor(Math.random() * 15);
+      }
+      
+      const now = new Date();
+      const hourDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour);
+      
+      return {
+        name: hourLabel,
+        time: hourLabel,
+        value: baseValue,
+        // Add device and environment to match the structure
+        device: device === 'all' ? 'mobile' : device,
+        environment: environment === 'all' ? 'production' : environment,
+        date: hourDate.toISOString()
+      };
+    });
+    
+    return hourlyData;
   }
   
   // Generate exact dates we need for the timeframe

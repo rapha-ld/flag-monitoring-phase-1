@@ -23,12 +23,12 @@ const TimeframeSelector = ({ timeframe, onTimeframeChange }: TimeframeSelectorPr
   return (
     <div className="flex items-center space-x-2">
       <Button 
-        variant={getButtonVariant("1h")} 
+        variant={getButtonVariant("1d")} 
         size="sm" 
-        className={getButtonClassName("1h")}
-        onClick={() => onTimeframeChange("1h")}
+        className={getButtonClassName("1d")}
+        onClick={() => onTimeframeChange("1d")}
       >
-        1H
+        1D
       </Button>
       <Button 
         variant={getButtonVariant("7d")} 

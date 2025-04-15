@@ -26,7 +26,9 @@ const ChartArea: React.FC<ChartAreaProps> = ({
 }) => {
   // Adjust interval based on timeframe
   let xAxisInterval;
-  if (timeframe === "1h") {
+  if (timeframe === "1d") {
+    xAxisInterval = 3; // Show every 4th hour for 1-day view (24 hours / 3 = 8 ticks)
+  } else if (timeframe === "1h") {
     xAxisInterval = 9; // Show fewer ticks for minute-based data
   } else {
     xAxisInterval = getXAxisInterval(chartData.length);
@@ -63,6 +65,9 @@ const ChartArea: React.FC<ChartAreaProps> = ({
     if (timeframe === "1h") {
       // For 1-hour timeframe, show just the minute
       return value.replace('m', '');
+    } else if (timeframe === "1d") {
+      // For 1-day timeframe, show the hour
+      return value;
     }
     // For other timeframes, show just the date part
     return value.split(" ")[0];
