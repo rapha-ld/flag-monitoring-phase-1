@@ -60,6 +60,17 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
     return Math.round(value).toString();
   };
 
+  // Calculate appropriate interval based on timeframe
+  const getXAxisInterval = () => {
+    if (timeframe === "1h") return 8;
+    if (timeframe === "1d") return 6;
+    if (timeframe === "7d") return 6;
+    if (timeframe === "14d") return 8;
+    if (timeframe === "30d") return 10;
+    if (timeframe === "90d") return 12;
+    return "preserveEnd";
+  };
+
   return (
     <ResponsiveContainer width="100%" height={height}>
       <LineChart 
@@ -139,9 +150,9 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
           tick={{ fontSize: 10, fill: axisLabelColor }}
           axisLine={{ stroke: '#eee' }} 
           tickLine={false}
-          interval={timeframe === "1h" ? 4 : timeframe === "1d" ? 3 : "preserveEnd"}
+          interval={getXAxisInterval()}
           tickMargin={10}
-          minTickGap={10}
+          minTickGap={15}
           padding={{ left: 10, right: 10 }}
         />
         <YAxis 
@@ -191,4 +202,3 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
 };
 
 export default TelemetryLineChart;
-

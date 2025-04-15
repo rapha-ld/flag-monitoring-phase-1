@@ -36,7 +36,7 @@ const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({
   };
 
   return (
-    <div className={cn("w-full space-y-4", className)}>
+    <div className={cn("w-full space-y-3", className)}>
       <div className="flex items-center gap-2">
         <h2 className="text-base font-medium text-gray-800">System-wide telemetry</h2>
         <TooltipProvider>
@@ -51,7 +51,7 @@ const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({
         </TooltipProvider>
       </div>
       
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-3 gap-4 mb-4">
         <TelemetryChart 
           title="Error Rate" 
           timeframe={timeframe} 

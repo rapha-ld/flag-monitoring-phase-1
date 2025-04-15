@@ -47,26 +47,26 @@ const Header = ({
   const [activeTab, setActiveTab] = useState("monitoring");
 
   return (
-    <header className={cn("pb-4 animate-slide-down space-y-4", className)} {...props}>
+    <header className={cn("pb-2 animate-slide-down space-y-4", className)} {...props}>
       {/* Breadcrumb */}
       <Breadcrumb />
       
       {/* Tab Navigation */}
       <NavTabs activeTab={activeTab} onChange={setActiveTab} />
       
-      {/* Controls - Rearranged to place TimeframeSelector below EnvironmentSelector */}
-      <div className="flex flex-col gap-4">
+      {/* Controls with reduced spacing and aligned elements */}
+      <div className="flex flex-col gap-2">
         <EnvironmentSelector 
           environment={environment} 
           onEnvironmentChange={onEnvironmentChange} 
         />
         
-        <TimeframeSelector 
-          timeframe={timeframe} 
-          onTimeframeChange={onTimeframeChange} 
-        />
-        
-        <div className="flex items-center">
+        <div className="flex items-center justify-between">
+          <TimeframeSelector 
+            timeframe={timeframe} 
+            onTimeframeChange={onTimeframeChange} 
+          />
+          
           <MetricsSelector 
             selectedMetrics={selectedMetrics}
             onMetricsChange={onMetricsChange}
