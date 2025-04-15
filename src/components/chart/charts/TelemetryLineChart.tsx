@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { LineChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea, Line } from 'recharts';
 import CustomTooltip from '../CustomTooltip';
@@ -40,13 +39,16 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
   // Default thresholds for LCP
   let goodThreshold = 2.5;
   let needsImprovementThreshold = 4;
+  
+  // Set a shared max domain for both charts (LCP and INP)
+  // This ensures both charts use the same scale
   let maxDomain = 6;
   
   // Adjust thresholds based on chart type
   if (title === "Interaction to Next Paint") {
     goodThreshold = 0.2;
     needsImprovementThreshold = 0.5;
-    maxDomain = 1;
+    // We keep the same maxDomain to ensure consistent scale across charts
   }
 
   return (
