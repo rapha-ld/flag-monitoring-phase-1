@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Area, Line, XAxis, YAxis, ResponsiveContainer, ComposedChart, Tooltip, ReferenceLine } from 'recharts';
 import { DataPoint } from '@/components/BarChart';
@@ -86,11 +85,13 @@ const ChartArea: React.FC<ChartAreaProps> = ({
 
   const tooltipValueFormatter = (value: number) => `${Math.round(value)}`;
 
-  // Updated hover event handlers
+  // Updated hover event handlers with improved timestamp handling
   const handleMouseMove = (e: any) => {
     if (e && e.activeLabel && onHoverTimestamp) {
-      console.log(`ChartArea hover: ${e.activeLabel}`);
-      onHoverTimestamp(e.activeLabel);
+      // Keep the original timestamp format for consistency across charts
+      const timestamp = e.activeLabel;
+      console.log(`ChartArea hover: ${timestamp}`);
+      onHoverTimestamp(timestamp);
     }
   };
 

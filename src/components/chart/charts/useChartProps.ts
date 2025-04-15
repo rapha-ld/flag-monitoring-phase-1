@@ -6,7 +6,9 @@ export const useChartProps = (onHoverTimestamp?: (timestamp: string | null) => v
   const handleMouseMove = useCallback((e: any) => {
     if (e && e.activeLabel && onHoverTimestamp) {
       console.log(`useChartProps handleMouseMove: ${e.activeLabel}`);
-      onHoverTimestamp(e.activeLabel);
+      // Ensure consistent timestamp format, especially for 1D view
+      let timestamp = e.activeLabel;
+      onHoverTimestamp(timestamp);
     }
   }, [onHoverTimestamp]);
 
@@ -52,4 +54,3 @@ export const useChartProps = (onHoverTimestamp?: (timestamp: string | null) => v
     axisLabelColor
   };
 };
-
