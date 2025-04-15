@@ -46,7 +46,7 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
     goodThreshold = 200;     // 200ms
     needsImprovementThreshold = 500;  // 500ms
     maxDomain = 800;          // 800ms
-    chartColor = "#148291";  // Explicitly set LCP chart color
+    chartColor = "#8E9196";  // Use the same gray color as LCP chart
   }
 
   return (
