@@ -31,13 +31,23 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
     axisLabelColor
   } = useChartProps(onHoverTimestamp);
 
-  // Constants for performance zones
-  const goodZoneColor = "#F2FCE2";
-  const needsImprovementZoneColor = "#FEF7CD";
-  const poorZoneColor = "#FEC6A1";
+  // Default constants for LCP performance zones
+  let goodZoneColor = "#F2FCE2";
+  let needsImprovementZoneColor = "#FEF7CD";
+  let poorZoneColor = "#FEC6A1";
   const dashedLineColor = "#8E9196";
-  const goodThreshold = 2.5;
-  const needsImprovementThreshold = 4;
+  
+  // Default thresholds for LCP
+  let goodThreshold = 2.5;
+  let needsImprovementThreshold = 4;
+  let maxDomain = 6;
+  
+  // Adjust thresholds based on chart type
+  if (title === "Interaction to Next Paint") {
+    goodThreshold = 0.2;
+    needsImprovementThreshold = 0.5;
+    maxDomain = 1;
+  }
 
   return (
     <ResponsiveContainer width="100%" height={height}>
@@ -51,14 +61,14 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
         
         <ReferenceArea 
           y1={needsImprovementThreshold} 
-          y2={6}
+          y2={maxDomain}
           fill={poorZoneColor} 
           fillOpacity={0.5}
           ifOverflow="extendDomain"
           label={{ 
             value: "Poor", 
             position: "insideTopRight",
-            fontSize: 10,  // Increased from 8 to 10
+            fontSize: 10,
             fill: "#B45309",
             dy: 5,
             dx: -5
@@ -82,7 +92,7 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
           label={{ 
             value: "Needs improvement", 
             position: "insideTopRight",
-            fontSize: 10,  // Increased from 8 to 10
+            fontSize: 10,
             fill: "#854D0E",
             dy: 5,
             dx: -5
@@ -106,7 +116,7 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
           label={{ 
             value: "Good", 
             position: "insideTopRight",
-            fontSize: 10,  // Increased from 8 to 10
+            fontSize: 10,
             fill: "#3F6212",
             dy: 5,
             dx: -5
@@ -128,7 +138,7 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
           axisLine={false}
           tickLine={false}
           width={20}
-          domain={[0, 6]}
+          domain={[0, maxDomain]}
           tickFormatter={(value) => Math.round(value).toString()}
         />
         <Tooltip 
@@ -169,4 +179,3 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
 };
 
 export default TelemetryLineChart;
-

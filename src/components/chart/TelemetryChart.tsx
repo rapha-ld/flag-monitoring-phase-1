@@ -54,6 +54,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
   const chartColor = 
     title === "Error Rate" ? "#DB2251" : 
     title === "Largest Contentful Paint" ? "#8E9196" : 
+    title === "Interaction to Next Paint" ? "#7E69AB" :
     "#7861C6";
 
   // Handle menu actions
@@ -77,7 +78,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <CardTitle className="text-sm font-medium">{displayTitle}</CardTitle>
-            {(title === "Error Rate" || title === "Errors" || title === "Largest Contentful Paint") && (
+            {(title === "Error Rate" || title === "Errors" || title === "Largest Contentful Paint" || title === "Interaction to Next Paint") && (
               <DropdownMenu>
                 <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center rounded-md hover:bg-slate-100">
                   <MoreVertical className="h-4 w-4 text-slate-500" />
@@ -121,7 +122,7 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
               timeframe={timeframe}
               height={height}
             />
-          ) : title === "Largest Contentful Paint" ? (
+          ) : title === "Largest Contentful Paint" || title === "Interaction to Next Paint" ? (
             <TelemetryLineChart 
               data={data}
               title={title}

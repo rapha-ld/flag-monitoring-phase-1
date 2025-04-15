@@ -17,11 +17,17 @@ export const useTelemetryData = (title: string, timeframe: string, environment: 
         const minuteStr = minutes.toString().padStart(2, '0');
         
         let baseValue = Math.random() * 100;
+        
         if (title === "Largest Contentful Paint") {
           const isSpike = Math.random() < 0.1;
           baseValue = isSpike 
             ? 2.5 + Math.random() * 0.8
             : 0.3 + Math.random() * 0.9;
+        } else if (title === "Interaction to Next Paint") {
+          const isSpike = Math.random() < 0.15;
+          baseValue = isSpike 
+            ? 0.5 + Math.random() * 0.2
+            : 0.05 + Math.random() * 0.2;
         } else if (environment === "staging") {
           if (title === "Error Rate") {
             baseValue = Math.random() * 100 + 20;
@@ -40,11 +46,17 @@ export const useTelemetryData = (title: string, timeframe: string, environment: 
         const hourInAmPm = formatHourInAmPm(i);
         
         let baseValue = Math.random() * 100;
+        
         if (title === "Largest Contentful Paint") {
           const isSpike = Math.random() < 0.1;
           baseValue = isSpike 
             ? 2.5 + Math.random() * 0.8
             : 0.3 + Math.random() * 0.9;
+        } else if (title === "Interaction to Next Paint") {
+          const isSpike = Math.random() < 0.15;
+          baseValue = isSpike 
+            ? 0.5 + Math.random() * 0.2
+            : 0.05 + Math.random() * 0.2;
         } else if (environment === "staging") {
           if (title === "Error Rate") {
             baseValue = Math.random() * 100 + 20;
@@ -72,11 +84,17 @@ export const useTelemetryData = (title: string, timeframe: string, environment: 
         const day = date.getDate();
         
         let value;
+        
         if (title === "Largest Contentful Paint") {
           const isSpike = Math.random() < 0.1;
           value = isSpike 
             ? 2.5 + Math.random() * 0.8
             : 0.3 + Math.random() * 0.9;
+        } else if (title === "Interaction to Next Paint") {
+          const isSpike = Math.random() < 0.15;
+          value = isSpike 
+            ? 0.5 + Math.random() * 0.2
+            : 0.05 + Math.random() * 0.2;
         } else if (title === "Error Rate") {
           const isSpike = Math.random() < 0.15;
           
@@ -113,7 +131,7 @@ export const useTelemetryData = (title: string, timeframe: string, environment: 
       const sum = data.reduce((acc, item) => acc + item.value, 0);
       const avg = sum / data.length;
       
-      if (title === "Largest Contentful Paint") {
+      if (title === "Largest Contentful Paint" || title === "Interaction to Next Paint") {
         return `${avg.toFixed(1)}s`;
       } else {
         return Math.round(avg);

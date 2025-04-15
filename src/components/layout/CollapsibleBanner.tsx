@@ -51,7 +51,7 @@ const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({
         </TooltipProvider>
       </div>
       
-      <div className="flex gap-4 mb-8">
+      <div className="grid grid-cols-3 gap-4 mb-8">
         <TelemetryChart 
           title="Error Rate" 
           timeframe={timeframe} 
@@ -62,6 +62,14 @@ const CollapsibleBanner: React.FC<CollapsibleBannerProps> = ({
         />
         <TelemetryChart 
           title="Largest Contentful Paint" 
+          timeframe={timeframe} 
+          environment={environment}
+          hoveredTimestamp={hoveredTimestamp}
+          onHoverTimestamp={handleHoverEvent}
+          height={198}
+        />
+        <TelemetryChart 
+          title="Interaction to Next Paint" 
           timeframe={timeframe} 
           environment={environment}
           hoveredTimestamp={hoveredTimestamp}
