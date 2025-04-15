@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import NavTabs from './NavTabs';
@@ -6,7 +7,14 @@ import EnvironmentSelector from './header/EnvironmentSelector';
 import TimeframeSelector from './header/TimeframeSelector';
 import MetricsSelector from './header/MetricsSelector';
 import { Button } from '@/components/ui/button';
-import { FileDown } from 'lucide-react';
+import { Share2, FileDown, Download, Link as LinkIcon } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { toast } from 'sonner';
 
 interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   timeframe: string;
@@ -47,6 +55,21 @@ const Header = ({
 }: HeaderProps) => {
   const [activeTab, setActiveTab] = useState("monitoring");
 
+  // Handle menu actions
+  const handleExportPDF = () => {
+    toast.success('Exporting dashboard as PDF');
+  };
+
+  const handleExportJPEG = () => {
+    toast.success('Exporting dashboard as JPEG');
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href)
+      .then(() => toast.success('Link copied to clipboard'))
+      .catch(() => toast.error('Failed to copy link'));
+  };
+
   return (
     <header className={cn("pb-2 animate-slide-down space-y-4", className)} {...props}>
       <Breadcrumb />
@@ -66,9 +89,27 @@ const Header = ({
           />
           
           <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" className="h-9">
-              <FileDown className="mr-2 h-4 w-4" />Export
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-9">
+                  <Share2 className="mr-2 h-4 w-4" />Share
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-white">
+                <DropdownMenuItem onClick={handleExportPDF} className="cursor-pointer">
+                  <FileDown className="mr-2 h-4 w-4" />
+                  <span>Export as PDF</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportJPEG} className="cursor-pointer">
+                  <Download className="mr-2 h-4 w-4" />
+                  <span>Export as JPEG</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
+                  <LinkIcon className="mr-2 h-4 w-4" />
+                  <span>Copy Link</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             <MetricsSelector 
               selectedMetrics={selectedMetrics}
