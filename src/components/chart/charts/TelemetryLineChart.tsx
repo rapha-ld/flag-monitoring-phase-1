@@ -53,7 +53,7 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
     <ResponsiveContainer width="100%" height={height}>
       <LineChart 
         data={data} 
-        margin={{ top: 10, right: 5, left: 0, bottom: 5 }}
+        margin={{ top: 10, right: 5, left: 10, bottom: 5 }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
@@ -137,9 +137,10 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
           tick={{ fontSize: 10, fill: axisLabelColor }}
           axisLine={false}
           tickLine={false}
-          width={20}
+          width={30}
           domain={[0, maxDomain]}
           tickFormatter={(value) => Math.round(value).toString()}
+          tickMargin={5}
         />
         <Tooltip 
           content={

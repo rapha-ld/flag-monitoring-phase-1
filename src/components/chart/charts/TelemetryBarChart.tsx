@@ -36,7 +36,7 @@ const TelemetryBarChart: React.FC<TelemetryBarChartProps> = ({
     <ResponsiveContainer width="100%" height={height}>
       <BarChart 
         data={data} 
-        margin={{ top: 10, right: 5, left: 0, bottom: 5 }}
+        margin={{ top: 10, right: 5, left: 10, bottom: 5 }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
@@ -61,8 +61,9 @@ const TelemetryBarChart: React.FC<TelemetryBarChartProps> = ({
           tick={{ fontSize: 10, fill: axisLabelColor }}
           axisLine={false}
           tickLine={false}
-          width={20}
+          width={30}
           tickFormatter={(value) => Math.round(value).toString()}
+          tickMargin={5}
         />
         <Tooltip 
           content={
