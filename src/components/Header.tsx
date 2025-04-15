@@ -54,8 +54,8 @@ const Header = ({
       {/* Tab Navigation */}
       <NavTabs activeTab={activeTab} onChange={setActiveTab} />
       
-      {/* Controls with reduced spacing and aligned elements */}
-      <div className="flex flex-col gap-2">
+      {/* Controls with improved spacing */}
+      <div className="flex flex-col gap-4">
         <EnvironmentSelector 
           environment={environment} 
           onEnvironmentChange={onEnvironmentChange} 

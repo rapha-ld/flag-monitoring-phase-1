@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { AreaChart, Area, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
 import CustomTooltip from '../CustomTooltip';
@@ -35,7 +34,7 @@ const TelemetryAreaChart: React.FC<TelemetryAreaChartProps> = ({
   const getXAxisInterval = () => {
     if (timeframe === "1h") return 8;
     if (timeframe === "1d") return 6;
-    if (timeframe === "7d") return 6;
+    if (timeframe === "7d") return 4;
     if (timeframe === "14d") return 8;
     if (timeframe === "30d") return 10;
     if (timeframe === "90d") return 12;
