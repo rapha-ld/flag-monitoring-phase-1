@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { DataPoint, VersionChange } from '@/components/BarChart';
 import { cn } from '@/lib/utils';
 import EvaluationsCard from './cards/EvaluationsCard';
 import ImpactCard from './cards/ImpactCard';
+import TimeframeSelector from '@/components/header/TimeframeSelector';
 import { Share } from 'lucide-react';
 import {
   DropdownMenu,
@@ -36,6 +36,7 @@ interface DashboardMetricsProps {
   onToggleTrue?: () => void;
   onToggleFalse?: () => void;
   hoveredTimestamp?: string | null;
+  onTimeframeChange?: (timeframe: string) => void;
 }
 
 const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
@@ -55,7 +56,8 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   onHoverTimestamp,
   onToggleTrue,
   onToggleFalse,
-  hoveredTimestamp
+  hoveredTimestamp,
+  onTimeframeChange
 }) => {
   const [isBreakdownEnabled, setIsBreakdownEnabled] = useState(false);
   
@@ -63,12 +65,10 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
     setIsBreakdownEnabled(enabled);
   };
   
-  // Debug log to track hover events at this level
   useEffect(() => {
     console.log(`DashboardMetrics detected hoveredTimestamp: ${hoveredTimestamp}`);
   }, [hoveredTimestamp]);
   
-  // Centralized handler for chart hover events
   const handleHoverEvent = (timestamp: string | null) => {
     if (onHoverTimestamp) {
       console.log(`DashboardMetrics forwarding hover: ${timestamp}`);
@@ -76,7 +76,6 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
     }
   };
   
-  // Handle dropdown menu actions
   const handleExportPDF = () => {
     toast.success('Exporting chart as PDF');
   };
@@ -94,7 +93,13 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between px-1">
-        <h2 className="text-base font-medium text-gray-800">Flag-specific metrics</h2>
+        <div className="flex items-center gap-4">
+          <h2 className="text-base font-medium text-gray-800">Flag-specific metrics</h2>
+          <TimeframeSelector 
+            timeframe={timeframe} 
+            onTimeframeChange={onTimeframeChange} 
+          />
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm" className="h-8 w-8 p-0">
