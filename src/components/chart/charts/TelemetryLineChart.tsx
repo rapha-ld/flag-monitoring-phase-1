@@ -44,9 +44,9 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
   
   // Adjust thresholds based on chart type
   if (title === "Interaction to Next Paint") {
-    goodThreshold = 0.2;
-    needsImprovementThreshold = 0.5;
-    maxDomain = 1;
+    goodThreshold = 200;     // 200ms
+    needsImprovementThreshold = 500;  // 500ms
+    maxDomain = 800;          // 800ms
   }
 
   return (

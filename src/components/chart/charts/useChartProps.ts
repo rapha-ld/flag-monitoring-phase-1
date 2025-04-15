@@ -32,7 +32,8 @@ export const useChartProps = (onHoverTimestamp?: (timestamp: string | null) => v
   };
   
   const tooltipValueFormatter = (value: number) => {
-    return `${value.toFixed(1)}s`;
+    // For INP, return value in milliseconds
+    return `${value.toFixed(1)}ms`;
   };
   
   const axisLabelColor = '#9CA3AF';

@@ -26,8 +26,8 @@ export const useTelemetryData = (title: string, timeframe: string, environment: 
         } else if (title === "Interaction to Next Paint") {
           const isSpike = Math.random() < 0.15;
           baseValue = isSpike 
-            ? 0.5 + Math.random() * 0.2
-            : 0.05 + Math.random() * 0.2;
+            ? 50 + Math.random() * 20  // Change to milliseconds (0.5s = 50ms)
+            : 5 + Math.random() * 20;  // Change to milliseconds (0.05s = 5ms)
         } else if (environment === "staging") {
           if (title === "Error Rate") {
             baseValue = Math.random() * 100 + 20;
@@ -55,8 +55,8 @@ export const useTelemetryData = (title: string, timeframe: string, environment: 
         } else if (title === "Interaction to Next Paint") {
           const isSpike = Math.random() < 0.15;
           baseValue = isSpike 
-            ? 0.5 + Math.random() * 0.2
-            : 0.05 + Math.random() * 0.2;
+            ? 50 + Math.random() * 20  // Change to milliseconds (0.5s = 50ms)
+            : 5 + Math.random() * 20;  // Change to milliseconds (0.05s = 5ms)
         } else if (environment === "staging") {
           if (title === "Error Rate") {
             baseValue = Math.random() * 100 + 20;
@@ -93,8 +93,8 @@ export const useTelemetryData = (title: string, timeframe: string, environment: 
         } else if (title === "Interaction to Next Paint") {
           const isSpike = Math.random() < 0.15;
           value = isSpike 
-            ? 0.5 + Math.random() * 0.2
-            : 0.05 + Math.random() * 0.2;
+            ? 50 + Math.random() * 20  // Change to milliseconds (0.5s = 50ms)
+            : 5 + Math.random() * 20;  // Change to milliseconds (0.05s = 5ms)
         } else if (title === "Error Rate") {
           const isSpike = Math.random() < 0.15;
           
@@ -131,8 +131,10 @@ export const useTelemetryData = (title: string, timeframe: string, environment: 
       const sum = data.reduce((acc, item) => acc + item.value, 0);
       const avg = sum / data.length;
       
-      if (title === "Largest Contentful Paint" || title === "Interaction to Next Paint") {
+      if (title === "Largest Contentful Paint") {
         return `${avg.toFixed(1)}s`;
+      } else if (title === "Interaction to Next Paint") {
+        return `${avg.toFixed(1)}ms`;
       } else {
         return Math.round(avg);
       }
