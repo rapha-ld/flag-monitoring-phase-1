@@ -31,14 +31,6 @@ const TimeframeSelector = ({ timeframe, onTimeframeChange }: TimeframeSelectorPr
         1H
       </Button>
       <Button 
-        variant={getButtonVariant("1d")} 
-        size="sm" 
-        className={getButtonClassName("1d")}
-        onClick={() => onTimeframeChange("1d")}
-      >
-        1D
-      </Button>
-      <Button 
         variant={getButtonVariant("7d")} 
         size="sm" 
         className={getButtonClassName("7d")}

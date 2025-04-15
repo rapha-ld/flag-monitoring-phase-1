@@ -41,35 +41,6 @@ export const useTelemetryData = (title: string, timeframe: string, environment: 
           environment: environment
         };
       });
-    } else if (timeframe === "1d") {
-      return Array.from({ length: 24 }, (_, i) => {
-        const hourInAmPm = formatHourInAmPm(i);
-        
-        let baseValue = Math.random() * 100;
-        
-        if (title === "Largest Contentful Paint") {
-          const isSpike = Math.random() < 0.1;
-          baseValue = isSpike 
-            ? 2.5 + Math.random() * 0.8
-            : 0.3 + Math.random() * 0.9;
-        } else if (title === "Interaction to Next Paint") {
-          const isSpike = Math.random() < 0.15;
-          baseValue = isSpike 
-            ? 50 + Math.random() * 20  // Change to milliseconds (0.5s = 50ms)
-            : 5 + Math.random() * 20;  // Change to milliseconds (0.05s = 5ms)
-        } else if (environment === "staging") {
-          if (title === "Error Rate") {
-            baseValue = Math.random() * 100 + 20;
-          }
-        }
-        
-        return {
-          time: hourInAmPm,
-          value: baseValue,
-          date: new Date().toISOString(),
-          environment: environment
-        };
-      });
     } else {
       let days = 30;
       if (timeframe.endsWith('d')) {

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { 
   evaluationData, 
@@ -15,7 +14,7 @@ import { DataPoint } from '@/components/BarChart';
 
 export const useDashboardData = () => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [timeframe, setTimeframe] = useState("1d"); 
+  const [timeframe, setTimeframe] = useState("7d"); // Changed default from "1d" to "7d"
   const [environment, setEnvironment] = useState("production");
   const [selectedDevice, setSelectedDevice] = useState("all");
   const [selectedMetrics, setSelectedMetrics] = useState(['evaluations', 'conversion']);
@@ -49,8 +48,6 @@ export const useDashboardData = () => {
     
     if (timeframe === "1h") {
       days = 0.042; // 1/24th of a day
-    } else if (timeframe === "1d") {
-      days = 1; // 1 day timeframe for hourly data
     } else if (timeframe.startsWith('custom-')) {
       days = parseInt(timeframe.replace('custom-', '').replace('d', ''));
     } else {
@@ -134,9 +131,7 @@ export const useDashboardData = () => {
     }
   };
 
-  // Update the handleHoverTimestamp function to actually store the hovered timestamp
   const handleHoverTimestamp = (timestamp: string | null) => {
-    // Only update if there's an actual change
     if (hoveredTimestampState !== timestamp) {
       console.log(`Hover timestamp changed to: ${timestamp}`);
       setHoveredTimestampState(timestamp);

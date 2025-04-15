@@ -28,8 +28,6 @@ const ChartArea: React.FC<ChartAreaProps> = ({
   let xAxisInterval;
   if (timeframe === "1h") {
     xAxisInterval = 9; // Show fewer ticks for minute-based data
-  } else if (timeframe === "1d") {
-    xAxisInterval = 2;
   } else {
     xAxisInterval = getXAxisInterval(chartData.length);
   }
@@ -65,15 +63,6 @@ const ChartArea: React.FC<ChartAreaProps> = ({
     if (timeframe === "1h") {
       // For 1-hour timeframe, show just the minute
       return value.replace('m', '');
-    } else if (timeframe === "1d") {
-      // For 1-day timeframe, format hour to AM/PM
-      if (/^\d{1,2}:\d{2}$/.test(value)) {
-        const hour = parseInt(value.split(':')[0], 10);
-        const period = hour >= 12 ? 'PM' : 'AM';
-        const formattedHour = hour % 12 || 12;
-        return `${formattedHour}${period}`;
-      }
-      return value;
     }
     // For other timeframes, show just the date part
     return value.split(" ")[0];
