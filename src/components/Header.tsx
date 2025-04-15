@@ -54,27 +54,27 @@ const Header = ({
       {/* Tab Navigation */}
       <NavTabs activeTab={activeTab} onChange={setActiveTab} />
       
-      {/* Controls */}
-      <div className="flex flex-col md:flex-row items-center gap-4">
+      {/* Controls - Rearranged to place TimeframeSelector below EnvironmentSelector */}
+      <div className="flex flex-col gap-4">
         <EnvironmentSelector 
           environment={environment} 
           onEnvironmentChange={onEnvironmentChange} 
         />
-        
-        {/* Removed DeviceSelector component */}
         
         <TimeframeSelector 
           timeframe={timeframe} 
           onTimeframeChange={onTimeframeChange} 
         />
         
-        <MetricsSelector 
-          selectedMetrics={selectedMetrics}
-          onMetricsChange={onMetricsChange}
-          hiddenMetrics={hiddenMetrics}
-          onMetricVisibilityChange={onMetricVisibilityChange}
-          isVisible={metricsButtonVisible}
-        />
+        <div className="flex items-center">
+          <MetricsSelector 
+            selectedMetrics={selectedMetrics}
+            onMetricsChange={onMetricsChange}
+            hiddenMetrics={hiddenMetrics}
+            onMetricVisibilityChange={onMetricVisibilityChange}
+            isVisible={metricsButtonVisible}
+          />
+        </div>
       </div>
     </header>
   );
