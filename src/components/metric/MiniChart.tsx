@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
@@ -6,6 +5,7 @@ import CustomTooltip from '../chart/CustomTooltip';
 import { format } from 'date-fns';
 import { determineEventName } from '@/utils/eventUtils';
 import { Progress } from '@/components/ui/progress';
+import { getBarSize } from '@/utils/chartUtils';
 
 interface MiniChartProps { 
   title: string; 
@@ -40,7 +40,6 @@ const MiniChart: React.FC<MiniChartProps> = ({
   onHoverTimestamp,
   percentage = 0 // Default to 0 if not provided
 }) => {
-  // Debug logging for hover events
   useEffect(() => {
     if (hoveredTimestamp) {
       console.log(`MiniChart ${title} has hoveredTimestamp: ${hoveredTimestamp}`);
@@ -130,7 +129,6 @@ const MiniChart: React.FC<MiniChartProps> = ({
   const hasSelectedPoints = selectedPoints && selectedPoints.length > 0;
   const textGray = '#545A62';
 
-  // Improved hover event handlers with console logging
   const handleMouseMove = (e: any) => {
     if (e && e.activeLabel && onHoverTimestamp) {
       console.log(`MiniChart ${title} hover: ${e.activeLabel}`);
@@ -149,6 +147,10 @@ const MiniChart: React.FC<MiniChartProps> = ({
   
   const axisLabelColor = '#9CA3AF';
 
+  const calculatedBarSize = getBarSize(data.length) * 0.6;
+  const barSize = Math.max(4, calculatedBarSize);
+  const barGap = Math.max(1, Math.min(2, Math.floor(barSize * 0.1)));
+
   return (
     <Card className="p-3 h-[116px] transition-all duration-300 hover:shadow-md chart-container">
       <div className="flex justify-between items-start mb-1">
@@ -165,8 +167,8 @@ const MiniChart: React.FC<MiniChartProps> = ({
         <BarChart 
           data={data} 
           margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-          barSize={6}
-          barGap={0}
+          barSize={barSize}
+          barGap={barGap}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
         >

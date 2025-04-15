@@ -43,6 +43,10 @@ const TelemetryBarChart: React.FC<TelemetryBarChartProps> = ({
     return "preserveEnd";
   };
 
+  // Calculate bar sizing with reduced gaps
+  const barSize = getBarSize(data.length);
+  const barGap = Math.max(1, Math.min(3, Math.floor(barSize * 0.1)));
+
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart 
@@ -50,6 +54,7 @@ const TelemetryBarChart: React.FC<TelemetryBarChartProps> = ({
         margin={{ top: 10, right: 5, left: 10, bottom: 5 }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
+        barGap={barGap}
       >
         <defs>
           <linearGradient id={`colorGradient-${title.replace(/\s+/g, '')}`} x1="0" y1="1" x2="0" y2="0">
@@ -104,7 +109,7 @@ const TelemetryBarChart: React.FC<TelemetryBarChartProps> = ({
           radius={[2, 2, 0, 0]}
           fillOpacity={0.3}
           isAnimationActive={false}
-          barSize={getBarSize(data.length)}
+          barSize={barSize}
           stroke="#FFFFFF"
           strokeWidth={1}
         />

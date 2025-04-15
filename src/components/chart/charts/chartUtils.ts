@@ -3,12 +3,12 @@
  * Calculate appropriate bar size based on data length
  */
 export function getBarSize(dataLength: number): number {
-  if (dataLength <= 5) return 30;
-  if (dataLength <= 10) return 20;
-  if (dataLength <= 20) return 12;
-  if (dataLength <= 30) return 8;
-  if (dataLength <= 60) return 6;
-  return 4;
+  if (dataLength <= 5) return 40;
+  if (dataLength <= 10) return 30;
+  if (dataLength <= 20) return 18;
+  if (dataLength <= 30) return 12;
+  if (dataLength <= 60) return 8;
+  return 6;
 }
 
 /**
