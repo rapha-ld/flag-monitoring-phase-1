@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { LineChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea, Line } from 'recharts';
 import CustomTooltip from '../CustomTooltip';
@@ -48,6 +49,16 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
     maxDomain = 800;          // 800ms
     chartColor = "#8E9196";  // Use the same gray color as LCP chart
   }
+
+  // Tick formatter to add 's' or 'ms' based on chart type
+  const yAxisTickFormatter = (value: number) => {
+    if (title === "Interaction to Next Paint") {
+      return `${Math.round(value)}ms`;
+    } else if (title === "Largest Contentful Paint") {
+      return `${value.toFixed(1)}s`;
+    }
+    return Math.round(value).toString();
+  };
 
   return (
     <ResponsiveContainer width="100%" height={height}>
@@ -139,7 +150,7 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
           tickLine={false}
           width={30}
           domain={[0, maxDomain]}
-          tickFormatter={(value) => Math.round(value).toString()}
+          tickFormatter={yAxisTickFormatter}
           tickMargin={5}
         />
         <Tooltip 
@@ -180,3 +191,4 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
 };
 
 export default TelemetryLineChart;
+

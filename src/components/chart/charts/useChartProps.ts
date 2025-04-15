@@ -31,9 +31,15 @@ export const useChartProps = (onHoverTimestamp?: (timestamp: string | null) => v
     return label;
   };
   
-  const tooltipValueFormatter = (value: number) => {
+  const tooltipValueFormatter = (value: number, title?: string) => {
     // For INP, return value in milliseconds
-    return `${value.toFixed(1)}ms`;
+    // For LCP, return value in seconds
+    if (title === "Interaction to Next Paint") {
+      return `${value.toFixed(1)}ms`;
+    } else if (title === "Largest Contentful Paint") {
+      return `${value.toFixed(1)}s`;
+    }
+    return `${value}`;
   };
   
   const axisLabelColor = '#9CA3AF';
@@ -46,3 +52,4 @@ export const useChartProps = (onHoverTimestamp?: (timestamp: string | null) => v
     axisLabelColor
   };
 };
+
