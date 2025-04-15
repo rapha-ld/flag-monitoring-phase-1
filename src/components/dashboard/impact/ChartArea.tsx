@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { Area, Line, XAxis, YAxis, ResponsiveContainer, ComposedChart, Tooltip, ReferenceLine } from 'recharts';
 import { DataPoint } from '@/components/BarChart';
 import { getXAxisInterval, getBarSize } from '@/utils/chartUtils';
 import { getTimestampPositions } from '@/utils/chartUtils';
-import { IMPACT_COLOR, THIS_FLAG_COLOR, CHART_HEIGHT, CHART_MARGIN } from './constants';
+import { IMPACT_COLOR, THIS_FLAG_COLOR, CHART_MARGIN } from './constants';
 import SelectedDot from './SelectedDot';
 import CustomTooltip from '@/components/chart/CustomTooltip';
 
@@ -99,8 +100,11 @@ const ChartArea: React.FC<ChartAreaProps> = ({
   // Standardize axis label colors - same as Evaluations chart
   const axisLabelColor = '#9CA3AF';
 
+  // Set a fixed height to match the Evaluations chart
+  const chartHeight = 160;
+
   return (
-    <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
+    <ResponsiveContainer width="100%" height={chartHeight}>
       <ComposedChart
         data={chartData}
         margin={CHART_MARGIN}

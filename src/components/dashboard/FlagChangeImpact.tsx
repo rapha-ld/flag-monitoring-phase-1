@@ -173,14 +173,16 @@ const FlagChangeImpact = ({
       
       <CustomLegend />
       
-      <ChartArea 
-        chartData={processedData} 
-        selectedTimestamp={selectedTimestamp} 
-        selectedTimestamps={selectedTimestamps} 
-        timeframe={timeframe} 
-        hoveredTimestamp={hoveredTimestamp}
-        onHoverTimestamp={handleChartHover} 
-      />
+      <div className="mt-4">
+        <ChartArea 
+          chartData={processedData} 
+          selectedTimestamp={selectedTimestamp} 
+          selectedTimestamps={selectedTimestamps} 
+          timeframe={timeframe} 
+          hoveredTimestamp={hoveredTimestamp}
+          onHoverTimestamp={handleChartHover} 
+        />
+      </div>
     </div>
   );
 };
