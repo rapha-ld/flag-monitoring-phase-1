@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -9,7 +8,6 @@ import { format } from 'date-fns';
 import BarChartCell from './chart/BarChartCell';
 import { getEventIcon, determineEventName, isPointInSelectedRange, getEventNameFromVersion } from '@/utils/eventUtils';
 
-// Define the ChartViewBox interface used in reference line labels
 interface ChartViewBox {
   x?: number;
   y?: number;
@@ -150,9 +148,7 @@ const BarChart = ({
 
   const getPointOpacity = () => 1;
   
-  // Format time label to show in AM/PM format
   const formatTimeLabel = (value: string) => {
-    // Check if value is in HH:00 format
     if (/^\d{1,2}:\d{2}$/.test(value)) {
       const hour = parseInt(value.split(':')[0], 10);
       const period = hour >= 12 ? 'PM' : 'AM';
@@ -160,12 +156,10 @@ const BarChart = ({
       return `${formattedHour}${period}`;
     }
     
-    // If it's a minute format (e.g., "30m")
     if (/^\d{1,2}m$/.test(value)) {
       return value.replace('m', '');
     }
     
-    // For date values, just return them unchanged
     const date = new Date(value);
     return isNaN(date.getTime()) 
       ? value
@@ -184,7 +178,6 @@ const BarChart = ({
     }
   };
   
-  // Standardize axis label colors - same as Evaluations chart
   const axisLabelColor = '#9CA3AF';
 
   return (
@@ -227,7 +220,6 @@ const BarChart = ({
               <CustomTooltip 
                 tooltipValueFormatter={tooltipValueFormatter}
                 tooltipLabelFormatter={(label) => {
-                  // Also apply the AM/PM format in the tooltip
                   return formatTimeLabel(label);
                 }}
                 showTrue={showTrue}
@@ -349,7 +341,7 @@ const BarChart = ({
               barSize={barSize}
               isAnimationActive={false}
               radius={[1, 1, 0, 0]}
-              stroke="#FFFFFF"  // 1px white contour
+              stroke="#FFFFFF"
               strokeWidth={1}
             >
               {data.map((entry, index) => (
@@ -373,7 +365,7 @@ const BarChart = ({
                 barSize={barSize}
                 isAnimationActive={false}
                 radius={[1, 1, 0, 0]}
-                stroke="#FFFFFF"  // 1px white contour
+                stroke="#FFFFFF"
                 strokeWidth={1}
               >
                 {data.map((entry, index) => (
@@ -393,7 +385,7 @@ const BarChart = ({
                 barSize={barSize}
                 isAnimationActive={false}
                 radius={[0, 0, 0, 0]}
-                stroke="#FFFFFF"  // 1px white contour
+                stroke="#FFFFFF"
                 strokeWidth={1}
               >
                 {data.map((entry, index) => (
