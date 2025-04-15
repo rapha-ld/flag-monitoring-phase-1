@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { LineChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea, Line } from 'recharts';
 import CustomTooltip from '../CustomTooltip';
@@ -47,7 +46,7 @@ const TelemetryLineChart: React.FC<TelemetryLineChartProps> = ({
     goodThreshold = 200;     // 200ms
     needsImprovementThreshold = 500;  // 500ms
     maxDomain = 800;          // 800ms
-    chartColor = "#2BB7D2";  // Match the LCP chart color
+    chartColor = "#148291";  // Explicitly set LCP chart color
   }
 
   return (
