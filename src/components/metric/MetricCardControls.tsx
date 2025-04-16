@@ -7,29 +7,31 @@ import { Label } from '@/components/ui/label';
 import { BarChartHorizontal } from 'lucide-react';
 
 interface MetricCardControlsProps {
-  showBreakdownToggle: boolean;
+  showBreakdownToggle?: boolean;
   breakdownEnabled: boolean;
   onBreakdownToggle: (enabled: boolean) => void;
   breakdownType: 'application' | 'sdk';
   onBreakdownTypeChange: (type: 'application' | 'sdk') => void;
-  showVariantFilters: boolean;
+  showVariantFilters?: boolean;
   showTrue: boolean;
   showFalse: boolean;
   onToggleTrue?: () => void;
   onToggleFalse?: () => void;
+  metricType?: 'evaluations' | 'conversion' | 'errorRate';
 }
 
 const MetricCardControls: React.FC<MetricCardControlsProps> = ({
-  showBreakdownToggle,
+  showBreakdownToggle = true,
   breakdownEnabled,
   onBreakdownToggle,
   breakdownType,
   onBreakdownTypeChange,
-  showVariantFilters,
+  showVariantFilters = true,
   showTrue,
   showFalse,
   onToggleTrue,
-  onToggleFalse
+  onToggleFalse,
+  metricType
 }) => {
   return (
     <div className="flex flex-col items-end pr-4 pt-4 space-y-2">

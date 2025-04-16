@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Circle } from 'recharts';
 import { 
   Tooltip, 
   TooltipContent, 
@@ -58,7 +57,7 @@ const ChartAnnotation: React.FC<ChartAnnotationProps> = ({
       <Tooltip delayDuration={100}>
         <TooltipTrigger asChild>
           <g transform={`translate(${x}, ${y})`} className="cursor-pointer">
-            <Circle
+            <circle
               cx={0}
               cy={0}
               r={6}

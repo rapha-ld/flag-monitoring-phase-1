@@ -74,7 +74,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
     }
   };
   
-  const handleTypeChange = (type: 'application' | 'sdk') => {
+  const handleBreakdownTypeChange = (type: 'application' | 'sdk') => {
     setBreakdownType(type);
   };
   
@@ -91,7 +91,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
           breakdownEnabled={breakdownEnabled}
           onBreakdownToggle={handleBreakdownToggle}
           breakdownType={breakdownType}
-          onTypeChange={handleTypeChange}
+          onBreakdownTypeChange={handleBreakdownTypeChange}
           showTrue={showTrue}
           showFalse={showFalse}
           onToggleTrue={onToggleTrue}
