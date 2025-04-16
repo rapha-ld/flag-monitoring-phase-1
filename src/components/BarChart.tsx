@@ -44,6 +44,7 @@ interface BarChartProps {
   showFalse?: boolean;
   chartType?: 'stacked' | 'mixed';
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
+  timeframe?: number;
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
   hoveredTimestamp?: string | null;
@@ -62,13 +63,14 @@ const BarChart = ({
   showFalse = false,
   chartType = 'stacked',
   metricType,
+  timeframe,
   selectedTimestamp,
   selectedTimestamps,
   hoveredTimestamp,
   onHoverTimestamp
 }: BarChartProps) => {
   const interval = getXAxisInterval(data.length);
-  const calculatedBarSize = getBarSize(data.length);
+  const calculatedBarSize = getBarSize(data.length, timeframe);
   
   const barSize = calculatedBarSize;
   

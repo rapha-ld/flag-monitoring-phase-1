@@ -1,4 +1,3 @@
-
 // Calculate optimal interval for the X axis based on data length
 export const getXAxisInterval = (dataLength: number) => {
   if (dataLength > 60) return 14;
@@ -8,12 +7,21 @@ export const getXAxisInterval = (dataLength: number) => {
   return 1;
 };
 
-// Calculate optimal bar size based on data length
-export const getBarSize = (dataLength: number) => {
-  if (dataLength > 60) return 6;  // Increased from 4 to 6 for wider bars in 3M view
-  if (dataLength > 30) return 10; // Increased from 6 to 10
-  if (dataLength > 14) return 14; // Increased from 8 to 14
-  return 18;                      // Increased from 12 to 18
+// Calculate optimal bar size based on data length and timeframe
+export const getBarSize = (dataLength: number, timeframe?: string) => {
+  // For 7-day view, increase bar width
+  if (timeframe === '7d') {
+    if (dataLength > 60) return 12;  // Wider bars for longer data sets
+    if (dataLength > 30) return 20;  // Even wider for medium data sets
+    if (dataLength > 14) return 28;  // Widest for shorter data sets
+    return 36;                       // Maximum width for very short data sets
+  }
+
+  // Existing bar size logic for other timeframes
+  if (dataLength > 60) return 6;  
+  if (dataLength > 30) return 10; 
+  if (dataLength > 14) return 14; 
+  return 18;                      
 };
 
 // Predetermined max y-axis values for each metric type

@@ -22,6 +22,7 @@ interface MiniChartProps {
   hoveredTimestamp?: string | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
   percentage?: number; // New prop for the percentage
+  timeframe?: string; // Optional timeframe prop
 }
 
 const MiniChart: React.FC<MiniChartProps> = ({ 
@@ -38,7 +39,8 @@ const MiniChart: React.FC<MiniChartProps> = ({
   selectedTimestamps,
   hoveredTimestamp,
   onHoverTimestamp,
-  percentage = 0 // Default to 0 if not provided
+  percentage = 0, // Default to 0 if not provided
+  timeframe
 }) => {
   useEffect(() => {
     if (hoveredTimestamp) {
