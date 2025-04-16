@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import TelemetryBarChart from './charts/TelemetryBarChart';
@@ -48,7 +47,12 @@ const TelemetryChart: React.FC<TelemetryChartProps> = ({
     }
   };
   
-  const displayTitle = title === "Error Rate" ? "Errors" : title;
+  const displayTitle = 
+    title === "Error Rate" ? "Total Errors" : 
+    title === "Largest Contentful Paint" ? title :
+    title === "Interaction to Next Paint" ? title :
+    title;
+  
   const useBarChart = title === "Error Rate" || title === "Errors";
   
   const chartColor = 
