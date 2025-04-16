@@ -4,7 +4,6 @@ import BarChart from '../BarChart';
 import { DataPoint, VersionChange } from '../BarChart';
 import ChartBreakdown from './ChartBreakdown';
 import { cn } from '@/lib/utils';
-import { AnnotationData } from '../chart/ChartAnnotation';
 
 interface MetricCardContentProps {
   breakdownEnabled: boolean;
@@ -27,7 +26,6 @@ interface MetricCardContentProps {
   children?: React.ReactNode;
   containerClassName?: string;
   title?: string;
-  annotations?: AnnotationData[];
 }
 
 const MetricCardContent: React.FC<MetricCardContentProps> = ({
@@ -50,8 +48,7 @@ const MetricCardContent: React.FC<MetricCardContentProps> = ({
   onHoverTimestamp,
   children,
   containerClassName,
-  title,
-  annotations
+  title
 }) => {
   // Debug logging for hover events
   useEffect(() => {
@@ -104,7 +101,6 @@ const MetricCardContent: React.FC<MetricCardContentProps> = ({
           selectedTimestamps={selectedTimestamps}
           hoveredTimestamp={hoveredTimestamp}
           onHoverTimestamp={handleHoverTimestamp}
-          annotations={annotations}
         />
       </div>
     );
