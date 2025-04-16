@@ -16,6 +16,7 @@ interface CustomTooltipProps {
   showAverage?: boolean;
   title?: string;
   activeAnnotation?: ChartAnnotation | null;
+  isImpactChart?: boolean; // Add this prop to support the ChartArea component
 }
 
 const CustomTooltip: React.FC<CustomTooltipProps> = ({
@@ -30,7 +31,8 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
   metricType,
   showAverage = false,
   title,
-  activeAnnotation
+  activeAnnotation,
+  isImpactChart = false // Default to false
 }) => {
   if (!active || !payload || payload.length === 0) {
     return null;

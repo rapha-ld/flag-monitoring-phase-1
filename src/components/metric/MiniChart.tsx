@@ -219,7 +219,6 @@ const MiniChart: React.FC<MiniChartProps> = ({
               strokeWidth={1}
               strokeDasharray="3 3"
               isFront={true}
-              zIndex={9999}
             />
           )}
 
@@ -232,7 +231,6 @@ const MiniChart: React.FC<MiniChartProps> = ({
               strokeWidth={1.5}
               strokeDasharray="3 3"
               isFront={true}
-              zIndex={9990}
             />
           ))}
           

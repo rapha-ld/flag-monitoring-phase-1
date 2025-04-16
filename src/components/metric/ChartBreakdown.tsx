@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { DataPoint } from '../BarChart';
 import MiniChart from './MiniChart';
-import { applicationBreakdownData, sdkBreakdownData } from '@/utils/chartBreakdownUtils';
+import { getApplicationBreakdowns, getSDKBreakdowns } from '@/utils/chartBreakdownUtils';
 import { ChartAnnotation } from '@/data/annotationData';
 
 interface ChartBreakdownProps {
@@ -30,10 +30,16 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
   timeframe,
   annotations
 }) => {
-  // Use appropriate breakdown data based on the type
-  const breakdownData = type === 'application' 
-    ? applicationBreakdownData
-    : sdkBreakdownData;
+  // Get appropriate breakdown data based on the type
+  const [breakdownData, setBreakdownData] = useState<any[]>([]);
+  
+  useEffect(() => {
+    if (type === 'application') {
+      setBreakdownData(getApplicationBreakdowns(chartData));
+    } else {
+      setBreakdownData(getSDKBreakdowns(chartData));
+    }
+  }, [type, chartData]);
 
   // Keep track of the highest value across all charts for consistent scaling
   const [maxYValue, setMaxYValue] = useState<number | undefined>(undefined);
@@ -46,7 +52,7 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
     let overallMax = 0;
     
     breakdownData.forEach(item => {
-      const maxInDataset = Math.max(...item.data.map(d => {
+      const maxInDataset = Math.max(...item.data.map((d: any) => {
         return Math.max(
           (showTrue && showFalse) ? ((d.valueTrue || 0) + (d.valueFalse || 0)) :
           showTrue ? (d.valueTrue || 0) :
@@ -87,7 +93,7 @@ const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
             ? chartData.reduce((sum, point) => sum + (point.value || 0), 0)
             : 1;
             
-          const itemEvaluations = item.data.reduce((sum, point) => sum + (point.value || 0), 0);
+          const itemEvaluations = item.data.reduce((sum: number, point: any) => sum + (point.value || 0), 0);
           const percentage = (itemEvaluations / totalEvaluations) * 100;
           
           // Find the annotations relevant to this specific breakdown item

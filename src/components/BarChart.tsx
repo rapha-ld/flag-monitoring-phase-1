@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -253,7 +254,6 @@ const BarChart = ({
               strokeWidth={1}
               strokeDasharray="3 3"
               isFront={true}
-              zIndex={9999}
             />
           )}
           
@@ -265,7 +265,6 @@ const BarChart = ({
               strokeWidth={1.5}
               strokeDasharray="3 3"
               isFront={true}
-              zIndex={9990}
               label={{
                 position: 'top',
                 content: ({ viewBox }: { viewBox: ChartViewBox }) => (
