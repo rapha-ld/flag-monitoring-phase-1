@@ -8,6 +8,7 @@ import { format } from 'date-fns';
 import BarChartCell from './chart/BarChartCell';
 import { getEventIcon, determineEventName, isPointInSelectedRange, getEventNameFromVersion } from '@/utils/eventUtils';
 import { formatTimestamp } from './chart/charts/chartUtils';
+import ChartAnnotation, { AnnotationData } from './chart/ChartAnnotation';
 
 interface ChartViewBox {
   x?: number;
@@ -50,6 +51,7 @@ interface BarChartProps {
   selectedTimestamps?: Date[] | null;
   hoveredTimestamp?: string | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
+  annotations?: AnnotationData[];
 }
 
 const BarChart = ({
@@ -68,7 +70,8 @@ const BarChart = ({
   selectedTimestamp,
   selectedTimestamps,
   hoveredTimestamp,
-  onHoverTimestamp
+  onHoverTimestamp,
+  annotations = []
 }: BarChartProps) => {
   const interval = getXAxisInterval(data.length);
   const calculatedBarSize = getBarSize(data.length, timeframe);
@@ -429,6 +432,24 @@ const BarChart = ({
               eventName={getEventNameFromVersion(change.version)}
             />
           ))}
+          
+          {annotations.filter(anno => anno.position >= 0 && anno.position < data.length).map((annotation, index) => {
+            const dataPoint = data[annotation.position];
+            const value = showTrue ? dataPoint.valueTrue || 0 : 
+                         showFalse ? dataPoint.valueFalse || 0 : 
+                         dataPoint.value || 0;
+            
+            const yValue = value + (yAxisDomain[1] - yAxisDomain[0]) * 0.05;
+            
+            return (
+              <ChartAnnotation 
+                key={`annotation-${index}`} 
+                x={annotation.position} 
+                y={yValue} 
+                data={annotation} 
+              />
+            );
+          })}
         </ComposedChart>
       </ResponsiveContainer>
     </div>
