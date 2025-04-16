@@ -3,7 +3,7 @@ import React from 'react';
 import { BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Bar, ReferenceLine } from 'recharts';
 import CustomTooltip from '../CustomTooltip';
 import { useChartProps } from './useChartProps';
-import { getBarSize } from './chartUtils';
+import { getBarSize } from '@/utils/chartUtils';
 
 interface TelemetryBarChartProps {
   data: any[];
@@ -44,7 +44,7 @@ const TelemetryBarChart: React.FC<TelemetryBarChartProps> = ({
   };
 
   // Calculate bar sizing with reduced gaps
-  const barSize = getBarSize(data.length);
+  const barSize = getBarSize(data.length, timeframe);
   const barGap = Math.max(1, Math.min(3, Math.floor(barSize * 0.1)));
 
   return (

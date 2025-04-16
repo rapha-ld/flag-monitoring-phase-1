@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -44,7 +45,7 @@ interface BarChartProps {
   showFalse?: boolean;
   chartType?: 'stacked' | 'mixed';
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
-  timeframe?: number;
+  timeframe?: string;
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
   hoveredTimestamp?: string | null;

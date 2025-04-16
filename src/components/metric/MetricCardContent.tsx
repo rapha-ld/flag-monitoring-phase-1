@@ -18,6 +18,7 @@ interface MetricCardContentProps {
   showFalse?: boolean;
   chartType?: 'stacked' | 'mixed';
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
+  timeframe?: string;
   selectedTimestamp?: Date | null;
   selectedTimestamps?: Date[] | null;
   hoveredTimestamp?: string | null;
@@ -40,6 +41,7 @@ const MetricCardContent: React.FC<MetricCardContentProps> = ({
   showFalse,
   chartType = 'stacked',
   metricType,
+  timeframe,
   selectedTimestamp,
   selectedTimestamps,
   hoveredTimestamp,
@@ -74,6 +76,7 @@ const MetricCardContent: React.FC<MetricCardContentProps> = ({
         selectedTimestamps={selectedTimestamps}
         hoveredTimestamp={hoveredTimestamp}
         onHoverTimestamp={handleHoverTimestamp}
+        timeframe={timeframe}
       />
     );
   }
@@ -93,6 +96,7 @@ const MetricCardContent: React.FC<MetricCardContentProps> = ({
           showFalse={showFalse}
           chartType={chartType}
           metricType={metricType}
+          timeframe={timeframe}
           selectedTimestamp={selectedTimestamp}
           selectedTimestamps={selectedTimestamps}
           hoveredTimestamp={hoveredTimestamp}

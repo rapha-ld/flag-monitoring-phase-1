@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -88,7 +87,7 @@ const MetricCard = ({
   
   return (
     <Card className={cn(
-      "overflow-hidden transition-all duration-300", // Removed hover:shadow-md
+      "overflow-hidden transition-all duration-300",
       className,
       metricType === 'evaluations' && breakdownEnabled ? 'h-[560px]' : ''
     )}>
@@ -136,6 +135,7 @@ const MetricCard = ({
           showFalse={showFalse}
           chartType={chartType}
           metricType={metricType}
+          timeframe={timeframe}
           selectedTimestamp={selectedTimestamp}
           selectedTimestamps={selectedTimestamps}
           hoveredTimestamp={hoveredTimestamp}
