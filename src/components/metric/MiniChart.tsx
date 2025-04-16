@@ -22,7 +22,6 @@ interface MiniChartProps {
   hoveredTimestamp?: string | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
   percentage?: number; // New prop for the percentage
-  timeframe?: string;
 }
 
 const MiniChart: React.FC<MiniChartProps> = ({ 
@@ -39,8 +38,7 @@ const MiniChart: React.FC<MiniChartProps> = ({
   selectedTimestamps,
   hoveredTimestamp,
   onHoverTimestamp,
-  percentage = 0, // Default to 0 if not provided
-  timeframe
+  percentage = 0 // Default to 0 if not provided
 }) => {
   useEffect(() => {
     if (hoveredTimestamp) {
@@ -149,7 +147,7 @@ const MiniChart: React.FC<MiniChartProps> = ({
   
   const axisLabelColor = '#9CA3AF';
 
-  const calculatedBarSize = getBarSize(data.length, timeframe) * 0.6;
+  const calculatedBarSize = getBarSize(data.length) * 0.6;
   const barSize = Math.max(4, calculatedBarSize);
   const barGap = Math.max(1, Math.min(2, Math.floor(barSize * 0.1)));
 
