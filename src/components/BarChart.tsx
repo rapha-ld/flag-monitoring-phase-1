@@ -231,6 +231,7 @@ const BarChart = ({
               strokeWidth={1}
               strokeDasharray="3 3"
               isFront={true}
+              zIndex={9999}
             />
           )}
           
