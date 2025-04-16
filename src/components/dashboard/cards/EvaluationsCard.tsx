@@ -2,7 +2,7 @@
 import React from 'react';
 import MetricCard from '@/components/metric/MetricCard';
 import { DataPoint, VersionChange } from '@/components/BarChart';
-import { cn } from '@/lib/utils';
+import { evaluationAnnotations } from '@/data/annotationData';
 
 interface EvaluationsCardProps {
   value: number;
@@ -65,6 +65,7 @@ const EvaluationsCard: React.FC<EvaluationsCardProps> = ({
       onHoverTimestamp={onHoverTimestamp}
       onToggleTrue={onToggleTrue}
       onToggleFalse={onToggleFalse}
+      annotations={evaluationAnnotations}
     />
   );
 };

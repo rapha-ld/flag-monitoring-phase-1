@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -7,6 +8,7 @@ import { calculateDisplayValue } from '@/utils/metricValueCalculator';
 import MetricCardContent from './MetricCardContent';
 import MetricCardControls from './MetricCardControls';
 import BreakdownTypeSelector from './BreakdownTypeSelector';
+import { ChartAnnotation } from '@/data/annotationData';
 
 export interface MetricCardProps {
   title: string;
@@ -37,6 +39,7 @@ export interface MetricCardProps {
   onHoverTimestamp?: (timestamp: string | null) => void;
   onToggleTrue?: () => void;
   onToggleFalse?: () => void;
+  annotations?: ChartAnnotation[];
 }
 
 const MetricCard = ({ 
@@ -64,7 +67,8 @@ const MetricCard = ({
   hoveredTimestamp,
   onHoverTimestamp,
   onToggleTrue,
-  onToggleFalse
+  onToggleFalse,
+  annotations
 }: MetricCardProps) => {
   const [breakdownEnabled, setBreakdownEnabled] = useState(false);
   const [breakdownType, setBreakdownType] = useState<'application' | 'sdk'>('application');
@@ -141,6 +145,7 @@ const MetricCard = ({
           hoveredTimestamp={hoveredTimestamp}
           onHoverTimestamp={onHoverTimestamp}
           children={children}
+          annotations={annotations}
         />
       </CardContent>
     </Card>

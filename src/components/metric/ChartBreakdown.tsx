@@ -1,8 +1,9 @@
-
-import React, { useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { DataPoint } from '../BarChart';
 import MiniChart from './MiniChart';
-import { getApplicationBreakdowns, getSDKBreakdowns } from '@/utils/chartBreakdownUtils';
+import { applicationBreakdownData, sdkBreakdownData } from '@/utils/chartBreakdownUtils';
+import { ChartAnnotation } from '@/data/annotationData';
 
 interface ChartBreakdownProps {
   type: 'application' | 'sdk';
@@ -14,103 +15,112 @@ interface ChartBreakdownProps {
   hoveredTimestamp?: string | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
   timeframe?: string;
+  annotations?: ChartAnnotation[];
 }
 
 const ChartBreakdown: React.FC<ChartBreakdownProps> = ({
   type,
   chartData,
   showTrue = true,
-  showFalse = true,
+  showFalse = false,
   selectedTimestamp,
   selectedTimestamps,
   hoveredTimestamp,
   onHoverTimestamp,
-  timeframe
+  timeframe,
+  annotations
 }) => {
-  const trueColor = '#2BB7D2';
-  const falseColor = '#FFD099';
-  
-  // Use useMemo to avoid recomputing breakdowns on each render
-  const { breakdowns, maxYValue, percentages } = useMemo(() => {
-    const getBreakdowns = type === 'application' 
-      ? getApplicationBreakdowns 
-      : getSDKBreakdowns;
+  // Use appropriate breakdown data based on the type
+  const breakdownData = type === 'application' 
+    ? applicationBreakdownData
+    : sdkBreakdownData;
+
+  // Keep track of the highest value across all charts for consistent scaling
+  const [maxYValue, setMaxYValue] = useState<number | undefined>(undefined);
+
+  // Process all the data to find the maximum value for Y axis scaling
+  useEffect(() => {
+    if (!chartData || chartData.length === 0) return;
     
-    const breakdownData = getBreakdowns(chartData);
+    // Calculate the max value across all data sets
+    let overallMax = 0;
     
-    // Calculate the highest value across all charts
-    let maxValue = 0;
-    let totalValue = 0;
-    
-    // First, calculate the total value across all charts and find the maximum value
-    const updatedBreakdowns = breakdownData.map(item => {
-      let itemTotal = 0;
+    breakdownData.forEach(item => {
+      const maxInDataset = Math.max(...item.data.map(d => {
+        return Math.max(
+          (showTrue && showFalse) ? ((d.valueTrue || 0) + (d.valueFalse || 0)) :
+          showTrue ? (d.valueTrue || 0) :
+          showFalse ? (d.valueFalse || 0) : (d.value || 0)
+        );
+      }));
       
-      item.data.forEach(d => {
-        const trueVal = d.valueTrue || 0;
-        const falseVal = d.valueFalse || 0;
-        const pointValue = (showTrue && showFalse) ? (trueVal + falseVal) : 
-                          showTrue ? trueVal : 
-                          showFalse ? falseVal : d.value || 0;
-                          
-        maxValue = Math.max(maxValue, pointValue);
-        itemTotal += pointValue;
-      });
-      
-      // Return a new object with the calculated total
-      return {
-        ...item,
-        calculatedTotal: itemTotal
-      };
+      overallMax = Math.max(overallMax, maxInDataset);
     });
-    
-    // Sum up all the calculated totals
-    totalValue = updatedBreakdowns.reduce((sum, item) => sum + item.calculatedTotal, 0);
     
     // Add 10% padding to the max value
-    maxValue = maxValue * 1.1;
-    
-    // Now calculate percentages
-    const itemPercentages = updatedBreakdowns.map(item => {
-      return totalValue > 0 ? (item.calculatedTotal / totalValue) * 100 : 0;
-    });
-    
-    return { 
-      breakdowns: updatedBreakdowns, 
-      maxYValue: maxValue,
-      percentages: itemPercentages
-    };
-  }, [chartData, type, showTrue, showFalse]);
+    setMaxYValue(overallMax * 1.1);
+  }, [chartData, breakdownData, showTrue, showFalse]);
 
-  // Handler to forward hover events from MiniCharts to parent
+  // Handle the timestamp hover synchronization
   const handleHoverTimestamp = (timestamp: string | null) => {
     if (onHoverTimestamp) {
       onHoverTimestamp(timestamp);
     }
   };
-  
+
+  useEffect(() => {
+    if (hoveredTimestamp) {
+      console.log(`ChartBreakdown received hoveredTimestamp: ${hoveredTimestamp}`);
+    }
+  }, [hoveredTimestamp]);
+
+  // Keep same colors as the main chart
+  const trueColor = '#2BB7D2';
+  const falseColor = '#FFD099';
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3 h-full">
-      {breakdowns.map((item, index) => (
-        <MiniChart 
-          key={`${type}-${index}`} 
-          title={item.title} 
-          version={item.version} 
-          data={item.data} 
-          showTrue={showTrue}
-          showFalse={showFalse}
-          trueColor={trueColor}
-          falseColor={falseColor}
-          factor={item.factor}
-          maxYValue={maxYValue}
-          selectedTimestamp={selectedTimestamp}
-          selectedTimestamps={selectedTimestamps}
-          hoveredTimestamp={hoveredTimestamp}
-          onHoverTimestamp={handleHoverTimestamp}
-          percentage={percentages[index]}
-          timeframe={timeframe}
-        />
-      ))}
+    <div className="pt-4">
+      <div className="grid grid-cols-2 gap-4">
+        {breakdownData.map((item, index) => {
+          // Calculate percentage of the total
+          const totalEvaluations = chartData && chartData.length > 0 
+            ? chartData.reduce((sum, point) => sum + (point.value || 0), 0)
+            : 1;
+            
+          const itemEvaluations = item.data.reduce((sum, point) => sum + (point.value || 0), 0);
+          const percentage = (itemEvaluations / totalEvaluations) * 100;
+          
+          // Find the annotations relevant to this specific breakdown item
+          const itemAnnotations = annotations?.filter(a => {
+            // Logic to determine if an annotation applies to this item
+            // This might need customization based on your data structure
+            return item.title.toLowerCase().includes(a.label.toLowerCase()) || 
+                   a.label.toLowerCase().includes(item.title.toLowerCase());
+          });
+          
+          return (
+            <MiniChart
+              key={`breakdown-${index}`} 
+              title={item.title}
+              version={item.version}
+              data={item.data}
+              showTrue={showTrue}
+              showFalse={showFalse}
+              trueColor={trueColor}
+              falseColor={falseColor}
+              factor={item.factor}
+              maxYValue={maxYValue}
+              selectedTimestamp={selectedTimestamp}
+              selectedTimestamps={selectedTimestamps}
+              hoveredTimestamp={hoveredTimestamp}
+              onHoverTimestamp={handleHoverTimestamp}
+              percentage={percentage}
+              timeframe={timeframe}
+              annotations={itemAnnotations}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 };

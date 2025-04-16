@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
@@ -7,6 +8,7 @@ import { determineEventName } from '@/utils/eventUtils';
 import { Progress } from '@/components/ui/progress';
 import { getBarSize } from '@/utils/chartUtils';
 import { formatTimestamp } from '../chart/charts/chartUtils';
+import { ChartAnnotation } from '@/data/annotationData';
 
 interface MiniChartProps { 
   title: string; 
@@ -24,6 +26,7 @@ interface MiniChartProps {
   onHoverTimestamp?: (timestamp: string | null) => void;
   percentage?: number; // New prop for the percentage
   timeframe?: string; // Optional timeframe prop
+  annotations?: ChartAnnotation[]; // Annotations data
 }
 
 const MiniChart: React.FC<MiniChartProps> = ({ 
@@ -41,7 +44,8 @@ const MiniChart: React.FC<MiniChartProps> = ({
   hoveredTimestamp,
   onHoverTimestamp,
   percentage = 0, // Default to 0 if not provided
-  timeframe
+  timeframe,
+  annotations = []
 }) => {
   useEffect(() => {
     if (hoveredTimestamp) {
@@ -110,6 +114,21 @@ const MiniChart: React.FC<MiniChartProps> = ({
     }).sort((a, b) => a.timestamp! - b.timestamp!);
   };
   
+  // Process annotations to match data points
+  const processedAnnotations = annotations ? annotations.map(annotation => {
+    const annotationDate = new Date(annotation.timestamp);
+    const matchingDataPoint = data.find(point => {
+      const pointDate = new Date(point.date || point.name);
+      return pointDate.getTime() === annotationDate.getTime() || 
+             (Math.abs(pointDate.getTime() - annotationDate.getTime()) < 3600000); // Within an hour
+    });
+    
+    return {
+      ...annotation,
+      dataPointName: matchingDataPoint?.name || null
+    };
+  }).filter(a => a.dataPointName !== null) : [];
+  
   const selectedPoints = findSelectedDataPoints();
   const hasSelectedPoints = selectedPoints && selectedPoints.length > 0;
   const textGray = '#545A62';
@@ -127,6 +146,11 @@ const MiniChart: React.FC<MiniChartProps> = ({
       onHoverTimestamp(null);
     }
   };
+
+  // Find active annotation based on hoveredTimestamp
+  const activeAnnotation = hoveredTimestamp 
+    ? processedAnnotations.find(a => a.dataPointName === hoveredTimestamp)
+    : null;
 
   const formattedPercentage = `${percentage.toFixed(1)}%`;
   
@@ -181,6 +205,7 @@ const MiniChart: React.FC<MiniChartProps> = ({
                 chartType="stacked"
                 metricType="evaluations"
                 title={title}
+                activeAnnotation={activeAnnotation}
               />
             }
             isAnimationActive={false}
@@ -194,8 +219,22 @@ const MiniChart: React.FC<MiniChartProps> = ({
               strokeWidth={1}
               strokeDasharray="3 3"
               isFront={true}
+              zIndex={9999}
             />
           )}
+
+          {/* Annotation vertical lines */}
+          {processedAnnotations.map((annotation, index) => (
+            <ReferenceLine
+              key={`mini-annotation-line-${index}`}
+              x={annotation.dataPointName}
+              stroke={annotation.color || "#6366F1"}
+              strokeWidth={1.5}
+              strokeDasharray="3 3"
+              isFront={true}
+              zIndex={9990}
+            />
+          ))}
           
           {hasSelectedPoints && selectedPoints.map((point, index) => {
             const eventName = determineEventName(point.exactTime);

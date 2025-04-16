@@ -8,6 +8,7 @@ import { format } from 'date-fns';
 import BarChartCell from './chart/BarChartCell';
 import { getEventIcon, determineEventName, isPointInSelectedRange, getEventNameFromVersion } from '@/utils/eventUtils';
 import { formatTimestamp } from './chart/charts/chartUtils';
+import { ChartAnnotation } from '@/data/annotationData';
 
 interface ChartViewBox {
   x?: number;
@@ -50,6 +51,7 @@ interface BarChartProps {
   selectedTimestamps?: Date[] | null;
   hoveredTimestamp?: string | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
+  annotations?: ChartAnnotation[];
 }
 
 const BarChart = ({
@@ -68,7 +70,8 @@ const BarChart = ({
   selectedTimestamp,
   selectedTimestamps,
   hoveredTimestamp,
-  onHoverTimestamp
+  onHoverTimestamp,
+  annotations = []
 }: BarChartProps) => {
   const interval = getXAxisInterval(data.length);
   const calculatedBarSize = getBarSize(data.length, timeframe);
@@ -99,6 +102,20 @@ const BarChart = ({
   const textGray = '#545A62';
 
   const thresholdLine = metricType ? thresholdLines.find(t => t.metricType === metricType) : undefined;
+
+  const processedAnnotations = annotations.map(annotation => {
+    const annotationDate = new Date(annotation.timestamp);
+    const matchingDataPoint = data.find(point => {
+      const pointDate = new Date(point.date || point.name);
+      return pointDate.getTime() === annotationDate.getTime() || 
+             (Math.abs(pointDate.getTime() - annotationDate.getTime()) < 3600000); // Within an hour
+    });
+    
+    return {
+      ...annotation,
+      dataPointName: matchingDataPoint?.name || null
+    };
+  }).filter(a => a.dataPointName !== null);
 
   const findSelectedDataPoints = () => {
     if ((!selectedTimestamp && !selectedTimestamps) || data.length === 0) return null;
@@ -171,6 +188,10 @@ const BarChart = ({
   
   const axisLabelColor = '#9CA3AF';
 
+  const activeAnnotation = hoveredTimestamp 
+    ? processedAnnotations.find(a => a.dataPointName === hoveredTimestamp)
+    : null;
+
   return (
     <div className="w-full h-full">
       <ResponsiveContainer width="100%" height={height}>
@@ -218,6 +239,7 @@ const BarChart = ({
                 chartType={chartType}
                 metricType={metricType}
                 showAverage={showAverage}
+                activeAnnotation={activeAnnotation}
               />
             }
             trigger="hover"
@@ -234,6 +256,39 @@ const BarChart = ({
               zIndex={9999}
             />
           )}
+          
+          {processedAnnotations.map((annotation, index) => (
+            <ReferenceLine
+              key={`annotation-line-${index}`}
+              x={annotation.dataPointName}
+              stroke={annotation.color || "#6366F1"}
+              strokeWidth={1.5}
+              strokeDasharray="3 3"
+              isFront={true}
+              zIndex={9990}
+              label={{
+                position: 'top',
+                content: ({ viewBox }: { viewBox: ChartViewBox }) => (
+                  <svg 
+                    x={(viewBox?.x ?? 0) - 6} 
+                    y={(viewBox?.y ?? 0) - 12}
+                    width="12" 
+                    height="12" 
+                    viewBox="0 0 12 12"
+                  >
+                    <circle
+                      cx="6"
+                      cy="6"
+                      r="5"
+                      fill={annotation.color || "#6366F1"}
+                      stroke="#FFFFFF"
+                      strokeWidth="1.5"
+                    />
+                  </svg>
+                )
+              }}
+            />
+          ))}
           
           {referenceLineMarkers.map((marker, index) => (
             <ReferenceLine

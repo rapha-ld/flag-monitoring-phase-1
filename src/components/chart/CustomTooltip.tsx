@@ -1,152 +1,110 @@
 
 import React from 'react';
-import { cn } from "@/lib/utils";
-import { Popover, PopoverContent } from "@/components/ui/popover";
+import { Card } from '@/components/ui/card';
+import { ChartAnnotation } from '@/data/annotationData';
 
 interface CustomTooltipProps {
   active?: boolean;
-  payload?: Array<any>;
+  payload?: any[];
   label?: string;
-  tooltipLabelFormatter: (label: string) => string;
-  tooltipValueFormatter: (value: number, title?: string) => string;
+  tooltipValueFormatter?: (value: number) => string;
+  tooltipLabelFormatter?: (label: string) => string;
   showTrue?: boolean;
   showFalse?: boolean;
   chartType?: 'stacked' | 'mixed';
   metricType?: 'evaluations' | 'conversion' | 'errorRate';
   showAverage?: boolean;
-  isImpactChart?: boolean;
   title?: string;
+  activeAnnotation?: ChartAnnotation | null;
 }
 
-const CustomTooltip = ({ 
-  active, 
-  payload, 
-  label, 
-  tooltipLabelFormatter, 
-  tooltipValueFormatter,
-  showTrue,
-  showFalse,
-  chartType = 'stacked',
+const CustomTooltip: React.FC<CustomTooltipProps> = ({
+  active,
+  payload,
+  label,
+  tooltipValueFormatter = (value) => `${value}`,
+  tooltipLabelFormatter = (label) => label,
+  showTrue = false,
+  showFalse = false,
+  chartType,
   metricType,
-  showAverage,
-  isImpactChart = false,
-  title
-}: CustomTooltipProps) => {
-  if (active && payload && payload.length) {
-    // For the flag impact chart
-    if (isImpactChart) {
-      const allFlagsValue = payload.find(p => p.dataKey === 'value')?.value || 0;
-      const thisFlagValue = payload.find(p => p.dataKey === 'flag')?.value || 0;
+  showAverage = false,
+  title,
+  activeAnnotation
+}) => {
+  if (!active || !payload || payload.length === 0) {
+    return null;
+  }
+
+  const formattedLabel = tooltipLabelFormatter(label || '');
+  const hasAnnotation = activeAnnotation !== null && activeAnnotation !== undefined;
+
+  return (
+    <Card className="p-2 max-w-[280px] shadow-md bg-white">
+      <div className="text-sm font-medium mb-1">{title ? `${title} - ${formattedLabel}` : formattedLabel}</div>
       
-      return (
-        <div className="bg-white border border-gray-200 shadow-md rounded-md p-3 text-xs z-[100]">
-          <p className="font-medium text-sm mb-2">{tooltipLabelFormatter(label || '')}</p>
-          <div className="space-y-2 mt-1">
-            {/* This Flag value - now shown first */}
-            <div className="flex justify-between gap-2 items-center">
-              <div className="flex items-center gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-[#7861C6]" />
-                <span className="text-gray-700">This flag:</span>
-              </div>
-              <span className="text-gray-900 font-medium">
-                {tooltipValueFormatter(thisFlagValue, title)}
-              </span>
-            </div>
-            
-            {/* All Flags value - now shown second */}
-            <div className="flex justify-between gap-2 items-center">
-              <div className="flex items-center gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-[#A9AFB4]" />
-                <span className="text-gray-700">All flags:</span>
-              </div>
-              <span className="text-gray-900 font-medium">
-                {tooltipValueFormatter(allFlagsValue, title)}
-              </span>
-            </div>
+      {/* Annotation display */}
+      {hasAnnotation && (
+        <div className="mb-2 border-b pb-2">
+          <div className="flex items-center gap-1.5 mb-1">
+            <div 
+              className="w-2 h-2 rounded-full" 
+              style={{ backgroundColor: activeAnnotation.color || '#6366F1' }}
+            ></div>
+            <span className="font-medium text-sm">{activeAnnotation.label}</span>
           </div>
+          <p className="text-xs text-gray-600">{activeAnnotation.description}</p>
         </div>
-      );
-    }
-    
-    // Original tooltip for other chart types
-    return (
-      <div className="bg-white border border-gray-200 shadow-md rounded-md p-3 text-xs z-[100]">
-        <p className="font-medium text-sm mb-2">{tooltipLabelFormatter(label || '')}</p>
-        
-        {/* For stacked or mixed charts when showing true/false values */}
-        {(showTrue || showFalse) && !showAverage && (
-          <div className="space-y-2 mt-1">
-            {payload.map((entry, index) => (
-              <div key={`tooltip-${index}`} className="flex justify-between gap-2 items-center">
-                <div className="flex items-center gap-1.5">
-                  <div 
-                    className="w-3 h-3 rounded-full" 
-                    style={{ backgroundColor: entry.color }}
-                  />
-                  <span className="text-gray-700">{entry.name}:</span>
-                </div>
-                <span className="text-gray-900 font-medium">
-                  {tooltipValueFormatter(entry.value, title)}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-        
-        {/* For average values (when both true/false are selected) */}
-        {showAverage && (
-          <div className="space-y-2 mt-1">
-            {/* Show the True value first */}
-            <div className="flex justify-between gap-2 items-center">
+      )}
+      
+      <div className="space-y-1">
+        {payload.map((entry, index) => {
+          // Skip false values if they're not to be shown
+          if (!showFalse && entry.dataKey === 'valueFalse') return null;
+          // Skip true values if they're not to be shown  
+          if (!showTrue && entry.dataKey === 'valueTrue') return null;
+          
+          // Determine the name based on the dataKey
+          let name = entry.name;
+          if (!name) {
+            if (entry.dataKey === 'valueTrue') name = 'True';
+            else if (entry.dataKey === 'valueFalse') name = 'False';
+            else if (entry.dataKey === 'valueAvg') name = 'Average';
+            else name = 'Value';
+          }
+          
+          const value = entry.value !== undefined && entry.value !== null 
+            ? tooltipValueFormatter(entry.value) 
+            : 'N/A';
+          
+          return (
+            <div key={`tooltip-item-${index}`} className="flex justify-between">
               <div className="flex items-center gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-[#2BB7D2]" />
-                <span className="text-gray-700">True:</span>
+                <div 
+                  className="w-2 h-2 rounded-full" 
+                  style={{ backgroundColor: entry.color }}
+                ></div>
+                <span className="text-xs">{name}</span>
               </div>
-              <span className="text-gray-900 font-medium">
-                {tooltipValueFormatter(payload[0].payload.valueTrue || 0, title)}
-              </span>
+              <span className="font-medium text-xs">{value}</span>
             </div>
-            
-            {/* Show the False value */}
-            <div className="flex justify-between gap-2 items-center">
-              <div className="flex items-center gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-[#FFD099]" />
-                <span className="text-gray-700">False:</span>
-              </div>
-              <span className="text-gray-900 font-medium">
-                {tooltipValueFormatter(payload.find(p => p.dataKey === 'valueFalse')?.value || 0, title)}
-              </span>
-            </div>
-          </div>
-        )}
+          );
+        })}
         
-        {/* If we're showing the original value - simplified for telemetry charts */}
-        {!showTrue && !showFalse && (
-          <div className="mt-1">
-            {isImpactChart ? (
-              <p className="text-gray-900 font-medium text-center">
-                {tooltipValueFormatter(payload[0].value, title)}
-              </p>
-            ) : (
-              <div className="flex justify-between gap-2 items-center">
-                <div className="flex items-center gap-1.5">
-                  <div 
-                    className="w-3 h-3 rounded-full" 
-                    style={{ backgroundColor: payload[0].color }}
-                  />
-                  <span className="text-gray-700">Value:</span>
-                </div>
-                <p className="text-gray-900 font-medium">
-                  {tooltipValueFormatter(payload[0].value, title)}
-                </p>
-              </div>
-            )}
+        {showAverage && payload[0]?.payload?.valueAvg !== undefined && (
+          <div className="flex justify-between border-t pt-1 mt-1">
+            <div className="flex items-center gap-1.5">
+              <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+              <span className="text-xs">Average</span>
+            </div>
+            <span className="font-medium text-xs">
+              {tooltipValueFormatter(payload[0].payload.valueAvg)}
+            </span>
           </div>
         )}
       </div>
-    );
-  }
-  return null;
+    </Card>
+  );
 };
 
 export default CustomTooltip;
