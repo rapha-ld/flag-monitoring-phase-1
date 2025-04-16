@@ -26,6 +26,29 @@ export function getBarSize(dataLength: number, timeframe?: string): number {
  * Format a timestamp for display in charts
  */
 export function formatTimestamp(timestamp: string): string {
-  // Add formatting logic as needed
+  // Handle time format (HH:MM)
+  if (/^\d{1,2}:\d{2}$/.test(timestamp)) {
+    const hour = parseInt(timestamp.split(':')[0], 10);
+    const period = hour >= 12 ? 'PM' : 'AM';
+    const formattedHour = hour % 12 || 12;
+    return `${formattedHour}${period}`;
+  }
+  
+  // Handle minute format (e.g., 30m)
+  if (/^\d{1,2}m$/.test(timestamp)) {
+    return timestamp.replace('m', '');
+  }
+  
+  try {
+    // Try to parse as date
+    const date = new Date(timestamp);
+    if (!isNaN(date.getTime())) {
+      return `${date.getMonth() + 1}/${date.getDate()}`;
+    }
+  } catch (e) {
+    // Fall back to original timestamp if parsing fails
+  }
+  
+  // Return original if no formatting applied
   return timestamp;
 }

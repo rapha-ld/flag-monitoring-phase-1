@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import { determineEventName } from '@/utils/eventUtils';
 import { Progress } from '@/components/ui/progress';
 import { getBarSize } from '@/utils/chartUtils';
+import { formatTimestamp } from '../chart/charts/chartUtils';
 
 interface MiniChartProps { 
   title: string; 
@@ -59,29 +60,11 @@ const MiniChart: React.FC<MiniChartProps> = ({
   const yAxisMax = maxYValue !== undefined ? maxYValue : localMaxValue * 1.1;
   
   const formatTimeLabel = (label: string) => {
-    if (/^\d{1,2}:\d{2}$/.test(label)) {
-      const hour = parseInt(label.split(':')[0], 10);
-      const period = hour >= 12 ? 'PM' : 'AM';
-      const formattedHour = hour % 12 || 12;
-      return `${formattedHour}${period}`;
-    }
-    
-    if (/^\d{1,2}m$/.test(label)) {
-      return label.replace('m', '');
-    }
-    
-    return label;
+    return formatTimestamp(label);
   };
   
   const tooltipLabelFormatter = (label: string) => {
-    if (label.includes(":") || label.includes("m")) {
-      return formatTimeLabel(label);
-    }
-    
-    const date = new Date(label);
-    return isNaN(date.getTime()) 
-      ? label
-      : `${date.getMonth() + 1}/${date.getDate()}`;
+    return formatTimestamp(label);
   };
   
   const tooltipValueFormatter = (value: number) => `${value.toFixed(1)}`;

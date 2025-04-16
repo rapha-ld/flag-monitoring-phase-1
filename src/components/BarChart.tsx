@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Bar, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from 'recharts';
 import { getXAxisInterval, getBarSize, calculateYAxisDomain } from '@/utils/chartUtils';
@@ -8,6 +7,7 @@ import { referenceLineMarkers, thresholdLines } from '@/utils/chartReferenceLine
 import { format } from 'date-fns';
 import BarChartCell from './chart/BarChartCell';
 import { getEventIcon, determineEventName, isPointInSelectedRange, getEventNameFromVersion } from '@/utils/eventUtils';
+import { formatTimestamp } from './chart/charts/chartUtils';
 
 interface ChartViewBox {
   x?: number;
@@ -154,21 +154,7 @@ const BarChart = ({
   const getPointOpacity = () => 1;
   
   const formatTimeLabel = (value: string) => {
-    if (/^\d{1,2}:\d{2}$/.test(value)) {
-      const hour = parseInt(value.split(':')[0], 10);
-      const period = hour >= 12 ? 'PM' : 'AM';
-      const formattedHour = hour % 12 || 12;
-      return `${formattedHour}${period}`;
-    }
-    
-    if (/^\d{1,2}m$/.test(value)) {
-      return value.replace('m', '');
-    }
-    
-    const date = new Date(value);
-    return isNaN(date.getTime()) 
-      ? value
-      : `${date.getMonth() + 1}/${date.getDate()}`;
+    return formatTimestamp(value);
   };
 
   const handleMouseMove = (e: any) => {
