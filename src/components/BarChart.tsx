@@ -48,6 +48,7 @@ interface BarChartProps {
   selectedTimestamps?: Date[] | null;
   hoveredTimestamp?: string | null;
   onHoverTimestamp?: (timestamp: string | null) => void;
+  timeframe?: number;
 }
 
 const BarChart = ({
@@ -65,10 +66,11 @@ const BarChart = ({
   selectedTimestamp,
   selectedTimestamps,
   hoveredTimestamp,
-  onHoverTimestamp
+  onHoverTimestamp,
+  timeframe
 }: BarChartProps) => {
   const interval = getXAxisInterval(data.length);
-  const calculatedBarSize = getBarSize(data.length);
+  const calculatedBarSize = getBarSize(data.length, timeframe);
   
   const barSize = calculatedBarSize;
   

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import MetricCard from '@/components/metric/MetricCard';
 import { DataPoint, VersionChange } from '@/components/BarChart';
